@@ -1,0 +1,41 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "carte_test.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "": {
+            "scaleInEditor": 1
+        },
+        "carte_test.tmx": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -109.75,
+                "y": 82
+            }
+        },
+        "carte_test.tmx#tileset_test": {
+            "scaleInDock": 1
+        }
+    },
+    "last.exportedFilePath": "C:/Users/Yann/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets",
+    "last.imagePath": "C:/Users/Yann/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets/tilesets",
+    "map.fixedSize": false,
+    "map.lastUsedExportFilter": "Fichiers de carte JSON (*.tmj *.json)",
+    "map.lastUsedFormat": "tmx",
+    "map.width": 32,
+    "openFiles": [
+        "carte_test.tmx"
+    ],
+    "project": "sans titre.tiled-project",
+    "property.type": "bool",
+    "recentFiles": [
+        "carte_test.tmx"
+    ],
+    "tileset.embedInMap": true
+}
