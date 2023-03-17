@@ -6,18 +6,19 @@ class Game extends Phaser.Scene{
     }
 
     preload(){
-        // spritesheet perso
+        // spritesheet perso - CHECK
         this.load.spritesheet('player', 'assets/perso.png',
             { frameWidth: 32, frameHeight: 32 });
 
-        // spritesheet Mob
+        // spritesheet Mob - CHECK
         this.load.spritesheet('mob', 'assets/mob.png',
             { frameWidth: 32, frameHeight: 32 });
 
-        // Preload assets Tiled
+        // Preload assets Tiled - CHECK 
         this.load.image('tiles', 'assets/tileset.png');
         this.load.tilemapTiledJSON('map', 'map_test.json');
-            
+        
+        // Preload box
         this.load.image('box', 'assets/box.png');
 
         //Preload Attaque
@@ -31,33 +32,12 @@ class Game extends Phaser.Scene{
 
     create(){
 
-        this.cursors = this.input.keyboard.createCursorKeys();
+        this.player_block = false;
+        this.player_beHit = false;
+        this.clignotement = 0;
+        this.health = 99;
 
         this.player_facing = "up";
-
-        // création joueur
-        this.player = this.physics.add.sprite(150, 150, 'player');    
-        this.player.setCollideWorldBounds(true);
-        this.anims.create({
-            key: 'left',
-            frames: [{ key: 'player', frame: 3 }],
-            frameRate: 20
-        });
-        this.anims.create({
-            key: 'up',
-            frames: [{ key: 'player', frame: 0 }],
-            frameRate: 20
-        });
-        this.anims.create({
-            key: 'down',
-            frames: [{ key: 'player', frame: 2 }],
-            frameRate: 20
-        });
-        this.anims.create({
-            key: 'right',
-            frames: [{ key: 'player', frame: 1 }],
-            frameRate: 20
-        });
 
         //Création Attaque
         this.attaque_sword = this.physics.add.staticGroup();
@@ -91,8 +71,8 @@ class Game extends Phaser.Scene{
         this.tileset = this.map.addTilesetImage('tileset', 'tiles')
 
         // loads calques
-        this.murs = this.map.createLayer('murs_Layer', this.tileset); //calque mur
         this.sol = this.map.createLayer('sol_Layer', this.tileset); // calque sol
+        this.murs = this.map.createLayer('murs_Layer', this.tileset); //calque mur
 
         // Calque objet - Mobs
         this.mob_Layer = this.map.getObjectLayer('mob_Layer');
@@ -116,6 +96,30 @@ class Game extends Phaser.Scene{
         this.switchLeft_Layer.setCollisionByProperty({ estSolide: true });
         this.switchRight_Layer.setCollisionByProperty({ estSolide: true });
 
+        // création joueur
+        this.player = this.physics.add.sprite(150, 150, 'player');    
+        this.player.setCollideWorldBounds(true);
+        this.anims.create({
+            key: 'left',
+            frames: [{ key: 'player', frame: 3 }],
+            frameRate: 20
+        });
+        this.anims.create({
+            key: 'up',
+            frames: [{ key: 'player', frame: 0 }],
+            frameRate: 20
+        });
+        this.anims.create({
+            key: 'down',
+            frames: [{ key: 'player', frame: 2 }],
+            frameRate: 20
+        });
+        this.anims.create({
+            key: 'right',
+            frames: [{ key: 'player', frame: 1 }],
+            frameRate: 20
+        });
+
         //Création Caméra
         this.physics.world.setBounds(0, 0, 3200, 3200);
         this.cameras.main.setBounds(0, 0, 3200, 3200);
@@ -128,13 +132,16 @@ class Game extends Phaser.Scene{
         this.healthMask.visible = false;
         this.barreVie.mask = new Phaser.Display.Masks.BitmapMask(this, this.healthMask);
 
+        // récupération des touches direction - CHECK
+        this.cursors = this.input.keyboard.createCursorKeys();
+
         //Création Collision
         //Joueur
         this.physics.add.collider(this.player, this.murs);
         this.physics.add.overlap(this.player, this.mob, this.perteVie, null, this);
 
         //Création Collision Attaque
-        this.physics.add.overlap(this.attaque_sword, this.bordure, this.clean_sword, this.if_clean_sword, this);
+        this.physics.add.overlap(this.attaque_sword, this.murs, this.clean_sword, this.if_clean_sword, this);
 
         //Ennemi
 
@@ -147,32 +154,30 @@ class Game extends Phaser.Scene{
 
     update(){
 
-        const speed = 175;
+        this.speed = 175;
 
         if (this.player_block == false) {
-
-
             //Mouvement
             if (this.cursors.up.isDown) {
-                this.player.setVelocityY(-speed);
+                this.player.setVelocityY(-this.speed);
                 this.player.setVelocityX(0);
                 this.player.anims.play('up');
                 this.player_facing = "up";
             }
             else if (this.cursors.down.isDown) {
-                this.player.setVelocityY(speed);
+                this.player.setVelocityY(this.speed);
                 this.player.setVelocityX(0);
                 this.player.anims.play('down');
                 this.player_facing = "down";
             }
             else if (this.cursors.right.isDown) {
-                this.player.setVelocityX(speed);
+                this.player.setVelocityX(this.speed);
                 this.player.setVelocityY(0);
                 this.player.anims.play('right');
                 this.player_facing = "right";
             }
             else if (this.cursors.left.isDown) {
-                this.player.setVelocityX(-speed);
+                this.player.setVelocityX(-this.speed);
                 this.player.setVelocityY(0);
                 this.player.anims.play('left');
                 this.player_facing = "left";
@@ -198,33 +203,12 @@ class Game extends Phaser.Scene{
                 this.player_block = true;
                 this.player.setVelocityX(0);
                 this.player.setVelocityY(0);
-                setTimeout(this.delock_attaque, 500);
+                this.time.delayedCall(500, this.delock_attaque, [], this);
             }
         }
-
-            this.player.body.setVelocity(0);
-
-            if (this.cursors.left.isDown) { //si la touche gauche est appuyée
-                this.player.setVelocityX(-speed); //alors vitesse négative en X
-                //this.player.anims.play('left', true); //et animation => gauche
-            }
-
-            else if (this.cursors.right.isDown) { //sinon si la touche droite est appuyée
-                this.player.setVelocityX(speed); //alors vitesse positive en X
-                //this.player.anims.play('right', true); //et animation => droite
-            }
-
-
-            if (this.cursors.down.isDown) {
-            this.player.setVelocityY(speed);
-            }
-
-            else if (this.cursors.up.isDown){
-                this.player.setVelocityY(-speed);
-            }
-
+        
             // Normalize and scale the velocity so that player can't move faster along a diagonal
-            this.player.body.velocity.normalize().scale(speed);   
+            //this.player.body.velocity.normalize().scale(speed);   
     }
 
     //Gestion Pattern Mob
@@ -263,8 +247,8 @@ class Game extends Phaser.Scene{
     }
 
     if_clean_sword() {
-        if (trigger_cleanSword == true) {
-            trigger_cleanSword = false;
+        if (this.trigger_cleanSword == true) {
+            this.trigger_cleanSword = false;
             return true
         }
         else {
@@ -274,14 +258,76 @@ class Game extends Phaser.Scene{
 
     //Delock Joueur
     delock_attaque() {
-        player_block = false;
-        trigger_cleanSword = true;
+        this.player_block = false;
+        this.trigger_cleanSword = true;
     }
+
+    //Delock Joueur
+    delock_joueur() {
+        this.player_block = false;
+    }
+
+    //Gestion Frame Imu
+    able_hit() {
+        this.player_beHit = false;
+    }
+
+    getHit() {
+        if (this.player_beHit == false) {
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+    pinvisible() {
+        this.player.setVisible(false);
+        this.time.delayedCall(50, this.pvisible, [], this);
+    }
+
+    pvisible() {
+        if (this.clignotement < 3) {
+            this.time.delayedCall(50, this.pinvisible, [], this);
+            this.player.visible = true;
+            this.clignotement += 1;
+        }
+        else {
+            this.player.visible = true;
+            this.clignotement = 0;
+            this.able_hit();
+        }
+    }
+
 
     //Gestion Vie
     perteVie(player, mob) {
-        this.healthMask.x -= 33;
+        this.player_block = true;
+        this.player_beHit = true;
+        if (mob.body.touching.left) {
+            player.setVelocityX(-400);
+        }
+        else if (mob.body.touching.right) {
+            player.setVelocityX(400);
+        }
+        else if (mob.body.touching.up) {
+            player.setVelocityY(-400);
+        }
+        else if (mob.body.touching.down) {
+            player.setVelocityY(400);
+        }
+        this.pinvisible();
+        this.healthMask.x -= 10;
+        this.health -= 10;
+        if (this.health < 0) {
+            this.player_block = true;
+            player.setTint(0xff0000);
+            this.physics.pause();
+        }
+        else {
+            this.time.delayedCall(200, this.delock_joueur, [], this);
+            this.time.delayedCall(200, this.able_hit, [], this);
+        }
     }
-    
 
 }
