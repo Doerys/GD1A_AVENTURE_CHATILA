@@ -1,0 +1,58 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/test/map_test.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_test.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 851.9999999999999,
+                "y": 308
+            }
+        },
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_test.tmx#tileset": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/test/map_test.tmx": {
+            "scale": 1,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 667,
+                "y": 451
+            }
+        },
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/test/map_test.tmx#tileset": {
+            "scaleInDock": 1
+        },
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/test/tileset.tsx": {
+            "scaleInDock": 1
+        }
+    },
+    "last.exportedFilePath": "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/test",
+    "last.externalTilesetPath": "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/test",
+    "last.imagePath": "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/test/assets",
+    "map.height": 25,
+    "map.lastUsedExportFilter": "Fichiers de carte JSON (*.tmj *.json)",
+    "map.lastUsedFormat": "tmx",
+    "map.width": 25,
+    "openFiles": [
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/test/map_test.tmx"
+    ],
+    "project": "map_test.tiled-project",
+    "property.type": "bool",
+    "recentFiles": [
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/test/map_test.tmx",
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_test.tmx"
+    ],
+    "tileset.embedInMap": true
+}
