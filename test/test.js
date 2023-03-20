@@ -16,7 +16,7 @@ class Game extends Phaser.Scene{
 
         // Preload assets Tiled - CHECK 
         this.load.image('tiles', 'assets/tileset.png');
-        this.load.tilemapTiledJSON('map', 'map_test.json');
+        this.load.tilemapTiledJSON('map', 'map.json');
         
         // Preload box
         this.load.image('box', 'assets/box.png');
@@ -121,7 +121,7 @@ class Game extends Phaser.Scene{
         });
 
         //Création Caméra
-        this.physics.world.setBounds(0, 0, 3200, 3200);
+        this.physics.world.setBounds(0, 0, 960, 640);
         this.cameras.main.setBounds(0, 0, 3200, 3200);
         this.cameras.main.startFollow(this.player);
 
