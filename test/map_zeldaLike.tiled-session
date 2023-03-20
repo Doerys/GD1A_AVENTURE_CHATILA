@@ -3,10 +3,14 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "C:/Users/Yann/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_zeldaLike.tmx",
+    "activeFile": "",
     "expandedProjectPaths": [
+        "."
     ],
     "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
         "C:/Users/Yann/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets/carte_test.tmx": {
             "scale": 0.838671875,
             "selectedLayer": 0,
@@ -19,14 +23,25 @@
             "scaleInDock": 1
         },
         "C:/Users/Yann/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_zeldaLike.tmx": {
-            "scale": 0.33,
+            "scale": 0.125,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 431.818181818182,
-                "y": -1215.151515151515
+                "x": -1092,
+                "y": -944
             }
         },
         "C:/Users/Yann/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_zeldaLike.tmx#watergrass": {
+            "scaleInDock": 1
+        },
+        "map_test.tmx": {
+            "scale": 1.0735,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 401.02468560782484,
+                "y": 341.87238006520727
+            }
+        },
+        "map_test.tmx#tileset": {
             "scaleInDock": 1
         }
     },
@@ -34,10 +49,10 @@
     "map.fixedSize": false,
     "map.lastUsedFormat": "tmx",
     "openFiles": [
-        "C:/Users/Yann/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_zeldaLike.tmx"
     ],
     "project": "map_zeldaLike.tiled-project",
     "recentFiles": [
+        "map_test.tmx",
         "C:/Users/Yann/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_zeldaLike.tmx",
         "C:/Users/Yann/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets/carte_test.tmx"
     ],
