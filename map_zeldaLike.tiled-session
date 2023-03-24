@@ -13,14 +13,11 @@
             "scaleInEditor": 1
         },
         "map.tmx": {
-            "expandedGroupLayers": [
-                11
-            ],
-            "scale": 0.0625,
-            "selectedLayer": 2,
+            "scale": 2,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": -264,
-                "y": -1312
+                "x": 375.75,
+                "y": 820.5
             }
         },
         "map.tmx#tileset": {
