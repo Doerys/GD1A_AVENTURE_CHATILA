@@ -13,15 +13,15 @@
             "scaleInEditor": 1
         },
         "map.tmx": {
-            "scale": 2,
+            "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 375.75,
-                "y": 820.5
+                "x": -112.12121212121201,
+                "y": -184.84848484848476
             }
         },
         "map.tmx#tileset": {
-            "scaleInDock": 0.75
+            "scaleInDock": 2
         }
     },
     "last.exportedFilePath": "C:/Users/Yann/Documents/GitHub/GD1A_AVENTURE_CHATILA",

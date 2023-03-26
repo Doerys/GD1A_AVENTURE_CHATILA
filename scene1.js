@@ -23,6 +23,10 @@ class Game extends Phaser.Scene{
         this.load.spritesheet('bridge', 'assets/pont.png',
             { frameWidth: 96, frameHeight:32});
 
+        this.load.image('trou', 'assets/trouGraine.png');
+        this.load.spritesheet('echelle', 'assets/haricot.png',
+        { frameWidth: 32, frameHeight:96});
+
         //Preload Attaque
         this.load.image("sword_y", "assets/attaque_joueur_y.png");
         this.load.image("sword_x", "assets/attaque_joueur_x.png");
@@ -55,12 +59,21 @@ class Game extends Phaser.Scene{
         // ANIMATION BRIDGE
 
         this.anims.create({
-            key: 'true',
+            key: 'trueBridge',
             frames: [{key: 'bridge', frame: 0}],
         });
         this.anims.create({
-            key: 'false',
+            key: 'falseBridge',
             frames: [{key: 'bridge', frame: 1}],
+        });
+
+        this.anims.create({
+            key: 'trueEchelle',
+            frames: [{key: 'echelle', frame: 0}],
+        });
+        this.anims.create({
+            key: 'falseEchelle',
+            frames: [{key: 'echelle', frame: 1}],
         });
 
         // ANIMATION JOUEUR
@@ -96,15 +109,25 @@ class Game extends Phaser.Scene{
         this.decor = this.map.createLayer('decor_layer', this.tileset);
 
         // Calque objet - Mobl
-        this.mobA = this.physics.add.group();
+        this.mobADown = this.physics.add.group();
 
-        this.mobA_layer = this.map.getObjectLayer('mobA/mobA_layer');
-        this.mobA_layer.objects.forEach(mobA_layer => {
-            this.mobA_create = this.physics.add.sprite(mobA_layer.x + 16, mobA_layer.y + 16, 'mobA');
-            this.mobA_create.anims.play('down_mob');
-            this.mobA.add(this.mobA_create);
+        this.mobADown_layer = this.map.getObjectLayer('mobA/mobADown_layer');
+        this.mobADown_layer.objects.forEach(mobADown_layer => {
+            this.mobADown_create = this.physics.add.sprite(mobADown_layer.x + 16, mobADown_layer.y + 16, 'mobA');
+            this.mobADown_create.anims.play('down_mob');
+            this.mobADown.add(this.mobADown_create);
         });
-        this.mobA.setVelocityY(100);
+        this.mobADown.setVelocityY(100);
+
+        this.mobAUp = this.physics.add.group();
+
+        this.mobAUp_layer = this.map.getObjectLayer('mobA/mobAUp_layer');
+        this.mobAUp_layer.objects.forEach(mobAUp_layer => {
+            this.mobAUp_create = this.physics.add.sprite(mobAUp_layer.x + 16, mobAUp_layer.y + 16, 'mobA');
+            this.mobAUp_create.anims.play('up_mob');
+            this.mobAUp.add(this.mobAUp_create);
+        });
+        this.mobAUp.setVelocityY(-100);
 
         this.mobB = this.physics.add.group();
 
@@ -125,6 +148,16 @@ class Game extends Phaser.Scene{
             this.ronces_create = this.physics.add.staticSprite(ronces_layer.x + 16, ronces_layer.y + 16, 'mobA');
             this.ronces_create.anims.play('down_mob');
             this.ronces.add(this.ronces_create);
+        });
+
+        // Calque objet - grainesHaricot
+
+        this.grainesHaricot = this.physics.add.group();
+
+        this.graines_layer = this.map.getObjectLayer('graines_layer');
+        this.graines_layer.objects.forEach(graines_layer => {
+            this.graines_create = this.physics.add.sprite(graines_layer.x + 16, graines_layer.y + 16, 'box');
+            this.grainesHaricot.add(this.graines_create);
         });
 
         // Bordures patterns mobs
@@ -170,7 +203,9 @@ class Game extends Phaser.Scene{
         this.switchBasGauche_Layer.setCollisionByProperty({ estSolide: true });
 
         // création joueur
-        this.player = this.physics.add.sprite(200, 800, 'player');    
+        this.player = this.physics.add.sprite(800, -1200, 'player');  
+        this.player.setSize(20, 20);
+        
         //player.setCollideWorldBounds(true); (bloque le joueur, NE PAS ACTIVER)
         this.anims.create({
             key: 'left',
@@ -195,7 +230,7 @@ class Game extends Phaser.Scene{
 
         //Création Caméra
         //this.physics.world.setBounds(0, 0, 9600, 9600);
-        //this.cameras.main.setBounds(0, 0, 9600, 9600);
+        //this.cameras.main.setBounds(0, 0, 683, 384);
         this.cameras.main.setSize(683, 384); //format 16/9
         this.cameras.main.startFollow(this.player);
 
@@ -211,11 +246,21 @@ class Game extends Phaser.Scene{
         this.shootKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
 
         //Création Collision
-        //Joueur
+        // Joueur - Environnement
         this.physics.add.collider(this.player, this.murs);
         this.physics.add.collider(this.player, this.decor);
-        this.physics.add.overlap(this.player, this.mobA, this.perteVie, null, this);
+        this.physics.add.collider(this.player, this.grainesHaricot);
+
+        // Joueur - Ennemi
+
+        this.physics.add.overlap(this.player, this.mobADown, this.perteVie, null, this);
+        this.physics.add.overlap(this.player, this.mobAUp, this.perteVie, null, this);
         this.physics.add.collider(this.player, this.ronces);
+
+        // Graine - Environnement
+
+        this.physics.add.collider(this.grainesHaricot, this.murs);
+        this.physics.add.collider(this.grainesHaricot, this.decor);
 
         //Création Collision Attaque
         this.physics.add.overlap(this.attaque_sword, this.murs, this.clean_sword, this.if_clean_sword, this);
@@ -224,18 +269,27 @@ class Game extends Phaser.Scene{
         this.physics.add.collider(this.ronces, this.attaque_sword, this.destroyRonces, null, this);
 
         //Ennemi
-        this.physics.add.collider(this.mobA, this.switchDown_Layer, this.mob_switch_down, null, this);
-        this.physics.add.collider(this.mobA, this.switchUp_Layer, this.mob_switch_up, null, this);
-        this.physics.add.collider(this.mobA, this.switchLeft_Layer, this.mob_switch_left, null, this);
-        this.physics.add.collider(this.mobA, this.switchRight_Layer, this.mob_switch_right, null, this);
+        this.physics.add.collider(this.mobADown, this.switchDown_Layer, this.mob_switch_down, null, this);
+        this.physics.add.collider(this.mobAUp, this.switchDown_Layer, this.mob_switch_down, null, this);
+
+        this.physics.add.collider(this.mobADown, this.switchUp_Layer, this.mob_switch_up, null, this);
+        this.physics.add.collider(this.mobAUp, this.switchUp_Layer, this.mob_switch_up, null, this);
+
+        this.physics.add.collider(this.mobADown, this.switchLeft_Layer, this.mob_switch_left, null, this);
+        this.physics.add.collider(this.mobAUp, this.switchLeft_Layer, this.mob_switch_left, null, this);
+
+        this.physics.add.collider(this.mobADown, this.switchRight_Layer, this.mob_switch_right, null, this);
+        this.physics.add.collider(this.mobAUp, this.switchRight_Layer, this.mob_switch_right, null, this);
 
         this.physics.add.collider(this.mobB, this.switchHautDroite_Layer, this.mob_switch_upRight, null, this);
         this.physics.add.collider(this.mobB, this.switchHautGauche_Layer, this.mob_switch_upLeft, null, this);
         this.physics.add.collider(this.mobB, this.switchBasDroite_Layer, this.mob_switch_downRight, null, this);
         this.physics.add.collider(this.mobB, this.switchBasGauche_Layer, this.mob_switch_downLeft, null, this);
         
-        this.physics.add.collider(this.mobA, this.attaque_sword, this.kill_mob, null, this);      
-        this.physics.add.collider(this.mobA, this.attaque_shoot, this.kill_mob_shoot, null, this);
+        this.physics.add.collider(this.mobADown, this.attaque_sword, this.kill_mob, null, this);
+        this.physics.add.collider(this.mobAUp, this.attaque_sword, this.kill_mob, null, this);      
+        this.physics.add.collider(this.mobADown, this.attaque_shoot, this.kill_mob_shoot, null, this);
+        this.physics.add.collider(this.mobAUp, this.attaque_shoot, this.kill_mob_shoot, null, this);
 
         // Calque objet - Trou à Graine
 
@@ -243,13 +297,23 @@ class Game extends Phaser.Scene{
         this.murBridge1 = this.physics.add.staticSprite(335, 818);
         this.murBridge1.setSize(96, 32);
         this.bridge1 = this.physics.add.staticSprite(335, 818, 'bridge');
-        this.bridge1.anims.play('false');
+        this.bridge1.anims.play('falseBridge');
+
+        this.trouHaricot1 = this.physics.add.staticSprite(800, -1232, 'trou');
+        this.murHaricot1 = this.physics.add.staticSprite(800, -1296);
+        this.murHaricot1.setSize(32, 96);
+        this.echelleHaricot1 = this.physics.add.staticSprite(800, -1296, "echelle");
+        this.echelleHaricot1.anims.play('falseEchelle');
 
         //Trou à graine
         this.bridgeDone = false;
 
         this.physics.add.collider(this.player, this.murBridge1);
         this.physics.add.collider(this.holeSeed1, this.attaque_shoot, this.createBridge, null, this);
+    
+        this.physics.add.collider(this.player, this.murHaricot1);
+        this.physics.add.overlap(this.trouHaricot1, this.grainesHaricot, this.createEchelle, null, this);
+    
     }
 
     update(){
@@ -258,36 +322,35 @@ class Game extends Phaser.Scene{
         this.stateBridge();
         console.log(this.bridgeDone);
 
+        this.player.body.setVelocity(0);
+        this.grainesHaricot.setVelocityX(0);
+        this.grainesHaricot.setVelocityY(0);
+
         if (this.player_block == false) {
             //Mouvement
-            if (this.cursors.up.isDown) {
-                this.player.setVelocityY(-this.speed);
-                this.player.setVelocityX(0);
-                this.player.anims.play('up');
-                this.player_facing = "up";
-            }
-            else if (this.cursors.down.isDown) {
-                this.player.setVelocityY(this.speed);
-                this.player.setVelocityX(0);
-                this.player.anims.play('down');
-                this.player_facing = "down";
-            }
-            else if (this.cursors.right.isDown) {
+
+            if (this.cursors.right.isDown) {
                 this.player.setVelocityX(this.speed);
-                this.player.setVelocityY(0);
                 this.player.anims.play('right');
                 this.player_facing = "right";
             }
             else if (this.cursors.left.isDown) {
                 this.player.setVelocityX(-this.speed);
-                this.player.setVelocityY(0);
                 this.player.anims.play('left');
                 this.player_facing = "left";
             }
-            else {
-                this.player.setVelocityY(0);
-                this.player.setVelocityX(0);
+
+            if (this.cursors.up.isDown) {
+                this.player.setVelocityY(-this.speed);
+                this.player.anims.play('up');
+                this.player_facing = "up";
             }
+            else if (this.cursors.down.isDown) {
+                this.player.setVelocityY(this.speed);
+                this.player.anims.play('down');
+                this.player_facing = "down";
+            }            
+            
             //Attaque
             if (this.cursors.space.isDown && this.attackCaCLoot == true) {
                 if (this.player_facing == "up") {
@@ -337,7 +400,7 @@ class Game extends Phaser.Scene{
         }
         
             // Normalize and scale the velocity so that player can't move faster along a diagonal
-            //this.player.body.velocity.normalize().scale(speed);   
+            this.player.body.velocity.normalize().scale(this.speed);   
     }
 
     //Gestion Pattern Mob
@@ -500,20 +563,26 @@ class Game extends Phaser.Scene{
         ronces.disableBody(true, true);
     }
 
-    createBridge(holeSeed1, attaque_shoot){       
+    createBridge(trou, graine){       
         console.log("création pont"); 
-        attaque_shoot.disableBody(true, true);
+        graine.disableBody(true, true);
         this.shoot_lock = false;
         this.bridgeDone = true;
     }
 
+    createEchelle(trou, graine){
+        graine.disableBody(true, true);
+        this.echelleHaricot1.anims.play('trueEchelle');
+        this.murHaricot1.disableBody(true, true);
+    }
+
     stateBridge(){
         if(this.bridgeDone == true){
-            this.bridge1.anims.play('true');
+            this.bridge1.anims.play('trueBridge');
             this.murBridge1.disableBody(true, true);
         }
         if (this.bridgeDone == false){
-            this.bridge1.anims.play('false');
+            this.bridge1.anims.play('falseBridge');
             this.murBridge1.enableBody();
         }
     }
