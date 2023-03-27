@@ -27,7 +27,7 @@ class sceneHub extends Phaser.Scene {
         // CHARGEMENT DE LA MAP
 
         //Load Map
-        this.map = this.add.tilemap("map");
+        this.map = this.add.tilemap("map_hub");
         this.tileset = this.map.addTilesetImage('tileset', 'tiles')
 
         // loads calques de tuiles
@@ -108,7 +108,7 @@ class sceneHub extends Phaser.Scene {
         // Sprites et groupes
 
         // création joueur
-        this.player = this.physics.add.sprite(500, 1800, 'player');
+        this.player = this.physics.add.sprite(500, 800, 'player');
         this.player.setSize(20, 20);
 
         //Création Attaques CaC et Distance
@@ -137,44 +137,6 @@ class sceneHub extends Phaser.Scene {
 
         // CALQUES OBJETS
 
-        // MOB A
-
-        // Va vers le bas
-        this.mobADown = this.physics.add.group();
-
-        this.mobADown_layer = this.map.getObjectLayer('mobA/mobADown_layer');
-        this.mobADown_layer.objects.forEach(mobADown_layer => {
-            this.mobADown_create = this.physics.add.sprite(mobADown_layer.x + 16, mobADown_layer.y + 16, 'mobA');
-            this.mobADown_create.anims.play('down_mob');
-            this.mobADown.add(this.mobADown_create);
-        });
-        this.mobADown.setVelocityY(100);
-
-        // Va vers le haut
-
-        this.mobAUp = this.physics.add.group();
-
-        this.mobAUp_layer = this.map.getObjectLayer('mobA/mobAUp_layer');
-        this.mobAUp_layer.objects.forEach(mobAUp_layer => {
-            this.mobAUp_create = this.physics.add.sprite(mobAUp_layer.x + 16, mobAUp_layer.y + 16, 'mobA');
-            this.mobAUp_create.anims.play('up_mob');
-            this.mobAUp.add(this.mobAUp_create);
-        });
-        this.mobAUp.setVelocityY(-100);
-
-        // Patterns de déplacement mobs A
-        this.switchRight_Layer = this.map.createLayer('mobA/switchRight_Layer', this.tileset);
-        this.switchRight_Layer.setVisible(false);
-
-        this.switchLeft_Layer = this.map.createLayer('mobA/switchLeft_Layer', this.tileset);
-        this.switchLeft_Layer.setVisible(false);
-
-        this.switchDown_Layer = this.map.createLayer('mobA/switchDown_Layer', this.tileset);
-        this.switchDown_Layer.setVisible(false);
-
-        this.switchUp_Layer = this.map.createLayer('mobA/switchUp_Layer', this.tileset);
-        this.switchUp_Layer.setVisible(false);
-
         // RONCES 
 
         this.ronces = this.physics.add.staticGroup();
@@ -186,26 +148,30 @@ class sceneHub extends Phaser.Scene {
             this.ronces.add(this.ronces_create);
         });
 
-        // GRAINE HARICOT
-
-        this.grainesHaricot = this.physics.add.group();
-
-        this.graines_layer = this.map.getObjectLayer('graines_layer');
-        this.graines_layer.objects.forEach(graines_layer => {
-            this.graines_create = this.physics.add.sprite(graines_layer.x + 16, graines_layer.y + 16, 'box');
-            this.grainesHaricot.add(this.graines_create);
+        // passage scène tuto
+        this.versTuto_layer = this.map.getObjectLayer('vers/versTuto_layer');
+        this.versTuto_layer.objects.forEach(versTuto_layer => {
+            this.versTuto = this.physics.add.sprite(versTuto_layer.x + 48, versTuto_layer.y + 16);
+            this.versTuto.setSize(96, 32);
         });
 
-        // passage scène "HUB"
-        this.sceneSuivante_layer = this.map.getObjectLayer('sceneSuivante_layer');
-        this.sceneSuivante_layer.objects.forEach(sceneSuivante_layer => {
-            this.sceneSuivante = this.physics.add.sprite(sceneSuivante_layer.x + 48, sceneSuivante_layer.y + 16);
-            this.sceneSuivante.setSize(96, 32);
+        // passage scène zone 1
+        this.versZone1_layer = this.map.getObjectLayer('vers/versZone1_layer');
+        this.versZone1_layer.objects.forEach(versZone1_layer => {
+            this.versZone1 = this.physics.add.sprite(versZone1_layer.x + 16, versZone1_layer.y + 48);
+            this.versZone1.setSize(32, 92);
+        });
+
+        // passage scène zone 2
+        this.versZone2_layer = this.map.getObjectLayer('vers/versZone2_layer');
+        this.versZone2_layer.objects.forEach(versZone2_layer => {
+            this.versZone2 = this.physics.add.sprite(versZone2_layer.x + 16, versZone2_layer.y + 48);
+            this.versZone2.setSize(32, 128);
         });
 
         // CAMERA et LIMITES DU MONDE
-        this.physics.world.setBounds(0, 0, 2496, 2496);
-        this.cameras.main.setBounds(0, 0, 2496, 2496);
+        this.physics.world.setBounds(0, 0, 1120, 832);
+        this.cameras.main.setBounds(0, 0, 1120, 832);
         this.cameras.main.setSize(683, 384); //format 16/9
         this.cameras.main.startFollow(this.player);
         //player.setCollideWorldBounds(true); (bloque le joueur, NE PAS ACTIVER)
@@ -234,12 +200,6 @@ class sceneHub extends Phaser.Scene {
         this.eau.setCollisionByProperty({ estLiquide: true });
         this.obstacles.setCollisionByProperty({ estSolide: true });
 
-        // Pattern déplacement mob A
-        this.switchRight_Layer.setCollisionByProperty({ estSolide: true });
-        this.switchLeft_Layer.setCollisionByProperty({ estSolide: true });
-        this.switchDown_Layer.setCollisionByProperty({ estSolide: true });
-        this.switchUp_Layer.setCollisionByProperty({ estSolide: true });
-
         // COLLIDERS ET OVERLAPS
 
         // Passage scène hub
@@ -248,43 +208,13 @@ class sceneHub extends Phaser.Scene {
         // Joueur - Environnement
         this.physics.add.collider(this.player, this.murs);
         this.physics.add.collider(this.player, this.eau);
-        this.physics.add.collider(this.player, this.obstacles);
-        this.physics.add.collider(this.player, this.grainesHaricot);
-
-        // INTERACTION MOBS
-
-        // Joueur - Ennemi (perte de vie)
-        this.physics.add.overlap(this.player, this.mobADown, this.perteVie, null, this);
-        this.physics.add.overlap(this.player, this.mobAUp, this.perteVie, null, this);
         this.physics.add.collider(this.player, this.ronces);
-
-        // Graine - Environnement
-        this.physics.add.collider(this.murs, this.grainesHaricot);
-        this.physics.add.collider(this.eau, this.grainesHaricot);
-        this.physics.add.collider(this.obstacles, this.grainesHaricot);
+        this.physics.add.collider(this.player, this.obstacles);
 
         // Joueur attaques - CaC et distance
         this.physics.add.overlap(this.attaque_sword, this.murs, this.clean_sword, this.if_clean_sword, this);
         this.physics.add.collider(this.attaque_shoot, this.murs, this.delock_shoot, null, this);
         this.physics.add.collider(this.ronces, this.attaque_sword, this.destroyRonces, null, this);
-        this.physics.add.collider(this.mobADown, this.attaque_sword, this.kill_mob, null, this);
-        this.physics.add.collider(this.mobAUp, this.attaque_sword, this.kill_mob, null, this);
-
-        this.physics.add.collider(this.mobADown, this.attaque_shoot, this.kill_mob_shoot, null, this);
-        this.physics.add.collider(this.mobAUp, this.attaque_shoot, this.kill_mob_shoot, null, this);
-
-        // Ennemis pattern déplacement
-        this.physics.add.collider(this.mobADown, this.switchDown_Layer, this.mob_switch_down, null, this);
-        this.physics.add.collider(this.mobAUp, this.switchDown_Layer, this.mob_switch_down, null, this);
-
-        this.physics.add.collider(this.mobADown, this.switchUp_Layer, this.mob_switch_up, null, this);
-        this.physics.add.collider(this.mobAUp, this.switchUp_Layer, this.mob_switch_up, null, this);
-
-        this.physics.add.collider(this.mobADown, this.switchLeft_Layer, this.mob_switch_left, null, this);
-        this.physics.add.collider(this.mobAUp, this.switchLeft_Layer, this.mob_switch_left, null, this);
-
-        this.physics.add.collider(this.mobADown, this.switchRight_Layer, this.mob_switch_right, null, this);
-        this.physics.add.collider(this.mobAUp, this.switchRight_Layer, this.mob_switch_right, null, this);
 
         //Trou à graine
         this.physics.add.collider(this.player, this.murBridge1);
@@ -297,9 +227,6 @@ class sceneHub extends Phaser.Scene {
     update() {
 
         this.stateBridge(); // check pont activé/désactivé
-
-        this.grainesHaricot.setVelocityX(0); // empêche graines de slider à l'infini après poussées
-        this.grainesHaricot.setVelocityY(0);
 
         if (this.player_block == false) {
             //Mouvement
@@ -380,44 +307,6 @@ class sceneHub extends Phaser.Scene {
         this.player.body.velocity.normalize().scale(this.speed);
     }
 
-    //Gestion Pattern Mob
-    mob_switch_right(mobA) {
-        mobA.setVelocityX(100);
-        mobA.setVelocityY(0);
-        mobA.anims.play('right_mob')
-    }
-
-    mob_switch_left(mobA) {
-        mobA.setVelocityX(-100);
-        mobA.setVelocityY(0);
-        mobA.anims.play('left_mob')
-    }
-
-    mob_switch_up(mobA) {
-        mobA.setVelocityX(0);
-        mobA.setVelocityY(-100);
-        mobA.anims.play('up_mob')
-    }
-
-    mob_switch_down(mobA) {
-        mobA.setVelocityX(0);
-        mobA.setVelocityY(100);
-        mobA.anims.play('down_mob')
-    }
-
-    // KILL MOB
-
-    //CaC
-    kill_mob(mobA) {
-        mobA.disableBody(true, true);
-    }
-
-    //Distance
-    kill_mob_shoot(mobA, attaque_shoot) {
-        mobA.disableBody(true, true);
-        attaque_shoot.disableBody(true, true);
-        this.shoot_lock = false;
-    }
 
     // FONCTIONS LIEES A L'ATTAQUE CAC
 
@@ -497,54 +386,6 @@ class sceneHub extends Phaser.Scene {
             this.player.visible = true;
             this.clignotement = 0;
             this.able_hit();
-        }
-    }
-
-    //Perte de vie si touché par mob
-    perteVie(player, mobA) {
-
-        if (this.player_beHit == false) {
-
-            // On ne peut plus se déplacer
-            this.player_block = true;
-            // variable qui empêchera de se faire taper pendant la frame d'invul
-            this.player_beHit = true;
-
-            // repoussoir du personnage
-            if (mobA.body.touching.left) {
-                player.setVelocityX(-600);
-            }
-            else if (mobA.body.touching.right) {
-                player.setVelocityX(600);
-            }
-            else if (mobA.body.touching.up) {
-                player.setVelocityY(-600);
-            }
-            else if (mobA.body.touching.down) {
-                player.setVelocityY(600);
-            }
-
-            // Visuel de la frame d'invulnérabilité
-            this.pinvisible();
-
-            // Retrait de vie sur interface
-            this.healthMask.x -= 10;
-
-            // retrait des pv dans la variable
-            this.health -= 1;
-
-            // si la vie est en-dessous de 0, on meurt.
-            if (this.health < 0) {
-                this.player_block = true;
-                player.setTint(0xff0000);
-                this.physics.pause();
-            }
-
-            // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
-            else {
-                this.time.delayedCall(500, this.delock_joueur, [], this);
-                this.time.delayedCall(200, this.able_hit, [], this);
-            }
         }
     }
 

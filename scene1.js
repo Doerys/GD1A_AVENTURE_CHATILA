@@ -26,7 +26,8 @@ class sceneTuto extends Phaser.Scene {
         // TILED 
 
         this.load.image('tiles', 'assets/tileset.png'); //Tileset 
-        this.load.tilemapTiledJSON('map', 'map_tuto.json'); //fichier JSON
+        this.load.tilemapTiledJSON('map_tuto', 'map_tuto.json'); //fichier JSON
+        this.load.tilemapTiledJSON('map_hub', 'map_hub.json')
 
         // IMAGES
         this.load.image('box', 'assets/box.png');
@@ -61,7 +62,7 @@ class sceneTuto extends Phaser.Scene {
         // CHARGEMENT DE LA MAP
 
         //Load Map
-        this.map = this.add.tilemap("map");
+        this.map = this.add.tilemap("map_tuto");
         this.tileset = this.map.addTilesetImage('tileset', 'tiles')
 
         // loads calques de tuiles
@@ -142,7 +143,8 @@ class sceneTuto extends Phaser.Scene {
         // Sprites et groupes
 
         // création joueur
-        this.player = this.physics.add.sprite(500, 1800, 'player');
+        //this.player = this.physics.add.sprite(500, 1800, 'player');
+        this.player = this.physics.add.sprite(2050, 100, 'player)');
         this.player.setSize(20, 20);
 
         //Création Attaques CaC et Distance

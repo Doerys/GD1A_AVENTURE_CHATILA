@@ -298,23 +298,77 @@
          "y":0
         }, 
         {
-         "draworder":"topdown",
-         "id":9,
-         "name":"versTuto_layer",
-         "objects":[
+         "id":12,
+         "layers":[
                 {
-                 "class":"",
-                 "height":32,
-                 "id":13,
-                 "name":"",
-                 "rotation":0,
+                 "draworder":"topdown",
+                 "id":9,
+                 "name":"versTuto_layer",
+                 "objects":[
+                        {
+                         "class":"",
+                         "height":32,
+                         "id":13,
+                         "name":"",
+                         "rotation":0,
+                         "visible":true,
+                         "width":96,
+                         "x":448,
+                         "y":800
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
                  "visible":true,
-                 "width":96,
-                 "x":448,
-                 "y":800
+                 "x":0,
+                 "y":0
+                }, 
+                {
+                 "draworder":"topdown",
+                 "id":10,
+                 "name":"versZone1_layer",
+                 "objects":[
+                        {
+                         "class":"",
+                         "height":96,
+                         "id":14,
+                         "name":"",
+                         "rotation":0,
+                         "visible":true,
+                         "width":32,
+                         "x":0,
+                         "y":288
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":true,
+                 "x":0,
+                 "y":0
+                }, 
+                {
+                 "draworder":"topdown",
+                 "id":11,
+                 "name":"versZone2_layer",
+                 "objects":[
+                        {
+                         "class":"",
+                         "height":128,
+                         "id":15,
+                         "name":"",
+                         "rotation":0,
+                         "visible":true,
+                         "width":32,
+                         "x":1088,
+                         "y":384
+                        }],
+                 "opacity":1,
+                 "type":"objectgroup",
+                 "visible":true,
+                 "x":0,
+                 "y":0
                 }],
+         "name":"vers",
          "opacity":1,
-         "type":"objectgroup",
+         "type":"group",
          "visible":true,
          "x":0,
          "y":0
@@ -393,8 +447,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":10,
- "nextobjectid":14,
+ "nextlayerid":14,
+ "nextobjectid":16,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.9.2",
