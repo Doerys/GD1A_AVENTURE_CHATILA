@@ -16,7 +16,7 @@ class Game extends Phaser.Scene{
 
         // Preload assets Tiled - CHECK 
         this.load.image('tiles', 'assets/tileset.png');
-        this.load.tilemapTiledJSON('map', 'map.json');
+        this.load.tilemapTiledJSON('map', 'map_tuto.json');
         
         // Preload box
         this.load.image('box', 'assets/box.png');
@@ -203,7 +203,7 @@ class Game extends Phaser.Scene{
         this.switchBasGauche_Layer.setCollisionByProperty({ estSolide: true });
 
         // création joueur
-        this.player = this.physics.add.sprite(800, -1200, 'player');  
+        this.player = this.physics.add.sprite(450, 1800, 'player');  
         this.player.setSize(20, 20);
         
         //player.setCollideWorldBounds(true); (bloque le joueur, NE PAS ACTIVER)
@@ -229,8 +229,8 @@ class Game extends Phaser.Scene{
         });
 
         //Création Caméra
-        //this.physics.world.setBounds(0, 0, 9600, 9600);
-        //this.cameras.main.setBounds(0, 0, 683, 384);
+        this.physics.world.setBounds(0, 0, 2496, 2496);
+        this.cameras.main.setBounds(0, 0, 2496, 2496);
         this.cameras.main.setSize(683, 384); //format 16/9
         this.cameras.main.startFollow(this.player);
 
