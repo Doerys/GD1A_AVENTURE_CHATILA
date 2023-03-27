@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="78" height="78" tilewidth="32" tileheight="32" infinite="0" nextlayerid="30" nextobjectid="72">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="78" height="78" tilewidth="32" tileheight="32" infinite="0" nextlayerid="31" nextobjectid="77">
  <editorsettings>
   <export target="map_tuto.json" format="json"/>
  </editorsettings>
@@ -2247,6 +2247,9 @@
   <object id="70" x="1824" y="896" width="32" height="32"/>
   <object id="65" x="2080" y="384" width="32" height="32"/>
   <object id="71" x="2080" y="384" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup id="30" name="sceneSuivante_layer">
+  <object id="76" x="1984" y="32" width="128" height="32"/>
  </objectgroup>
  <layer id="26" name="taille_ecran" width="78" height="78" offsetx="1280" offsety="-800.5">
   <data encoding="csv">
