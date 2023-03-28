@@ -26,6 +26,7 @@ class mainScreen extends Phaser.Scene {
         this.load.image('tiles', 'assets/Tiled/tileset.png'); //Tileset 
         this.load.tilemapTiledJSON('map_tuto', 'assets/Tiled/map_tuto.json'); //fichier JSON
         this.load.tilemapTiledJSON('map_hub', 'assets/Tiled/map_hub.json')
+        this.load.tilemapTiledJSON('map_zone2', 'assets/Tiled/map_part2.json')
 
         // IMAGES
         this.load.image('box', 'assets/box.png');
@@ -50,6 +51,8 @@ class mainScreen extends Phaser.Scene {
         this.load.image("Button_Game", "assets/launchGame.png");
 
         this.load.image('passage3x1', "assets/3x1_cases.png");
+        this.load.image('passage1x3', "assets/1x3_cases.png");
+        this.load.image('passage1x4', 'assets/1x4_cases.png');
     }
 
     create() {
@@ -61,7 +64,7 @@ class mainScreen extends Phaser.Scene {
     }
 
     launchGame(){
-        this.scene.start('sceneTuto', {
+        this.scene.start('sceneHub', {
             argent : 0,
 
             // Variables pour débloquer les mécaniques
@@ -73,11 +76,11 @@ class mainScreen extends Phaser.Scene {
             speed : 800,
             health : 100,
             
-            spawnX : 400,
-            spawnY : 1808
+            //spawnX : 400,
+            //spawnY : 1808
 
-            //spawnX : 496,
-            //spawnY : 816
+            spawnX : 528,
+            spawnY : 816
         });
     }
 }

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="32" height="20" tilewidth="32" tileheight="32" infinite="1" nextlayerid="18" nextobjectid="7">
+<map version="1.10" tiledversion="1.10.0" orientation="orthogonal" renderorder="right-down" width="32" height="20" tilewidth="32" tileheight="32" infinite="1" nextlayerid="19" nextobjectid="8">
  <editorsettings>
   <export target="map_part2.json" format="json"/>
  </editorsettings>
  <tileset firstgid="1" name="tileset" tilewidth="32" tileheight="32" tilecount="1620" columns="36">
-  <image source="assets/tileset.png" width="1152" height="1440"/>
+  <image source="tileset.png" width="1152" height="1440"/>
  </tileset>
  <layer id="1" name="sol_layer" width="32" height="20">
   <data encoding="csv">
@@ -1372,7 +1372,7 @@
 </chunk>
   </data>
  </layer>
- <layer id="3" name="decor_layer" width="32" height="20" visible="0">
+ <layer id="3" name="decor_layer" width="32" height="20">
   <data encoding="csv">
    <chunk x="48" y="-48" width="16" height="16">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1525,6 +1525,7 @@
   <object id="4" x="1472" y="-1920" width="32" height="32"/>
   <object id="5" x="1504" y="-1920" width="32" height="32"/>
  </objectgroup>
+ <objectgroup id="18" name="graines_layer"/>
  <layer id="4" name="taille_ecran" width="32" height="20" visible="0">
   <data encoding="csv">
    <chunk x="0" y="-16" width="16" height="16">
@@ -1601,25 +1602,20 @@
 </chunk>
   </data>
  </layer>
- <group id="9" name="mobA">
-  <layer id="12" name="switchUp_Layer" width="32" height="20">
-   <data encoding="csv"/>
-  </layer>
-  <layer id="13" name="switchLeft_Layer" width="32" height="20">
-   <data encoding="csv"/>
-  </layer>
-  <layer id="14" name="switchDown_Layer" width="32" height="20">
-   <data encoding="csv"/>
-  </layer>
-  <layer id="15" name="switchRight_Layer" width="32" height="20">
-   <data encoding="csv"/>
-  </layer>
-  <objectgroup id="10" name="mobAUp_layer"/>
-  <objectgroup id="11" name="mobADown_layer"/>
- </group>
- <group id="16" name="mobB">
-  <objectgroup id="17" name="mobB_layer"/>
- </group>
+ <layer id="12" name="switchUp_Layer" width="32" height="20">
+  <data encoding="csv"/>
+ </layer>
+ <layer id="13" name="switchLeft_Layer" width="32" height="20">
+  <data encoding="csv"/>
+ </layer>
+ <layer id="14" name="switchDown_Layer" width="32" height="20">
+  <data encoding="csv"/>
+ </layer>
+ <layer id="15" name="switchRight_Layer" width="32" height="20">
+  <data encoding="csv"/>
+ </layer>
+ <objectgroup id="10" name="mobAUp_layer"/>
+ <objectgroup id="11" name="mobADown_layer"/>
  <layer id="7" name="repère_haricot_courge" width="32" height="20">
   <data encoding="csv">
    <chunk x="0" y="-64" width="16" height="16">

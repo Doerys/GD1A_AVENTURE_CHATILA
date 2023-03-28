@@ -147,7 +147,7 @@ class sceneTuto extends Phaser.Scene {
         // Va vers le bas
         this.mobADown = this.physics.add.group();
 
-        this.mobADown_layer = this.map.getObjectLayer('mobA/mobADown_layer');
+        this.mobADown_layer = this.map.getObjectLayer('mobADown_layer');
         this.mobADown_layer.objects.forEach(mobADown_layer => {
             this.mobADown_create = this.physics.add.sprite(mobADown_layer.x + 16, mobADown_layer.y + 16, 'mobA');
             this.mobADown_create.anims.play('down_mob');
@@ -156,10 +156,10 @@ class sceneTuto extends Phaser.Scene {
         this.mobADown.setVelocityY(100);
 
         // Va vers le haut
-
+        
         this.mobAUp = this.physics.add.group();
 
-        this.mobAUp_layer = this.map.getObjectLayer('mobA/mobAUp_layer');
+        this.mobAUp_layer = this.map.getObjectLayer('mobAUp_layer');
         this.mobAUp_layer.objects.forEach(mobAUp_layer => {
             this.mobAUp_create = this.physics.add.sprite(mobAUp_layer.x + 16, mobAUp_layer.y + 16, 'mobA');
             this.mobAUp_create.anims.play('up_mob');
@@ -167,17 +167,19 @@ class sceneTuto extends Phaser.Scene {
         });
         this.mobAUp.setVelocityY(-100);
 
+        
+
         // Patterns de déplacement mobs A
-        this.switchRight_Layer = this.map.createLayer('mobA/switchRight_Layer', this.tileset);
+        this.switchRight_Layer = this.map.createLayer('switchRight_Layer', this.tileset);
         this.switchRight_Layer.setVisible(false);
 
-        this.switchLeft_Layer = this.map.createLayer('mobA/switchLeft_Layer', this.tileset);
+        this.switchLeft_Layer = this.map.createLayer('switchLeft_Layer', this.tileset);
         this.switchLeft_Layer.setVisible(false);
 
-        this.switchDown_Layer = this.map.createLayer('mobA/switchDown_Layer', this.tileset);
+        this.switchDown_Layer = this.map.createLayer('switchDown_Layer', this.tileset);
         this.switchDown_Layer.setVisible(false);
 
-        this.switchUp_Layer = this.map.createLayer('mobA/switchUp_Layer', this.tileset);
+        this.switchUp_Layer = this.map.createLayer('switchUp_Layer', this.tileset);
         this.switchUp_Layer.setVisible(false);
 
         // RONCES 
@@ -201,14 +203,9 @@ class sceneTuto extends Phaser.Scene {
             this.grainesHaricot.add(this.graines_create);
         });
 
-        // passage scène "HUB"
-        /*this.sceneSuivante_layer = this.map.getObjectLayer('sceneSuivante_layer');
-        this.sceneSuivante_layer.objects.forEach(sceneSuivante_layer => {
-            this.sceneSuivante = this.physics.add.sprite(sceneSuivante_layer.x + 48, sceneSuivante_layer.y + 16);
-            this.sceneSuivante.setSize(96, 32);
-        });*/
-
-        this.sceneSuivante= this.add.sprite(2064, 16, 'passage3x1');
+        // Passage scene HUB
+        this.sceneSuivante = this.physics.add.staticGroup();
+        this.sceneSuivante.create(2064, 16, "passage3x1");
 
         // CAMERA et LIMITES DU MONDE
         this.physics.world.setBounds(0, 0, 2496, 2496);
@@ -292,7 +289,7 @@ class sceneTuto extends Phaser.Scene {
 
         this.physics.add.collider(this.mobADown, this.switchRight_Layer, this.mob_switch_right, null, this);
         this.physics.add.collider(this.mobAUp, this.switchRight_Layer, this.mob_switch_right, null, this);
-
+        
         //Trou à graine
         this.physics.add.collider(this.player, this.murBridge1);
         this.physics.add.collider(this.holeSeed1, this.attaque_shoot, this.createBridge, null, this);
@@ -599,7 +596,7 @@ class sceneTuto extends Phaser.Scene {
 
             speed : this.speed,
             health : this.health,
-            spawnX : 496,
+            spawnX : 528,
             spawnY : 816
         })
     }
