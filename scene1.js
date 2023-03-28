@@ -4,58 +4,27 @@ class sceneTuto extends Phaser.Scene {
         super('sceneTuto')
     }
 
-    preload() {
+    init(data) {
+        this.argent = data.argent;
+        this.attackCaCLoot = data.attackCaCLoot;
+        this.attackDistanceLoot = data.attackDistanceLoot;
+        this.volerLoot = data.volerLoot;
 
-        // SPRITE SHEETS
+        this.speed = data.speed;
+        this.health = data.health;
 
-        // player (32 x 32)
-        this.load.spritesheet('player', 'assets/perso.png',
-            { frameWidth: 32, frameHeight: 32 });
-
-        // Mob A (32 x 32)
-        this.load.spritesheet('mobA', 'assets/mobA.png',
-            { frameWidth: 32, frameHeight: 32 });
-
-        // Echelle haricot (32 x 96)
-        this.load.spritesheet('echelle', 'assets/haricot.png',
-            { frameWidth: 32, frameHeight: 96 });
-
-        this.load.spritesheet('bridge', 'assets/pont.png',
-            { frameWidth: 96, frameHeight: 32 });
-
-        // TILED 
-
-        this.load.image('tiles', 'assets/tileset.png'); //Tileset 
-        this.load.tilemapTiledJSON('map_tuto', 'map_tuto.json'); //fichier JSON
-        this.load.tilemapTiledJSON('map_hub', 'map_hub.json')
-
-        // IMAGES
-        this.load.image('box', 'assets/box.png');
-        this.load.image('trou', 'assets/trouGraine.png');
-
-        //Attaque serpe
-        this.load.image("sword_y", "assets/attaque_joueur_y.png");
-        this.load.image("sword_x", "assets/attaque_joueur_x.png");
-
-        //UI
-        this.load.image("CadreVie", "assets/CadreVie.png");
-        this.load.image("BarreVie", "assets/BarreVie.png");
+        this.spawnX = data.spawnX;
+        this.spawnY = data.spawnY;
     }
 
+    preload() {}
+
     create() {
-
-        // Variables pour débloquer les mécaniques
-        this.attackCaCLoot = true;
-        this.attackDistanceLoot = true;
-        this.volerLoot = true;
-
 
         this.player_block = false; // fige le personnage
         this.player_beHit = false; // subir des dégâts
         this.shoot_lock = false; // bloque l'option de tir
         this.clignotement = 0; // frames d'invulnérabilité
-        this.health = 5; // points de vie
-        this.speed = 175; // vitesse de base du joueur
 
         this.player_facing = "down"; // rotation du personnage standard
 
@@ -144,7 +113,7 @@ class sceneTuto extends Phaser.Scene {
 
         // création joueur
         //this.player = this.physics.add.sprite(500, 1800, 'player');
-        this.player = this.physics.add.sprite(2050, 100, 'player)');
+        this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'player');
         this.player.setSize(20, 20);
 
         //Création Attaques CaC et Distance
@@ -163,7 +132,7 @@ class sceneTuto extends Phaser.Scene {
         this.echelleHaricot1.anims.play('falseEchelle');
 
         // Fleur de courge 
-        
+
         this.bridge1Done = false;
         this.holeSeed1 = this.physics.add.staticSprite(270, 818, 'box');
         this.murBridge1 = this.physics.add.staticSprite(335, 818);
@@ -239,9 +208,14 @@ class sceneTuto extends Phaser.Scene {
             this.sceneSuivante.setSize(96, 32);
         });
 
+        this.sceneSuivante= this.add.staticSprite(2064, 16, '');
+
+
+
+
         // CAMERA et LIMITES DU MONDE
         this.physics.world.setBounds(0, 0, 2496, 2496);
-        this.cameras.main.setBounds(0, 0, 2496, 2496);
+        this.cameras.main.setBounds(0, 32, 2496, 2496);
         this.cameras.main.setSize(683, 384); //format 16/9
         this.cameras.main.startFollow(this.player);
         //player.setCollideWorldBounds(true); (bloque le joueur, NE PAS ACTIVER)
@@ -388,19 +362,19 @@ class sceneTuto extends Phaser.Scene {
 
             if (this.shootKey.isDown && this.shoot_lock == false && this.attackDistanceLoot == true) {
                 if (this.player_facing == "up") {
-                    this.attaque_shoot.create(this.player.x, this.player.y - 32, "sword_y");
+                    this.attaque_shoot.create(this.player.x, this.player.y - 32, "proj");
                     this.attaque_shoot.setVelocityY(-500);
                 }
                 else if (this.player_facing == "down") {
-                    this.attaque_shoot.create(this.player.x, this.player.y + 32, "sword_y");
+                    this.attaque_shoot.create(this.player.x, this.player.y + 32, "proj");
                     this.attaque_shoot.setVelocityY(500);
                 }
                 else if (this.player_facing == "right") {
-                    this.attaque_shoot.create(this.player.x + 32, this.player.y, "sword_x");
+                    this.attaque_shoot.create(this.player.x + 32, this.player.y, "proj");
                     this.attaque_shoot.setVelocityX(500);
                 }
                 else if (this.player_facing == "left") {
-                    this.attaque_shoot.create(this.player.x - 32, this.player.y, "sword_x");
+                    this.attaque_shoot.create(this.player.x - 32, this.player.y, "proj");
                     this.attaque_shoot.setVelocityX(-500);
                 }
                 this.bridge1Done = false;
@@ -619,7 +593,17 @@ class sceneTuto extends Phaser.Scene {
     //Passage scène suivante
     passageScene() {
         this.scene.start('sceneHub', {
-            attaque: this.attackCaCLoot
+            argent : this.argent,
+
+            // Variables pour débloquer les mécaniques
+            attackCaCLoot : this.attackCaCLoot,
+            attackDistanceLoot : this.attackDistanceLoot,
+            volerLoot : this.volerLoot,
+
+            speed : this.speed,
+            health : this.health,
+            spawnX : 496,
+            spawnY : 816
         })
     }
 }

@@ -3,13 +3,75 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/test/map_test.tmx",
+    "activeFile": "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets/Tiled/map_tuto.tmx",
     "expandedProjectPaths": [
     ],
     "fileStates": {
         "": {
             "scaleInDock": 1,
             "scaleInEditor": 1
+        },
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets/Tiled/map_hub.tmx": {
+            "expandedGroupLayers": [
+                12
+            ],
+            "expandedObjectLayers": [
+                9,
+                8,
+                12
+            ],
+            "scale": 0.75,
+            "selectedLayer": 5,
+            "viewCenter": {
+                "x": 489.3333333333333,
+                "y": 66
+            }
+        },
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets/Tiled/map_hub.tmx#tileset": {
+            "scaleInDock": 1
+        },
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets/Tiled/map_tuto.tmx": {
+            "expandedGroupLayers": [
+                11,
+                18
+            ],
+            "expandedObjectLayers": [
+                30
+            ],
+            "scale": 1.5,
+            "selectedLayer": 9,
+            "viewCenter": {
+                "x": 2016,
+                "y": 171
+            }
+        },
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets/Tiled/map_tuto.tmx#tileset": {
+            "scaleInDock": 1
+        },
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_hub.tmx": {
+            "expandedObjectLayers": [
+                8
+            ],
+            "scale": 0.75,
+            "selectedLayer": 5,
+            "viewCenter": {
+                "x": 552,
+                "y": 827.3333333333333
+            }
+        },
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_hub.tmx#tileset": {
+            "scaleInDock": 1
+        },
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_part2.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1294,
+                "y": 24
+            }
+        },
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_part2.tmx#tileset": {
+            "scaleInDock": 1
         },
         "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_test.tmx": {
             "scale": 0.75,
@@ -22,6 +84,20 @@
         "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_test.tmx#tileset": {
             "scaleInDock": 1,
             "scaleInEditor": 1
+        },
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_tuto.tmx": {
+            "expandedObjectLayers": [
+                30
+            ],
+            "scale": 0.75,
+            "selectedLayer": 9,
+            "viewCenter": {
+                "x": 528,
+                "y": 1679.333333333333
+            }
+        },
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_tuto.tmx#tileset": {
+            "scaleInDock": 1
         },
         "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/test/map_test.tmx": {
             "scale": 1,
@@ -40,17 +116,23 @@
     },
     "last.exportedFilePath": "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/test",
     "last.externalTilesetPath": "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/test",
-    "last.imagePath": "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/test/assets",
+    "last.imagePath": "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets/Tiled",
     "map.height": 25,
     "map.lastUsedExportFilter": "Fichiers de carte JSON (*.tmj *.json)",
     "map.lastUsedFormat": "tmx",
     "map.width": 25,
     "openFiles": [
-        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/test/map_test.tmx"
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets/Tiled/map_tuto.tmx",
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets/Tiled/map_hub.tmx"
     ],
     "project": "map_test.tiled-project",
     "property.type": "bool",
     "recentFiles": [
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets/Tiled/map_hub.tmx",
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets/Tiled/map_tuto.tmx",
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_tuto.tmx",
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_part2.tmx",
+        "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_hub.tmx",
         "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/test/map_test.tmx",
         "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/map_test.tmx"
     ],

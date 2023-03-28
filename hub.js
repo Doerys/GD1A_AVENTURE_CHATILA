@@ -4,25 +4,29 @@ class sceneHub extends Phaser.Scene {
         super('sceneHub')
     }
 
+    init(data) {
+        this.argent = data.argent;
+        this.attackCaCLoot = data.attackCaCLoot;
+        this.attackDistanceLoot = data.attackDistanceLoot;
+        this.volerLoot = data.volerLoot;
+
+        this.speed = data.speed;
+        this.health = data.health;
+
+        this.spawnX = data.spawnX;
+        this.spawnY = data.spawnY;
+    }
+
     preload() {
     }
 
     create() {
-
-        // Variables pour débloquer les mécaniques
-        this.attackCaCLoot = true;
-        this.attackDistanceLoot = true;
-        this.volerLoot = true;
-
-
         this.player_block = false; // fige le personnage
         this.player_beHit = false; // subir des dégâts
         this.shoot_lock = false; // bloque l'option de tir
         this.clignotement = 0; // frames d'invulnérabilité
-        this.health = 5; // points de vie
-        this.speed = 175; // vitesse de base du joueur
 
-        this.player_facing = "down"; // rotation du personnage standard
+        this.player_facing = "up"; // rotation du personnage standard
 
         // CHARGEMENT DE LA MAP
 
@@ -108,7 +112,7 @@ class sceneHub extends Phaser.Scene {
         // Sprites et groupes
 
         // création joueur
-        this.player = this.physics.add.sprite(500, 800, 'player');
+        this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'player');
         this.player.setSize(20, 20);
 
         //Création Attaques CaC et Distance
@@ -151,26 +155,26 @@ class sceneHub extends Phaser.Scene {
         // passage scène tuto
         this.versTuto_layer = this.map.getObjectLayer('vers/versTuto_layer');
         this.versTuto_layer.objects.forEach(versTuto_layer => {
-            this.versTuto = this.physics.add.sprite(versTuto_layer.x + 48, versTuto_layer.y + 16);
+            this.versTuto = this.physics.add.staticSprite(versTuto_layer.x + 48, versTuto_layer.y + 16);
             this.versTuto.setSize(96, 32);
         });
 
         // passage scène zone 1
         this.versZone1_layer = this.map.getObjectLayer('vers/versZone1_layer');
         this.versZone1_layer.objects.forEach(versZone1_layer => {
-            this.versZone1 = this.physics.add.sprite(versZone1_layer.x + 16, versZone1_layer.y + 48);
+            this.versZone1 = this.physics.add.staticSprite(versZone1_layer.x + 16, versZone1_layer.y + 48);
             this.versZone1.setSize(32, 92);
         });
 
         // passage scène zone 2
         this.versZone2_layer = this.map.getObjectLayer('vers/versZone2_layer');
         this.versZone2_layer.objects.forEach(versZone2_layer => {
-            this.versZone2 = this.physics.add.sprite(versZone2_layer.x + 16, versZone2_layer.y + 48);
+            this.versZone2 = this.physics.add.staticSprite(versZone2_layer.x + 16, versZone2_layer.y + 48);
             this.versZone2.setSize(32, 128);
         });
 
         // CAMERA et LIMITES DU MONDE
-        this.physics.world.setBounds(0, 0, 1120, 832);
+        this.physics.world.setBounds(0, 0, 1120, 864);
         this.cameras.main.setBounds(0, 0, 1120, 832);
         this.cameras.main.setSize(683, 384); //format 16/9
         this.cameras.main.startFollow(this.player);
@@ -203,7 +207,7 @@ class sceneHub extends Phaser.Scene {
         // COLLIDERS ET OVERLAPS
 
         // Passage scène hub
-        this.physics.add.overlap(this.player, this.sceneSuivante, this.passageScene, null, this);
+        this.physics.add.overlap(this.player, this.versTuto, this.passageSceneTuto, null, this);
 
         // Joueur - Environnement
         this.physics.add.collider(this.player, this.murs);
@@ -279,19 +283,19 @@ class sceneHub extends Phaser.Scene {
 
             if (this.shootKey.isDown && this.shoot_lock == false && this.attackDistanceLoot == true) {
                 if (this.player_facing == "up") {
-                    this.attaque_shoot.create(this.player.x, this.player.y - 32, "sword_y");
+                    this.attaque_shoot.create(this.player.x, this.player.y - 32, "proj");
                     this.attaque_shoot.setVelocityY(-500);
                 }
                 else if (this.player_facing == "down") {
-                    this.attaque_shoot.create(this.player.x, this.player.y + 32, "sword_y");
+                    this.attaque_shoot.create(this.player.x, this.player.y + 32, "proj");
                     this.attaque_shoot.setVelocityY(500);
                 }
                 else if (this.player_facing == "right") {
-                    this.attaque_shoot.create(this.player.x + 32, this.player.y, "sword_x");
+                    this.attaque_shoot.create(this.player.x + 32, this.player.y, "proj");
                     this.attaque_shoot.setVelocityX(500);
                 }
                 else if (this.player_facing == "left") {
-                    this.attaque_shoot.create(this.player.x - 32, this.player.y, "sword_x");
+                    this.attaque_shoot.create(this.player.x - 32, this.player.y, "proj");
                     this.attaque_shoot.setVelocityX(-500);
                 }
                 this.bridge1Done = false;
@@ -422,9 +426,51 @@ class sceneHub extends Phaser.Scene {
     }
 
     //Passage scène suivante
-    passageScene() {
-        this.scene.start('sceneHub', {
-            attaque: this.attackCaCLoot
+    passageSceneTuto() {
+        this.scene.start('sceneTuto', {
+            argent : this.argent,
+
+            // Variables pour débloquer les mécaniques
+            attackCaCLoot : this.attackCaCLoot,
+            attackDistanceLoot : this.attackDistanceLoot,
+            volerLoot : this.volerLoot,
+
+            speed : this.speed,
+            health : this.health,
+            spawnX : 2064,
+            spawnY : 48
+        })
+    }
+
+    passageSceneZone1() {
+        this.scene.start('sceneZone1', {
+            argent : this.argent,
+
+            // Variables pour débloquer les mécaniques
+            attackCaCLoot : this.attackCaCLoot,
+            attackDistanceLoot : this.attackDistanceLoot,
+            volerLoot : this.volerLoot,
+
+            speed : this.speed,
+            health : this.health,
+            spawnX : 480,
+            spawnY : 800
+        })
+    }
+
+    passageSceneZone2() {
+        this.scene.start('sceneZone2', {
+            argent : this.argent,
+
+            // Variables pour débloquer les mécaniques
+            attackCaCLoot : this.attackCaCLoot,
+            attackDistanceLoot : this.attackDistanceLoot,
+            volerLoot : this.volerLoot,
+
+            speed : this.speed,
+            health : this.health,
+            spawnX : 480,
+            spawnY : 800
         })
     }
 }
