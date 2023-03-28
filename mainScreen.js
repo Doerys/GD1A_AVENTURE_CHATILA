@@ -48,6 +48,8 @@ class mainScreen extends Phaser.Scene {
         
         //Bouton de lancement
         this.load.image("Button_Game", "assets/launchGame.png");
+
+        this.load.image('passage3x1', "assets/3x1_cases.png");
     }
 
     create() {
@@ -59,7 +61,7 @@ class mainScreen extends Phaser.Scene {
     }
 
     launchGame(){
-        this.scene.start('sceneHub', {
+        this.scene.start('sceneTuto', {
             argent : 0,
 
             // Variables pour débloquer les mécaniques
@@ -71,11 +73,11 @@ class mainScreen extends Phaser.Scene {
             speed : 800,
             health : 100,
             
-            //spawnX : 400,
-            //spawnY : 1808
+            spawnX : 400,
+            spawnY : 1808
 
-            spawnX : 496,
-            spawnY : 816
+            //spawnX : 496,
+            //spawnY : 816
         });
     }
 }

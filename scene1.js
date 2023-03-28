@@ -202,16 +202,13 @@ class sceneTuto extends Phaser.Scene {
         });
 
         // passage scène "HUB"
-        this.sceneSuivante_layer = this.map.getObjectLayer('sceneSuivante_layer');
+        /*this.sceneSuivante_layer = this.map.getObjectLayer('sceneSuivante_layer');
         this.sceneSuivante_layer.objects.forEach(sceneSuivante_layer => {
             this.sceneSuivante = this.physics.add.sprite(sceneSuivante_layer.x + 48, sceneSuivante_layer.y + 16);
             this.sceneSuivante.setSize(96, 32);
-        });
+        });*/
 
-        this.sceneSuivante= this.add.staticSprite(2064, 16, '');
-
-
-
+        this.sceneSuivante= this.add.sprite(2064, 16, 'passage3x1');
 
         // CAMERA et LIMITES DU MONDE
         this.physics.world.setBounds(0, 0, 2496, 2496);
