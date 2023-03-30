@@ -114,7 +114,7 @@ class sceneTuto extends Phaser.Scene {
         // création joueur
         //this.player = this.physics.add.sprite(500, 1800, 'player');
         this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'player');
-        this.player.setSize(20, 20);
+        //this.player.setSize(20, 20);
 
         //Création Attaques CaC et Distance
         this.attaque_sword = this.physics.add.staticGroup();
