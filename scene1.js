@@ -115,14 +115,10 @@ class sceneTuto extends Phaser.Scene {
         //animation mob C
 
         this.anims.create({
-            key: 'mobC_on',
-            frames: [{ key: 'mobC', frame: 0 }],
-            frameRate: 20
-        });
-        this.anims.create({
-            key: 'mobC_off',
-            frames: [{ key: 'mobC', frame: 1 }],
-            frameRate: 20
+            key: 'mobC_anims',
+            frames: this.anims.generateFrameNumbers('mobC', {start:1,end:0}),
+            frameRate: .5,
+            repeat: -1
         });
 
         // Sprites et groupes
@@ -203,6 +199,7 @@ class sceneTuto extends Phaser.Scene {
         this.mobC_layer = this.map.getObjectLayer('mobC_layer');
         this.mobC_layer.objects.forEach(mobC_layer => {
             this.mobC_create = this.physics.add.sprite(mobC_layer.x + 16, mobC_layer.y + 16, 'mobC');
+            this.mobC_create.anims.play('mobC_anims');
             this.mobC.add(this.mobC_create);
         });
 
@@ -338,6 +335,8 @@ class sceneTuto extends Phaser.Scene {
 
         this.physics.add.collider(this.player, this.murHaricot1);
         this.physics.add.overlap(this.trouHaricot1, this.grainesHaricot, this.createEchelle, null, this);
+
+        this.stateMobC();
     }
 
     update() {
@@ -426,7 +425,6 @@ class sceneTuto extends Phaser.Scene {
         this.player.body.velocity.normalize().scale(this.speed);
 
         this.mobBSpit();
-        this.stateMobC();
     }
 
     //Gestion Pattern Mob
@@ -666,17 +664,18 @@ class sceneTuto extends Phaser.Scene {
 
     stateMobC() {
         if(this.ableMobC){
-            this.mobC.anims.play('mobC_off');
+            console.log("Mob C PAS TAPER");
             this.ableMobC = false;
             this.mobCDanger = false; 
-            this.time.delayedCall(5000, this.enableMobC, [], this);
+            this.time.delayedCall(2000, this.enableMobC, [], this);
         }
     }
 
     enableMobC(){
+        console.log("Mob TAPER");
         this.ableMobC = true;
-        this.mobCDanger = true; 
-        this.mobC.anims.play('mobC_on');
+        this.mobCDanger = true;
+        this.time.delayedCall(2000, this.stateMobC, [], this);
     }
 
     perteVieMobC(player, mobC) {

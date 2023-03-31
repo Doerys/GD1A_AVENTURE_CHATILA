@@ -35,14 +35,11 @@
                 18,
                 11
             ],
-            "expandedObjectLayers": [
-                30
-            ],
-            "scale": 1.5,
-            "selectedLayer": 9,
+            "scale": 0.75,
+            "selectedLayer": 16,
             "viewCenter": {
-                "x": 1256,
-                "y": 1276.3333333333333
+                "x": 1067.9999999999998,
+                "y": 1528
             }
         },
         "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets/Tiled/map_tuto.tmx#tileset": {
