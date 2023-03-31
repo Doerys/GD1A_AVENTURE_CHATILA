@@ -2935,9 +2935,7 @@
  <objectgroup id="28" name="mobAUp_layer">
   <object id="64" x="1760" y="1728" width="32" height="32"/>
  </objectgroup>
- <objectgroup id="36" name="mobBDown_layer">
-  <object id="91" x="480" y="1504" width="32" height="32"/>
- </objectgroup>
+ <objectgroup id="36" name="mobBDown_layer"/>
  <objectgroup id="37" name="mobC_layer">
   <object id="92" x="672" y="1792" width="32" height="32"/>
  </objectgroup>

@@ -1097,18 +1097,7 @@
          "draworder":"topdown",
          "id":36,
          "name":"mobBDown_layer",
-         "objects":[
-                {
-                 "class":"",
-                 "height":32,
-                 "id":91,
-                 "name":"",
-                 "rotation":0,
-                 "visible":true,
-                 "width":32,
-                 "x":480,
-                 "y":1504
-                }],
+         "objects":[],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,

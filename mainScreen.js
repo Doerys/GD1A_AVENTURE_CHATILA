@@ -81,8 +81,8 @@ class mainScreen extends Phaser.Scene {
             attackDistanceLoot : true,
             volerLoot : true,
 
-            // speed : 175
-            speed : 800,
+            speed : 175,
+            //speed : 800,
             health : 100,
             
             spawnX : 400,

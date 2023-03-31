@@ -92,7 +92,7 @@ class sceneTuto extends Phaser.Scene {
         // animation mob A
 
         this.anims.create({
-            key: 'down_mob',
+            key: 'left_mob',
             frames: [{ key: 'mobA', frame: 3 }],
             frameRate: 20
         });
@@ -102,7 +102,7 @@ class sceneTuto extends Phaser.Scene {
             frameRate: 20
         });
         this.anims.create({
-            key: 'left_mob',
+            key: 'down_mob',
             frames: [{ key: 'mobA', frame: 2 }],
             frameRate: 20
         });
@@ -287,7 +287,7 @@ class sceneTuto extends Phaser.Scene {
         this.physics.add.collider(this.player, this.murs);
         this.physics.add.collider(this.player, this.eau);
         this.physics.add.collider(this.player, this.obstacles);
-        this.physics.add.collider(this.player, this.grainesHaricot);
+        this.physics.add.collider(this.player, this.grainesHaricot, this.vitesseDoubleeCaisse, null, this);
 
         // INTERACTION MOBS
 
@@ -301,9 +301,9 @@ class sceneTuto extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.attaquemobB, this.perteVie, null, this);
 
         // Graine - Environnement
-        this.physics.add.collider(this.murs, this.grainesHaricot);
-        this.physics.add.collider(this.eau, this.grainesHaricot);
-        this.physics.add.collider(this.obstacles, this.grainesHaricot);
+        this.physics.add.collider(this.grainesHaricot, this.murs);
+        this.physics.add.collider(this.grainesHaricot, this.eau);
+        this.physics.add.collider(this.grainesHaricot, this.obstacles);
 
         // Joueur attaques - CaC et distance
         this.physics.add.overlap(this.attaque_sword, this.murs, this.clean_sword, this.if_clean_sword, this);
@@ -342,9 +342,6 @@ class sceneTuto extends Phaser.Scene {
     update() {
 
         this.stateBridge(); // check pont activé/désactivé
-
-        this.grainesHaricot.setVelocityX(0); // empêche graines de slider à l'infini après poussées
-        this.grainesHaricot.setVelocityY(0);
 
         if (this.player_block == false) {
             //Mouvement
@@ -664,7 +661,6 @@ class sceneTuto extends Phaser.Scene {
 
     stateMobC() {
         if(this.ableMobC){
-            console.log("Mob C PAS TAPER");
             this.ableMobC = false;
             this.mobCDanger = false; 
             this.time.delayedCall(2000, this.enableMobC, [], this);
@@ -672,7 +668,6 @@ class sceneTuto extends Phaser.Scene {
     }
 
     enableMobC(){
-        console.log("Mob TAPER");
         this.ableMobC = true;
         this.mobCDanger = true;
         this.time.delayedCall(2000, this.stateMobC, [], this);
@@ -723,5 +718,23 @@ class sceneTuto extends Phaser.Scene {
             }
         }
     }
-
+    
+    vitesseDoubleeCaisse(player, caisse){
+        if (caisse.body.touching.left) {
+            caisse.setVelocityX(this.speed);
+        }
+        else if (caisse.body.touching.right) {
+            caisse.setVelocityX(-this.speed);
+        }
+        else if (caisse.body.touching.up) {
+            caisse.setVelocityY(this.speed);
+        }
+        else if (caisse.body.touching.down) {
+            caisse.setVelocityY(-this.speed);
+        }
+        else{
+            caisse.setVelocityX(0);
+            caisse.setVelocityY(0);
+        }
+    }
 }
