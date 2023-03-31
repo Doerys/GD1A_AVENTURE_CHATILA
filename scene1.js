@@ -25,6 +25,9 @@ class sceneTuto extends Phaser.Scene {
         this.player_beHit = false; // subir des dégâts
         this.shoot_lock = false; // bloque l'option de tir
         this.clignotement = 0; // frames d'invulnérabilité
+        this.ableSpitMobB = true;
+        this.ableMobC = true;
+        this.mobCDanger = true;
 
         this.player_facing = "down"; // rotation du personnage standard
 
@@ -89,7 +92,7 @@ class sceneTuto extends Phaser.Scene {
         // animation mob A
 
         this.anims.create({
-            key: 'left_mob',
+            key: 'down_mob',
             frames: [{ key: 'mobA', frame: 3 }],
             frameRate: 20
         });
@@ -99,13 +102,26 @@ class sceneTuto extends Phaser.Scene {
             frameRate: 20
         });
         this.anims.create({
-            key: 'down_mob',
+            key: 'left_mob',
             frames: [{ key: 'mobA', frame: 2 }],
             frameRate: 20
         });
         this.anims.create({
             key: 'right_mob',
             frames: [{ key: 'mobA', frame: 1 }],
+            frameRate: 20
+        });
+
+        //animation mob C
+
+        this.anims.create({
+            key: 'mobC_on',
+            frames: [{ key: 'mobC', frame: 0 }],
+            frameRate: 20
+        });
+        this.anims.create({
+            key: 'mobC_off',
+            frames: [{ key: 'mobC', frame: 1 }],
             frameRate: 20
         });
 
@@ -167,7 +183,28 @@ class sceneTuto extends Phaser.Scene {
         });
         this.mobAUp.setVelocityY(-100);
 
-        
+        // MOB B
+
+        // Va vers le bas
+
+        this.mobBDown = this.physics.add.staticGroup();
+
+        this.mobBDown_layer = this.map.getObjectLayer('mobBDown_layer');
+        this.mobBDown_layer.objects.forEach(mobBDown_layer => {
+            this.mobBDown_create = this.physics.add.staticSprite(mobBDown_layer.x + 16, mobBDown_layer.y + 16, 'mobB');
+            this.mobBDown.add(this.mobBDown_create);
+        });
+
+        this.attaquemobB = this.physics.add.group();
+
+        // MOB C
+
+        this.mobC = this.physics.add.group();
+        this.mobC_layer = this.map.getObjectLayer('mobC_layer');
+        this.mobC_layer.objects.forEach(mobC_layer => {
+            this.mobC_create = this.physics.add.sprite(mobC_layer.x + 16, mobC_layer.y + 16, 'mobC');
+            this.mobC.add(this.mobC_create);
+        });
 
         // Patterns de déplacement mobs A
         this.switchRight_Layer = this.map.createLayer('switchRight_Layer', this.tileset);
@@ -258,9 +295,13 @@ class sceneTuto extends Phaser.Scene {
         // INTERACTION MOBS
 
         // Joueur - Ennemi (perte de vie)
+        this.physics.add.overlap(this.player, this.mobC, this.perteVieMobC, null, this);
+        this.physics.add.collider(this.player, this.mobBDown);
         this.physics.add.overlap(this.player, this.mobADown, this.perteVie, null, this);
         this.physics.add.overlap(this.player, this.mobAUp, this.perteVie, null, this);
         this.physics.add.collider(this.player, this.ronces);
+        
+        this.physics.add.overlap(this.player, this.attaquemobB, this.perteVie, null, this);
 
         // Graine - Environnement
         this.physics.add.collider(this.murs, this.grainesHaricot);
@@ -273,6 +314,7 @@ class sceneTuto extends Phaser.Scene {
         this.physics.add.collider(this.ronces, this.attaque_sword, this.destroyRonces, null, this);
         this.physics.add.collider(this.mobADown, this.attaque_sword, this.kill_mob, null, this);
         this.physics.add.collider(this.mobAUp, this.attaque_sword, this.kill_mob, null, this);
+        this.physics.add.collider(this.mobBDown, this.attaque_sword, this.kill_mob, null, this);
 
         this.physics.add.collider(this.mobADown, this.attaque_shoot, this.kill_mob_shoot, null, this);
         this.physics.add.collider(this.mobAUp, this.attaque_shoot, this.kill_mob_shoot, null, this);
@@ -382,6 +424,9 @@ class sceneTuto extends Phaser.Scene {
 
         // Empêche d'aller plus plus en se déplaçant en diagonale
         this.player.body.velocity.normalize().scale(this.speed);
+
+        this.mobBSpit();
+        this.stateMobC();
     }
 
     //Gestion Pattern Mob
@@ -413,12 +458,12 @@ class sceneTuto extends Phaser.Scene {
 
     //CaC
     kill_mob(mobA) {
-        mobA.disableBody(true, true);
+        mobA.destroy();
     }
 
     //Distance
     kill_mob_shoot(mobA, attaque_shoot) {
-        mobA.disableBody(true, true);
+        mobA.destroy();
         attaque_shoot.disableBody(true, true);
         this.shoot_lock = false;
     }
@@ -600,4 +645,84 @@ class sceneTuto extends Phaser.Scene {
             spawnY : 816
         })
     }
+    
+    mobBSpit() {
+        if (this.ableSpitMobB){
+            this.mobBDown.children.each(mobBDown => {
+                this.attaquemobB_create = this.physics.add.sprite(mobBDown.x, mobBDown.y + 16, 'projmobB');
+                this.attaquemobB.add(this.attaquemobB_create);
+            });
+
+            this.attaquemobB.setVelocityY(250);
+            this.ableSpitMobB = false;
+            this.time.delayedCall(1000, this.enableSpitmobB, [], this);
+        }
+    }
+
+    // Duo de fonctions qui font ping pong pour frames d'invulnérabilités
+    enableSpitmobB() {
+        this.ableSpitMobB = true;
+    }
+
+    stateMobC() {
+        if(this.ableMobC){
+            this.mobC.anims.play('mobC_off');
+            this.ableMobC = false;
+            this.mobCDanger = false; 
+            this.time.delayedCall(5000, this.enableMobC, [], this);
+        }
+    }
+
+    enableMobC(){
+        this.ableMobC = true;
+        this.mobCDanger = true; 
+        this.mobC.anims.play('mobC_on');
+    }
+
+    perteVieMobC(player, mobC) {
+        if (this.player_beHit == false && this.mobCDanger) {
+
+            // On ne peut plus se déplacer
+            this.player_block = true;
+            // variable qui empêchera de se faire taper pendant la frame d'invul
+            this.player_beHit = true;
+
+            // repoussoir du personnage
+            if (mobC.body.touching.left) {
+                player.setVelocityX(-600);
+            }
+            else if (mobC.body.touching.right) {
+                player.setVelocityX(600);
+            }
+            else if (mobC.body.touching.up) {
+                player.setVelocityY(-600);
+            }
+            else if (mobC.body.touching.down) {
+                player.setVelocityY(600);
+            }
+
+            // Visuel de la frame d'invulnérabilité
+            this.pinvisible();
+
+            // Retrait de vie sur interface
+            this.healthMask.x -= 10;
+
+            // retrait des pv dans la variable
+            this.health -= 1;
+
+            // si la vie est en-dessous de 0, on meurt.
+            if (this.health < 0) {
+                this.player_block = true;
+                player.setTint(0xff0000);
+                this.physics.pause();
+            }
+
+            // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
+            else {
+                this.time.delayedCall(500, this.delock_joueur, [], this);
+                this.time.delayedCall(200, this.able_hit, [], this);
+            }
+        }
+    }
+
 }

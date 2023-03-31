@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="78" height="78" tilewidth="32" tileheight="32" infinite="0" nextlayerid="36" nextobjectid="91">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="78" height="78" tilewidth="32" tileheight="32" infinite="0" nextlayerid="38" nextobjectid="95">
  <editorsettings>
   <export target="map_tuto.json" format="json"/>
  </editorsettings>
@@ -2934,6 +2934,12 @@
  </objectgroup>
  <objectgroup id="28" name="mobAUp_layer">
   <object id="64" x="1760" y="1728" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup id="36" name="mobBDown_layer">
+  <object id="91" x="480" y="1504" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup id="37" name="mobC_layer">
+  <object id="92" x="672" y="1792" width="32" height="32"/>
  </objectgroup>
  <group id="11" name="mobA"/>
  <group id="18" name="mobB">

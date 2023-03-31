@@ -14,6 +14,15 @@ class mainScreen extends Phaser.Scene {
         this.load.spritesheet('mobA', 'assets/mobA.png',
             { frameWidth: 32, frameHeight: 32 });
 
+        // Mob B (32 x 32)
+        this.load.image('mobB', 'assets/mobB.png');
+        this.load.image("projmobB", "assets/projMobB.png");
+
+        // Mob C (32 x 32)
+
+        this.load.spritesheet('mobC', 'assets/mobC.png',
+            { frameWidth: 32, frameHeight: 32});
+
         // Echelle haricot (32 x 96)
         this.load.spritesheet('echelle', 'assets/haricot.png',
             { frameWidth: 32, frameHeight: 96 });
@@ -64,7 +73,7 @@ class mainScreen extends Phaser.Scene {
     }
 
     launchGame(){
-        this.scene.start('sceneHub', {
+        this.scene.start('sceneTuto', {
             argent : 0,
 
             // Variables pour débloquer les mécaniques
@@ -76,11 +85,11 @@ class mainScreen extends Phaser.Scene {
             speed : 800,
             health : 100,
             
-            //spawnX : 400,
-            //spawnY : 1808
+            spawnX : 400,
+            spawnY : 1808
 
-            spawnX : 528,
-            spawnY : 816
+            //spawnX : 528,
+            //spawnY : 816
         });
     }
 }

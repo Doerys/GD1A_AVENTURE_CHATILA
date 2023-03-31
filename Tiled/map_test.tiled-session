@@ -23,8 +23,8 @@
             "scale": 0.75,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": 489.3333333333333,
-                "y": 66
+                "x": 592,
+                "y": 432.6666666666667
             }
         },
         "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets/Tiled/map_hub.tmx#tileset": {
@@ -32,8 +32,8 @@
         },
         "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets/Tiled/map_tuto.tmx": {
             "expandedGroupLayers": [
-                11,
-                18
+                18,
+                11
             ],
             "expandedObjectLayers": [
                 30
@@ -41,8 +41,8 @@
             "scale": 1.5,
             "selectedLayer": 9,
             "viewCenter": {
-                "x": 2016,
-                "y": 171
+                "x": 1256,
+                "y": 1276.3333333333333
             }
         },
         "C:/Users/y.chatila/Documents/GitHub/GD1A_AVENTURE_CHATILA/assets/Tiled/map_tuto.tmx#tileset": {
