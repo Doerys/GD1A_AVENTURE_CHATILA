@@ -67,6 +67,84 @@ class mainScreen extends Phaser.Scene {
     create() {
         this.gameButton = this.add.image(350, 200, "Button_Game").setInteractive();
         this.gameButton.on("pointerdown", this.launchGame, this);
+
+        // ANIMATIONS 
+
+        // Animation joueur
+
+        this.anims.create({
+            key: 'left',
+            frames: [{ key: 'player', frame: 3 }],
+            frameRate: 20
+        });
+        this.anims.create({
+            key: 'down',
+            frames: [{ key: 'player', frame: 0 }],
+            frameRate: 20
+        });
+        this.anims.create({
+            key: 'up',
+            frames: [{ key: 'player', frame: 2 }],
+            frameRate: 20
+        });
+        this.anims.create({
+            key: 'right',
+            frames: [{ key: 'player', frame: 1 }],
+            frameRate: 20
+        });
+
+        // animation pont
+
+        this.anims.create({
+            key: 'trueBridge',
+            frames: [{ key: 'bridge', frame: 0 }],
+        });
+        this.anims.create({
+            key: 'falseBridge',
+            frames: [{ key: 'bridge', frame: 1 }],
+        });
+
+        this.anims.create({
+            key: 'trueEchelle',
+            frames: [{ key: 'echelle', frame: 0 }],
+        });
+        this.anims.create({
+            key: 'falseEchelle',
+            frames: [{ key: 'echelle', frame: 1 }],
+        });
+
+        // animation mob A
+
+        this.anims.create({
+            key: 'left_mob',
+            frames: [{ key: 'mobA', frame: 3 }],
+            frameRate: 20
+        });
+        this.anims.create({
+            key: 'up_mob',
+            frames: [{ key: 'mobA', frame: 0 }],
+            frameRate: 20
+        });
+        this.anims.create({
+            key: 'down_mob',
+            frames: [{ key: 'mobA', frame: 2 }],
+            frameRate: 20
+        });
+        this.anims.create({
+            key: 'right_mob',
+            frames: [{ key: 'mobA', frame: 1 }],
+            frameRate: 20
+        });
+
+        //animation mob C
+
+        this.anims.create({
+            key: 'mobC_anims',
+            frames: this.anims.generateFrameNumbers('mobC', {start:1,end:0}),
+            frameRate: .5,
+            repeat: -1
+        });
+
     }
 
     update() {

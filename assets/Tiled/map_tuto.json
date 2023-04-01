@@ -1097,7 +1097,18 @@
          "draworder":"topdown",
          "id":36,
          "name":"mobBDown_layer",
-         "objects":[],
+         "objects":[
+                {
+                 "class":"",
+                 "height":32,
+                 "id":96,
+                 "name":"",
+                 "rotation":0,
+                 "visible":true,
+                 "width":32,
+                 "x":512,
+                 "y":1536
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -1514,7 +1525,7 @@
          "y":0
         }],
  "nextlayerid":38,
- "nextobjectid":95,
+ "nextobjectid":97,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.9.2",
