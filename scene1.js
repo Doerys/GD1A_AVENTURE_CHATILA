@@ -29,6 +29,7 @@ class sceneTuto extends Phaser.Scene {
         this.ableMobC = true;
         this.mobCDanger = true;
         this.carryGraine = false;
+        this.flyingMod = false;
 
         this.player_facing = "down"; // rotation du personnage standard
 
@@ -136,6 +137,22 @@ class sceneTuto extends Phaser.Scene {
             this.mobC_create.anims.play('mobC_anims');
             this.mobC.add(this.mobC_create);
         });
+    
+        //Passages vol
+
+        this.passageVol = this.physics.add.staticGroup();
+        this.trouFranchissable_layer = this.map.getObjectLayer('trouFranchissable_layer');
+        this.trouFranchissable_layer.objects.forEach(trouFranchissable_layer => {
+            this.passageVol_create = this.physics.add.staticSprite(trouFranchissable_layer.x + 16, trouFranchissable_layer.y + 16);
+            this.passageVol.add(this.passageVol_create);
+        });
+
+        this.stopVol = this.physics.add.staticGroup();
+        this.stopVol_layer = this.map.getObjectLayer('stopVol_layer');
+        this.stopVol_layer.objects.forEach(stopVol_layer => {
+            this.stopVol_create = this.physics.add.staticSprite(stopVol_layer.x + 16, stopVol_layer.y + 16);
+            this.stopVol.add(this.stopVol_create);
+        });
 
         // Patterns de déplacement mobs A
         this.switchRight_Layer = this.map.createLayer('switchRight_Layer', this.tileset);
@@ -187,6 +204,7 @@ class sceneTuto extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
         this.shiftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
         this.FKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
+        this.EKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
 
         // COLLISIONS
 
@@ -209,10 +227,13 @@ class sceneTuto extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.sceneSuivante, this.passageScene, null, this);
 
         // Joueur - Environnement
-        this.physics.add.collider(this.player, this.murs);
-        this.physics.add.collider(this.player, this.eau);
-        this.physics.add.collider(this.player, this.obstacles);
+        this.collisionMur = this.physics.add.collider(this.player, this.murs);
+        this.collisionEau = this.physics.add.collider(this.player, this.eau);
+        this.collisionObstacles = this.physics.add.collider(this.player, this.obstacles);
         this.physics.add.overlap(this.player, this.grainesHaricot, this.grabGraine, null, this);
+
+        this.physics.add.overlap(this.player, this.passageVol, this.sautVide, null, this);
+        this.physics.add.overlap(this.player, this.stopVol, this.stopSaut, null, this);
 
         // INTERACTION MOBS
 
@@ -698,7 +719,6 @@ class sceneTuto extends Phaser.Scene {
 
     grabGraine(player, graine){
         if(Phaser.Input.Keyboard.JustDown(this.FKey) && this.carryGraine == false){
-            console.log("Check")
             graine.destroy();
             this.speed = 100;
             this.carryGraine = true;
@@ -711,6 +731,27 @@ class sceneTuto extends Phaser.Scene {
             this.grainesHaricot.add(this.graines_create);
             this.carryGraine = false;
             this.speed = 175;
+        }
+    }
+
+    sautVide(){
+        if(Phaser.Input.Keyboard.JustDown(this.EKey) && this.volerLoot == true && this.carryGraine == false){
+            console.log("CHECK");
+            this.physics.world.removeCollider(this.collisionMur);
+            this.physics.world.removeCollider(this.collisionEau);
+            this.player_block = true;
+            this.player.setVelocityX(150);
+            this.flyingMod = true;
+        }
+    }
+
+    stopSaut(){
+        if(this.flyingMod == true){
+            console.log("CHECK 2");
+            this.physics.world.colliders.add(this.collisionMur);
+            this.physics.world.colliders.add(this.collisionEau);
+            this.delock_joueur();
+            this.flyingMod = false;
         }
     }
 
