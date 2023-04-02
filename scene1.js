@@ -42,8 +42,8 @@ class sceneTuto extends Phaser.Scene {
         // loads calques de tuiles
 
         this.sol = this.map.createLayer('sol_layer', this.tileset); // calque sol
-        this.murs = this.map.createLayer('murs_layer', this.tileset); //calque mur
         this.eau = this.map.createLayer('eau_layer', this.tileset);
+        this.murs = this.map.createLayer('murs_layer', this.tileset); //calque mur
         this.decor = this.map.createLayer('decor_layer', this.tileset);
 
         // Sprites et groupes
@@ -72,11 +72,11 @@ class sceneTuto extends Phaser.Scene {
 
         // Trous Graine Haricot
 
-        this.trouHaricot1 = this.physics.add.staticSprite(800, -1232, 'trou');
-        this.murHaricot1 = this.physics.add.staticSprite(800, -1296);
-        this.murHaricot1.setSize(32, 96);
-        this.echelleHaricot1 = this.physics.add.staticSprite(800, -1296, "echelle");
+        this.murHaricot1 = this.physics.add.staticSprite(2064, 272);
+        this.murHaricot1.setSize(32, 32);
+        this.echelleHaricot1 = this.physics.add.staticSprite(2064, 288, "echelle");
         this.echelleHaricot1.anims.play('falseEchelle');
+        this.trouHaricot1 = this.physics.add.staticSprite(2064, 304, 'trou');
 
         // Fleur de courge 
 

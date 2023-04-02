@@ -37,8 +37,8 @@ class sceneHub extends Phaser.Scene {
         // loads calques de tuiles
 
         this.sol = this.map.createLayer('sol_layer', this.tileset); // calque sol
-        this.murs = this.map.createLayer('murs_layer', this.tileset); //calque mur
         this.eau = this.map.createLayer('eau_layer', this.tileset);
+        this.murs = this.map.createLayer('murs_layer', this.tileset); //calque mur
         this.decor = this.map.createLayer('decor_layer', this.tileset);
 
         // Sprites et groupes
@@ -391,8 +391,11 @@ class sceneHub extends Phaser.Scene {
 
             speed : this.speed,
             health : this.health,
-            spawnX : -176,
-            spawnY : -64
+            //spawnX : 880,
+            //spawnY : 3008
+    
+            spawnX : 2384,
+            spawnY : 2512
         })
     }
 }

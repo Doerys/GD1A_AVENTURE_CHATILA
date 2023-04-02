@@ -25,7 +25,7 @@ class mainScreen extends Phaser.Scene {
 
         // Echelle haricot (32 x 96)
         this.load.spritesheet('echelle', 'assets/haricot.png',
-            { frameWidth: 32, frameHeight: 96 });
+            { frameWidth: 32, frameHeight: 64 });
 
         this.load.spritesheet('bridge', 'assets/pont.png',
             { frameWidth: 96, frameHeight: 32 });
@@ -151,7 +151,7 @@ class mainScreen extends Phaser.Scene {
     }
 
     launchGame(){
-        this.scene.start('sceneTuto', {
+        this.scene.start('sceneHub', {
             argent : 0,
 
             // Variables pour débloquer les mécaniques
@@ -159,15 +159,15 @@ class mainScreen extends Phaser.Scene {
             attackDistanceLoot : true,
             volerLoot : true,
 
-            speed : 175,
-            //speed : 800,
+            //speed : 175,
+            speed : 800,
             health : 100,
             
-            spawnX : 400,
-            spawnY : 1808
+            //spawnX : 400,
+            //spawnY : 1808
 
-            //spawnX : 528,
-            //spawnY : 816
+            spawnX : 528,
+            spawnY : 816
         });
     }
 }
