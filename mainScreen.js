@@ -35,6 +35,7 @@ class mainScreen extends Phaser.Scene {
         this.load.image('tiles', 'assets/Tiled/tileset.png'); //Tileset 
         this.load.tilemapTiledJSON('map_tuto', 'assets/Tiled/map_tuto.json'); //fichier JSON
         this.load.tilemapTiledJSON('map_hub', 'assets/Tiled/map_hub.json')
+        this.load.tilemapTiledJSON('map_zone1', 'assets/Tiled/map_part1.json')
         this.load.tilemapTiledJSON('map_zone2', 'assets/Tiled/map_part2.json')
 
         // IMAGES
@@ -159,8 +160,8 @@ class mainScreen extends Phaser.Scene {
             attackDistanceLoot : true,
             volerLoot : true,
 
-            //speed : 175,
-            speed : 800,
+            speed : 175,
+            //speed : 800,
             health : 100,
             
             //spawnX : 400,

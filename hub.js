@@ -375,8 +375,11 @@ class sceneHub extends Phaser.Scene {
 
             speed : this.speed,
             health : this.health,
-            spawnX : 480,
-            spawnY : 800
+            //spawnX : 3296,
+            //spawnY : 4032
+
+            spawnX : 1583,
+            spawnY : 1713
         })
     }
 

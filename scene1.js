@@ -25,7 +25,9 @@ class sceneTuto extends Phaser.Scene {
         this.player_beHit = false; // subir des dégâts
         this.shoot_lock = false; // bloque l'option de tir
         this.clignotement = 0; // frames d'invulnérabilité
-        this.ableSpitMobB = true;
+        this.ableSpitMobBDown = true;
+        this.ableSpitMobBLeft = true;
+        this.ableSpitMobBRight = true;
         this.ableMobC = true;
         this.mobCDanger = true;
         this.carryGraine = false;
@@ -127,6 +129,29 @@ class sceneTuto extends Phaser.Scene {
         });
 
         this.attaquemobB = this.physics.add.group();
+
+        // Va vers la droite
+        this.mobBRight = this.physics.add.staticGroup();
+
+        this.mobBRight_layer = this.map.getObjectLayer('mobBRight_layer');
+        this.mobBRight_layer.objects.forEach(mobBRight_layer => {
+            this.mobBRight_create = this.physics.add.staticSprite(mobBRight_layer.x + 16, mobBRight_layer.y + 16, 'mobB');
+            this.mobBRight.add(this.mobBRight_create);
+        });
+
+        // Va vers la gauche
+
+        this.mobBLeft = this.physics.add.staticGroup();
+
+        this.mobBLeft_layer = this.map.getObjectLayer('mobBLeft_layer');
+        this.mobBLeft_layer.objects.forEach(mobBLeft_layer => {
+            this.mobBLeft_create = this.physics.add.staticSprite(mobBLeft_layer.x + 16, mobBLeft_layer.y + 16, 'mobB');
+            this.mobBLeft.add(this.mobBLeft_create);
+        });
+
+        this.attaquemobBDown = this.physics.add.group();
+        this.attaquemobBLeft = this.physics.add.group();
+        this.attaquemobBRight = this.physics.add.group();
 
         // MOB C
 
@@ -244,7 +269,13 @@ class sceneTuto extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.mobAUp, this.perteVie, null, this);
         this.physics.add.collider(this.player, this.ronces);
         
-        this.physics.add.overlap(this.player, this.attaquemobB, this.perteVieMobB, null, this);
+        this.physics.add.overlap(this.player, this.attaquemobBDown, this.perteVieMobB, null, this);
+        this.physics.add.overlap(this.player, this.attaquemobBLeft, this.perteVieMobB, null, this);
+        this.physics.add.overlap(this.player, this.attaquemobBRight, this.perteVieMobB, null, this);
+
+        this.physics.add.collider(this.attaquemobBDown, this.murs, this.clean_projMobB, null, this);
+        this.physics.add.collider(this.attaquemobBLeft, this.murs, this.clean_projMobB, null, this);
+        this.physics.add.collider(this.attaquemobBRight, this.murs, this.clean_projMobB, null, this);
 
         // Joueur attaques - CaC et distance
         this.physics.add.overlap(this.attaque_sword, this.murs, this.clean_sword, this.if_clean_sword, this);
@@ -255,7 +286,10 @@ class sceneTuto extends Phaser.Scene {
         this.physics.add.collider(this.ronces, this.attaque_sword, this.destroyRonces, null, this);
         this.physics.add.collider(this.mobADown, this.attaque_sword, this.kill_mob, null, this);
         this.physics.add.collider(this.mobAUp, this.attaque_sword, this.kill_mob, null, this);
+
         this.physics.add.collider(this.mobBDown, this.attaque_sword, this.kill_mob, null, this);
+        this.physics.add.collider(this.mobBLeft, this.attaque_sword, this.kill_mob, null, this);
+        this.physics.add.collider(this.mobBRight, this.attaque_sword, this.kill_mob, null, this);
 
         this.physics.add.collider(this.mobADown, this.attaque_shoot, this.kill_mob_shoot, null, this);
         this.physics.add.collider(this.mobAUp, this.attaque_shoot, this.kill_mob_shoot, null, this);
@@ -371,26 +405,26 @@ class sceneTuto extends Phaser.Scene {
 
     //Gestion Pattern Mob
     mob_switch_right(mobA) {
-        mobA.setVelocityX(100);
+        mobA.setVelocityX(150);
         mobA.setVelocityY(0);
         mobA.anims.play('right_mob')
     }
 
     mob_switch_left(mobA) {
-        mobA.setVelocityX(-100);
+        mobA.setVelocityX(-150);
         mobA.setVelocityY(0);
         mobA.anims.play('left_mob')
     }
 
     mob_switch_up(mobA) {
         mobA.setVelocityX(0);
-        mobA.setVelocityY(-100);
+        mobA.setVelocityY(-150);
         mobA.anims.play('up_mob')
     }
 
     mob_switch_down(mobA) {
         mobA.setVelocityX(0);
-        mobA.setVelocityY(100);
+        mobA.setVelocityY(150);
         mobA.anims.play('down_mob')
     }
 
@@ -640,21 +674,49 @@ class sceneTuto extends Phaser.Scene {
     }
     
     mobBSpit() {
-        if (this.ableSpitMobB){
+        if (this.ableSpitMobBDown) {
             this.mobBDown.children.each(mobBDown => {
-                this.attaquemobB_create = this.physics.add.sprite(mobBDown.x, mobBDown.y + 16, 'projmobB');
-                this.attaquemobB.add(this.attaquemobB_create);
+                this.attaquemobBDown_create = this.physics.add.sprite(mobBDown.x, mobBDown.y + 16, 'projmobB');
+                this.attaquemobBDown.add(this.attaquemobBDown_create);
             });
 
-            this.attaquemobB.setVelocityY(250);
-            this.ableSpitMobB = false;
+            this.attaquemobBDown.setVelocityY(250);
+            this.ableSpitMobBDown = false;
+            this.time.delayedCall(1000, this.enableSpitmobB, [], this);
+        }
+
+        if (this.ableSpitMobBLeft) {
+            this.mobBLeft.children.each(mobBLeft => {
+                this.attaquemobBLeft_create = this.physics.add.sprite(mobBLeft.x - 16, mobBLeft.y, 'projmobB');
+                this.attaquemobBRight.add(this.attaquemobBLeft_create);
+            });
+
+            this.attaquemobBRight.setVelocityX(-250);
+            this.ableSpitMobBLeft = false;
+            this.time.delayedCall(1000, this.enableSpitmobB, [], this);
+        }
+
+        if (this.ableSpitMobBRight) {
+            this.mobBRight.children.each(mobBRight => {
+                this.attaquemobBRight_create = this.physics.add.sprite(mobBRight.x + 16, mobBRight.y, 'projmobB');
+                this.attaquemobBLeft.add(this.attaquemobBRight_create);
+            });
+
+            this.attaquemobBLeft.setVelocityX(250);
+            this.ableSpitMobBRight = false;
             this.time.delayedCall(1000, this.enableSpitmobB, [], this);
         }
     }
 
+    clean_projMobB(proj) {
+        proj.disableBody(true, true);
+    }
+
     // Duo de fonctions qui font ping pong pour frames d'invulnérabilités
     enableSpitmobB() {
-        this.ableSpitMobB = true;
+        this.ableSpitMobBDown = true;
+        this.ableSpitMobBLeft = true;
+        this.ableSpitMobBRight = true;
     }
 
     stateMobC() {
