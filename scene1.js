@@ -210,7 +210,7 @@ class sceneTuto extends Phaser.Scene {
         // CAMERA et LIMITES DU MONDE
         this.physics.world.setBounds(0, 0, 2496, 2496);
         this.cameras.main.setBounds(0, 32, 2496, 2496);
-        this.cameras.main.setSize(683, 384); //format 16/9
+        this.cameras.main.setSize(683, 384)  ; //format 16/9
         this.cameras.main.startFollow(this.player);
         //player.setCollideWorldBounds(true); (bloque le joueur, NE PAS ACTIVER)
 
@@ -218,6 +218,7 @@ class sceneTuto extends Phaser.Scene {
 
         //Barre de vie
         this.UIvie = this.add.sprite(100, 40, "CadreVie").setScrollFactor(0);
+        this.interface = this.add.sprite(342, 40, "interface").setScrollFactor(0);
         this.barreVie = this.add.sprite(this.UIvie.x, this.UIvie.y, "BarreVie").setScrollFactor(0);
         this.healthMask = this.add.sprite(this.barreVie.x, this.barreVie.y, "BarreVie").setScrollFactor(0);
         this.healthMask.visible = false;

@@ -8,7 +8,7 @@ class mainScreen extends Phaser.Scene {
 
         // player (32 x 32)
         this.load.spritesheet('player', 'assets/perso.png',
-            { frameWidth: 32, frameHeight: 32 });
+            { frameWidth: 64, frameHeight: 64 });
 
         // Mob A (32 x 32)
         this.load.spritesheet('mobA', 'assets/mobA.png',
@@ -54,6 +54,7 @@ class mainScreen extends Phaser.Scene {
         //UI
         this.load.image("CadreVie", "assets/CadreVie.png");
         this.load.image("BarreVie", "assets/BarreVie.png");
+        this.load.image("interface", "assets/ui.png");
 
         //////
         
@@ -75,22 +76,23 @@ class mainScreen extends Phaser.Scene {
 
         this.anims.create({
             key: 'left',
-            frames: [{ key: 'player', frame: 3 }],
+            frames: [{ key: 'player', frame: 7 }],
             frameRate: 20
         });
         this.anims.create({
             key: 'down',
-            frames: [{ key: 'player', frame: 0 }],
-            frameRate: 20
+            frames: this.anims.generateFrameNumbers('player', {start:0,end:3}),
+            frameRate: 5,
+            repeat : -1
         });
         this.anims.create({
             key: 'up',
-            frames: [{ key: 'player', frame: 2 }],
+            frames: [{ key: 'player', frame: 4 }],
             frameRate: 20
         });
         this.anims.create({
             key: 'right',
-            frames: [{ key: 'player', frame: 1 }],
+            frames: [{ key: 'player', frame: 6 }],
             frameRate: 20
         });
 
@@ -152,7 +154,7 @@ class mainScreen extends Phaser.Scene {
     }
 
     launchGame(){
-        this.scene.start('sceneHub', {
+        this.scene.start('sceneTuto', {
             argent : 0,
 
             // Variables pour débloquer les mécaniques
@@ -164,11 +166,11 @@ class mainScreen extends Phaser.Scene {
             //speed : 800,
             health : 100,
             
-            //spawnX : 400,
-            //spawnY : 1808
+            spawnX : 400,
+            spawnY : 1808
 
-            spawnX : 528,
-            spawnY : 816
+            //spawnX : 528,
+            //spawnY : 816
         });
     }
 }
