@@ -87,26 +87,37 @@ class mainScreen extends Phaser.Scene {
         // Animation joueur
 
         this.anims.create({
-            key: 'left',
-            frames: [{ key: 'player', frame: 7 }],
-            frameRate: 20
-        });
-        this.anims.create({
             key: 'down',
             frames: this.anims.generateFrameNumbers('player', {start:0,end:3}),
-            frameRate: 5,
+            frameRate: 4,
             repeat : -1
         });
         this.anims.create({
             key: 'up',
-            frames: [{ key: 'player', frame: 4 }],
-            frameRate: 20
+            frames: this.anims.generateFrameNumbers('player', {start:4,end:7}),
+            frameRate: 4,
+            repeat : -1
         });
         this.anims.create({
             key: 'right',
-            frames: [{ key: 'player', frame: 6 }],
-            frameRate: 20
+            frames: this.anims.generateFrameNumbers('player', {start:8,end:11}),
+            frameRate: 4,
+            repeat : -1
         });
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('player', {start:12,end:15}),
+            frameRate: 4,
+            repeat : -1
+        });
+        this.anims.create({
+            key: 'walk_down',
+            frames: this.anims.generateFrameNumbers('player', {start:16,end:19}),
+            frameRate: 5,
+            repeat : -1
+        });
+
+
 
         // animation pont
 

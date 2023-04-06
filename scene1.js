@@ -82,7 +82,8 @@ class sceneTuto extends Phaser.Scene {
         // création joueur
         //this.player = this.physics.add.sprite(500, 1800, 'player');
         this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'player');
-        //this.player.setSize(20, 20);
+        this.player.setSize(25, 30);
+        this.player.setOffset(19, 23);
 
         //Création Attaques CaC et Distance
         this.attaque_sword = this.physics.add.staticGroup();
@@ -354,25 +355,43 @@ class sceneTuto extends Phaser.Scene {
 
             if (this.cursors.right.isDown) { // DROITE
                 this.player.setVelocityX(this.speed);
-                this.player.anims.play('right');
+                this.player.anims.play('right', true);
                 this.player_facing = "right";
             }
             else if (this.cursors.left.isDown) { // GAUCHE
                 this.player.setVelocityX(-this.speed);
-                this.player.anims.play('left');
+                this.player.anims.play('left', true);
                 this.player_facing = "left";
             }
-
-            if (this.cursors.up.isDown) { // HAUT
+            else if (this.cursors.up.isDown) { // HAUT
                 this.player.setVelocityY(-this.speed);
-                this.player.anims.play('up');
+                this.player.anims.play('up', true);
                 this.player_facing = "up";
             }
             else if (this.cursors.down.isDown) { // BAS
                 this.player.setVelocityY(this.speed);
-                this.player.anims.play('down');
+                this.player.anims.play('walk_down', true);
                 this.player_facing = "down";
             }
+            
+            else{
+                if(this.player_facing == "left"){
+                    this.player.anims.play('left', true);
+                }
+        
+                if(this.player_facing == "right"){
+                    this.player.anims.play('right', true);
+                }
+        
+                if(this.player_facing == "up"){
+                    this.player.anims.play('up', true);
+                }
+        
+                if(this.player_facing == "down"){
+                    this.player.anims.play('down', true);
+                }
+            }
+    
 
             //Attaque
             if (this.cursors.space.isDown && this.attackCaCLoot == true) {
