@@ -39,12 +39,12 @@ class mainScreen extends Phaser.Scene {
         this.load.tilemapTiledJSON('map_zone2', 'assets/Tiled/map_part2.json')
 
         // IMAGES
-        this.load.image('box', 'assets/box.png');
+        this.load.image('box', 'assets/graine_haricot.png');
         this.load.image('trou', 'assets/trouGraine.png');
 
         // LOOT
-        this.load.image("Monnaie", "assets/Monnaie.png");
-        this.load.image("Soin", "assets/Soin.png");
+        this.load.image("grainesScore", "assets/loot.png");
+        this.load.image("heal", "assets/Soin.png");
 
         //Attaque serpe
         this.load.image("sword_y", "assets/attaque_joueur_y.png");
@@ -54,7 +54,19 @@ class mainScreen extends Phaser.Scene {
         //UI
         this.load.image("CadreVie", "assets/CadreVie.png");
         this.load.image("BarreVie", "assets/BarreVie.png");
-        this.load.image("interface", "assets/ui.png");
+
+        this.load.image("salade_ui", "assets/feuille_salade_ui.png");
+        this.load.image("graineCourge_ui", "assets/graine_courge_ui.png");
+        this.load.image("serpe_ui", "assets/serpe_ui.png");
+
+        this.load.image("life1", "assets/life_step1.png");
+        this.load.image("life2", "assets/life_step2.png");
+        this.load.image("life3", "assets/life_step3.png");
+        this.load.image("life4", "assets/life_step4.png");
+        this.load.image("life5", "assets/life_step5.png");
+        this.load.image("lifeEmpty", "assets/life_stepEmpty.png");
+        
+        this.load.image("interface", "assets/interface.png");
 
         //////
         
@@ -161,10 +173,11 @@ class mainScreen extends Phaser.Scene {
             attackCaCLoot : true,
             attackDistanceLoot : true,
             volerLoot : true,
+            graineScore : 7,
 
             speed : 175,
             //speed : 800,
-            health : 100,
+            health : 5,
             
             spawnX : 400,
             spawnY : 1808

@@ -10,6 +10,8 @@ class sceneTuto extends Phaser.Scene {
         this.attackDistanceLoot = data.attackDistanceLoot;
         this.volerLoot = data.volerLoot;
 
+        this.graineScore = data.graineScore,
+
         this.speed = data.speed;
         this.health = data.health;
 
@@ -59,6 +61,23 @@ class sceneTuto extends Phaser.Scene {
             this.graines_create = this.physics.add.staticSprite(graines_layer.x + 16, graines_layer.y + 16, 'box');
             this.grainesHaricot.add(this.graines_create);
         });
+
+        // LOOTS
+
+            //Soin
+            this.heal = this.physics.add.group();
+            this.heal_layer = this.map.getObjectLayer('heal_layer');
+            this.heal_layer.objects.forEach(heal_layer => {
+                const Heal = this.heal.create(heal_layer.x + 16, heal_layer.y + 16, "heal");
+            });
+
+            
+            // Graines Scores
+            this.money = this.physics.add.group();
+            this.money_layer = this.map.getObjectLayer('money_layer');
+            this.money_layer.objects.forEach(money_layer => {
+                const Monnaie = this.money.create(money_layer.x + 16, money_layer.y + 16, "grainesScore");
+            });
 
         // création joueur
         //this.player = this.physics.add.sprite(500, 1800, 'player');
@@ -217,12 +236,13 @@ class sceneTuto extends Phaser.Scene {
         // UI
 
         //Barre de vie
-        this.UIvie = this.add.sprite(100, 40, "CadreVie").setScrollFactor(0);
-        this.interface = this.add.sprite(342, 40, "interface").setScrollFactor(0);
-        this.barreVie = this.add.sprite(this.UIvie.x, this.UIvie.y, "BarreVie").setScrollFactor(0);
-        this.healthMask = this.add.sprite(this.barreVie.x, this.barreVie.y, "BarreVie").setScrollFactor(0);
-        this.healthMask.visible = false;
-        this.barreVie.mask = new Phaser.Display.Masks.BitmapMask(this, this.healthMask);
+        this.interface = this.add.sprite(342,40, 'interface').setScrollFactor(0);
+        this.textScore =this.add.text(632,36,`${this.graineScore}`,{fontSize:'14px',fill:'#963d17', align: 'center'}).setOrigin(0,0).setScrollFactor(0);
+
+        this.lifeUI = this.add.sprite(342,40, 'life1').setScrollFactor(0);
+        this.serpeUI = this.add.sprite(342,40, 'serpe_ui').setScrollFactor(0);
+        this.graineCourgeUI = this.add.sprite(342,40, 'graineCourge_ui').setScrollFactor(0);
+        this.saladeUI = this.add.sprite(342,40, 'salade_ui').setScrollFactor(0);
 
         // COMMANDES
 
@@ -277,6 +297,11 @@ class sceneTuto extends Phaser.Scene {
         this.physics.add.collider(this.attaquemobBDown, this.murs, this.clean_projMobB, null, this);
         this.physics.add.collider(this.attaquemobBLeft, this.murs, this.clean_projMobB, null, this);
         this.physics.add.collider(this.attaquemobBRight, this.murs, this.clean_projMobB, null, this);
+
+        // Loot
+
+        this.physics.add.overlap(this.player, this.money, this.collectLoot, null, this);
+        this.physics.add.overlap(this.player, this.heal, this.collectHeal, null, this);
 
         // Joueur attaques - CaC et distance
         this.physics.add.overlap(this.attaque_sword, this.murs, this.clean_sword, this.if_clean_sword, this);
@@ -402,6 +427,8 @@ class sceneTuto extends Phaser.Scene {
 
         this.mobBSpit();
         this.putGraine();
+        this.gestionUI();
+        this.checkLoot();
     }
 
     //Gestion Pattern Mob
@@ -434,6 +461,7 @@ class sceneTuto extends Phaser.Scene {
     //CaC
     kill_mob(mobA) {
         mobA.destroy();
+        this.lootMob(mobA);
     }
 
     //Distance
@@ -441,6 +469,19 @@ class sceneTuto extends Phaser.Scene {
         mobA.destroy();
         attaque_shoot.disableBody(true, true);
         this.shoot_lock = false;
+
+        this.lootMob(mobA);
+    }
+
+    lootMob(mob) {
+        this.loot = Math.floor(Math.random() * (4 - 1)) + 1;
+        console.log(this.loot);
+        if (this.loot == 1) {
+            this.heal.create(mob.x, mob.y, "heal");
+        }
+        else if (this.loot == 2) {
+            this.money.create(mob.x, mob.y, "grainesScore");
+        }
     }
 
     // FONCTIONS LIEES A L'ATTAQUE CAC
@@ -555,14 +596,11 @@ class sceneTuto extends Phaser.Scene {
             // Visuel de la frame d'invulnérabilité
             this.pinvisible();
 
-            // Retrait de vie sur interface
-            this.healthMask.x -= 10;
-
             // retrait des pv dans la variable
             this.health -= 1;
 
             // si la vie est en-dessous de 0, on meurt.
-            if (this.health < 0) {
+            if (this.health == 0) {
                 this.player_block = true;
                 player.setTint(0xff0000);
                 this.physics.pause();
@@ -603,14 +641,11 @@ class sceneTuto extends Phaser.Scene {
             // Visuel de la frame d'invulnérabilité
             this.pinvisible();
 
-            // Retrait de vie sur interface
-            this.healthMask.x -= 10;
-
             // retrait des pv dans la variable
             this.health -= 1;
 
             // si la vie est en-dessous de 0, on meurt.
-            if (this.health < 0) {
+            if (this.health == 0) {
                 this.player_block = true;
                 player.setTint(0xff0000);
                 this.physics.pause();
@@ -623,6 +658,61 @@ class sceneTuto extends Phaser.Scene {
             }
         }
         mobA.destroy();
+    }
+
+    gestionUI(){
+        if (this.health == 5){
+            this.lifeUI.setTexture('life1')
+        }
+        if (this.health == 4){
+            this.lifeUI.setTexture('life2');
+        }
+        if (this.health == 3){
+            this.lifeUI.setTexture('life3');
+        }
+        if (this.health == 2){
+            this.lifeUI.setTexture('life4');
+        }
+        if (this.health == 1){
+            this.lifeUI.setTexture('life5');
+        }
+        if (this.health == 0){
+            this.lifeUI.setTexture('lifeEmpty');
+        }
+
+        if (this.attackCaCLoot == true){
+            this.serpeUI.setVisible(true);}
+        else{this.serpeUI.setVisible(false);}
+
+        if(this.attackDistanceLoot == true){
+            this.graineCourgeUI.setVisible(true);}
+        else{this.graineCourgeUI.setVisible(false);}
+
+        if(this.volerLoot == true){
+            this.saladeUI.setVisible(true);}
+        else{this.saladeUI.setVisible(false);}
+    }
+
+    collectHeal(player, heal){
+
+        if(this.health < 5){
+        heal.destroy(heal.x, heal.y);
+        this.health ++;}
+    }
+
+    collectLoot(player, loot){
+        loot.destroy(loot.x, loot.y); // détruit l'esprit collecté
+        this.graineScore ++; // incrémente le score
+        this.textScore.setText(`${this.graineScore}`); // montre le score actuel
+    }
+
+    checkLoot(){
+        if(this.graineScore > 9){
+            this.textScore.setPosition(628,36)
+        }
+        else if(this.graineScore < 10){
+            this.textScore.setPosition(632,36);
+        }
     }
 
     // destruction d'une ronce si frappé par la serpe
@@ -758,9 +848,6 @@ class sceneTuto extends Phaser.Scene {
 
             // Visuel de la frame d'invulnérabilité
             this.pinvisible();
-
-            // Retrait de vie sur interface
-            this.healthMask.x -= 10;
 
             // retrait des pv dans la variable
             this.health -= 1;
