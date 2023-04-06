@@ -42,6 +42,8 @@ class mainScreen extends Phaser.Scene {
         this.load.image('box', 'assets/graine_haricot.png');
         this.load.image('trou', 'assets/trouGraine.png');
 
+        this.load.image('ronces', 'assets/ronces.png');
+
         // LOOT
         this.load.image("grainesScore", "assets/loot.png");
         this.load.image("heal", "assets/Soin.png");
@@ -116,7 +118,24 @@ class mainScreen extends Phaser.Scene {
             frameRate: 5,
             repeat : -1
         });
-
+        this.anims.create({
+            key: 'walk_up',
+            frames: this.anims.generateFrameNumbers('player', {start:20,end:23}),
+            frameRate: 5,
+            repeat : -1
+        });
+        this.anims.create({
+            key: 'walk_right',
+            frames: this.anims.generateFrameNumbers('player', {start:24,end:27}),
+            frameRate: 5,
+            repeat : -1
+        });
+        this.anims.create({
+            key: 'walk_left',
+            frames: this.anims.generateFrameNumbers('player', {start:28,end:31}),
+            frameRate: 5,
+            repeat : -1
+        });
 
 
         // animation pont
@@ -132,11 +151,12 @@ class mainScreen extends Phaser.Scene {
 
         this.anims.create({
             key: 'trueEchelle',
-            frames: [{ key: 'echelle', frame: 0 }],
+            frames: this.anims.generateFrameNumbers('echelle', {start:1,end:3}),
+            frameRate: 2,
         });
         this.anims.create({
             key: 'falseEchelle',
-            frames: [{ key: 'echelle', frame: 1 }],
+            frames: [{ key: 'echelle', frame: 0 }],
         });
 
         // animation mob A
@@ -186,8 +206,8 @@ class mainScreen extends Phaser.Scene {
             volerLoot : true,
             graineScore : 7,
 
-            speed : 175,
-            //speed : 800,
+            //speed : 175,
+            speed : 800,
             health : 5,
             
             spawnX : 400,
