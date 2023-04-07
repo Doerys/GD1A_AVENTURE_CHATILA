@@ -73,7 +73,6 @@ class sceneHub extends Phaser.Scene {
                 const Heal = this.heal.create(heal_layer.x + 16, heal_layer.y + 16, "heal");
             });
 
-            
             // Graines Scores
             this.money = this.physics.add.group();
             this.money_layer = this.map.getObjectLayer('money_layer');
@@ -108,16 +107,10 @@ class sceneHub extends Phaser.Scene {
         });
 
         // PNJ
-        this.panneau1 = this.physics.add.staticSprite(288, 352, 'panneau');
-        this.panneau2 = this.physics.add.staticSprite(1024, 416, 'panneau');
+        this.panneau1 = this.physics.add.staticSprite(272, 328, 'panneauG');
+        this.panneau2 = this.physics.add.staticSprite(1040, 392, 'panneauD');
 
         this.buffHole = this.physics.add.staticSprite(448, 520, 'buff');
-
-        // création joueur
-        //this.player = this.physics.add.sprite(500, 1800, 'player');
-        this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'player');
-        this.player.setSize(25, 30);
-        this.player.setOffset(19, 23);
 
         //Création Attaques CaC et Distance
         this.attaque_sword = this.physics.add.staticGroup();
@@ -228,6 +221,12 @@ class sceneHub extends Phaser.Scene {
 
         this.switchUp_Layer = this.map.createLayer('switchUp_Layer', this.tileset);
         this.switchUp_Layer.setVisible(false);
+
+        // création joueur
+        //this.player = this.physics.add.sprite(500, 1800, 'player');
+        this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'player');
+        this.player.setSize(25, 30);
+        this.player.setOffset(19, 23);
 
         // Passage scenes suivantes
         this.versTuto = this.physics.add.staticGroup();
@@ -1103,11 +1102,11 @@ class sceneHub extends Phaser.Scene {
 
             speed : this.speed,
             health : this.health,
-            //spawnX : 880,
-            //spawnY : 3008
+            spawnX : 880,
+            spawnY : 3008
     
-            spawnX : 2384,
-            spawnY : 2512
+            //spawnX : 2384,
+            //spawnY : 2512
         })
     }
 }

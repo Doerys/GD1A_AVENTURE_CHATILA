@@ -5,7 +5,6 @@ class sceneTuto extends Phaser.Scene {
     }
 
     init(data) {
-        this.argent = data.argent;
         this.attackCaCLoot = data.attackCaCLoot;
         this.attackDistanceLoot = data.attackDistanceLoot;
         this.volerLoot = data.volerLoot;
@@ -68,16 +67,35 @@ class sceneTuto extends Phaser.Scene {
             this.heal = this.physics.add.group();
             this.heal_layer = this.map.getObjectLayer('heal_layer');
             this.heal_layer.objects.forEach(heal_layer => {
-                const Heal = this.heal.create(heal_layer.x + 16, heal_layer.y + 16, "heal");
+                this.healCreate = this.heal.create(heal_layer.x + 16, heal_layer.y + 16, "heal");
+                this.tweens.add({
+                    targets: this.healCreate,
+                    y: this.healCreate.y + 5,
+                    duration: 500,
+                    yoyo: true,
+                    delay: 50,
+                    repeat : -1
+                });     
             });
 
+            this.heal.add(this.healCreate);
             
             // Graines Scores
             this.money = this.physics.add.group();
             this.money_layer = this.map.getObjectLayer('money_layer');
             this.money_layer.objects.forEach(money_layer => {
-                const Monnaie = this.money.create(money_layer.x + 16, money_layer.y + 16, "grainesScore");
+                this.moneyCreate = this.money.create(money_layer.x + 16, money_layer.y + 16, "grainesScore");
+                this.tweens.add({
+                    targets: this.moneyCreate,
+                    y: this.moneyCreate.y + 5,
+                    duration: 500,
+                    yoyo: true,
+                    delay: 50,
+                    repeat : -1
+                });     
             });
+
+            this.heal.add(this.moneyCreate);
 
         // Trous Graine Haricot
 
@@ -107,12 +125,6 @@ class sceneTuto extends Phaser.Scene {
 
         // PNJ
         this.npc = this.physics.add.staticSprite(400, 1750, 'npc');
-
-        // création joueur
-        //this.player = this.physics.add.sprite(500, 1800, 'player');
-        this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'player');
-        this.player.setSize(25, 30);
-        this.player.setOffset(19, 23);
 
         //Création Attaques CaC et Distance
         this.attaque_sword = this.physics.add.staticGroup();
@@ -223,6 +235,13 @@ class sceneTuto extends Phaser.Scene {
 
         this.switchUp_Layer = this.map.createLayer('switchUp_Layer', this.tileset);
         this.switchUp_Layer.setVisible(false);
+
+        // création joueur
+        //this.player = this.physics.add.sprite(500, 1800, 'player');
+        this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'player');
+        this.player.setSize(25, 30);
+        this.player.setOffset(19, 23);
+
 
         // Passage scene HUB
         this.sceneSuivante = this.physics.add.staticGroup();
@@ -765,10 +784,29 @@ class sceneTuto extends Phaser.Scene {
         this.loot = Math.floor(Math.random() * (4 - 1)) + 1;
         console.log(this.loot);
         if (this.loot == 1) {
-            this.heal.create(mob.x, mob.y, "heal");
+            this.healCreate = this.physics.add.sprite(mob.x, mob.y, 'heal');
+            this.tweens.add({
+                targets: this.healCreate,
+                y: this.healCreate.y + 5,
+                duration: 500,
+                yoyo: true,
+                delay: 50,
+                repeat : -1
+            });     
+            this.heal.add(this.healCreate);
         }
         else if (this.loot == 2) {
-            this.money.create(mob.x, mob.y, "grainesScore");
+
+            this.moneyCreate = this.physics.add.sprite(mob.x, mob.y, 'grainesScore');
+            this.tweens.add({
+                targets: this.moneyCreate,
+                y: this.moneyCreate.y + 5,
+                duration: 500,
+                yoyo: true,
+                delay: 50,
+                repeat : -1
+            });     
+            this.money.add(this.moneyCreate);
         }
     }
 

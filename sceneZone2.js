@@ -5,10 +5,11 @@ class sceneZone2 extends Phaser.Scene {
     }
 
     init(data) {
-        this.argent = data.argent;
         this.attackCaCLoot = data.attackCaCLoot;
         this.attackDistanceLoot = data.attackDistanceLoot;
         this.volerLoot = data.volerLoot;
+
+        this.graineScore = data.graineScore,
 
         this.speed = data.speed;
         this.health = data.health;
@@ -17,7 +18,7 @@ class sceneZone2 extends Phaser.Scene {
         this.spawnY = data.spawnY;
     }
 
-    preload() { }
+    preload() {}
 
     create() {
 
@@ -25,7 +26,9 @@ class sceneZone2 extends Phaser.Scene {
         this.player_beHit = false; // subir des dégâts
         this.shoot_lock = false; // bloque l'option de tir
         this.clignotement = 0; // frames d'invulnérabilité
-        this.ableSpitMobB = true;
+        this.ableSpitMobBDown = true;
+        this.ableSpitMobBLeft = true;
+        this.ableSpitMobBRight = true;
         this.ableMobC = true;
         this.mobCDanger = true;
         this.carryGraine = false;
@@ -58,25 +61,30 @@ class sceneZone2 extends Phaser.Scene {
             this.grainesHaricot.add(this.graines_create);
         });
 
-        // création joueur
-        //this.player = this.physics.add.sprite(500, 1800, 'player');
-        this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'player');
-        //this.player.setSize(20, 20);
+        // LOOTS
 
-        //Création Attaques CaC et Distance
-        this.attaque_sword = this.physics.add.staticGroup();
-        this.attaque_shoot = this.physics.add.group();
+            //Soin
+            this.heal = this.physics.add.group();
+            this.heal_layer = this.map.getObjectLayer('heal_layer');
+            this.heal_layer.objects.forEach(heal_layer => {
+                const Heal = this.heal.create(heal_layer.x + 16, heal_layer.y + 16, "heal");
+            });
 
-        // CALQUE DE TUILE "OBSTACLES" (placé dans le code après le joueur, pour qu'il puisse se déplacer derrière)
-        this.obstacles = this.map.createLayer('obstacle_layer', this.tileset);
+            
+            // Graines Scores
+            this.money = this.physics.add.group();
+            this.money_layer = this.map.getObjectLayer('money_layer');
+            this.money_layer.objects.forEach(money_layer => {
+                const Monnaie = this.money.create(money_layer.x + 16, money_layer.y + 16, "grainesScore");
+            });
 
         // Trous Graine Haricot
 
-        //this.murHaricot1 = this.physics.add.staticSprite(1776, 2992);
-        //this.murHaricot1.setSize(32, 32);
+        this.murHaricot1 = this.physics.add.staticSprite(1776, 2992);
+        this.murHaricot1.setSize(32, 32);
         this.echelleHaricot1 = this.physics.add.staticSprite(1776, 3008, "echelle");
         this.echelleHaricot1.anims.play('falseEchelle');
-        this.trouHaricot1 = this.physics.add.staticSprite(1776, 3024, 'trou');
+
         // Fleur de courge 
 
         this.bridge1Done = false;
@@ -85,6 +93,26 @@ class sceneZone2 extends Phaser.Scene {
         this.murBridge1.setSize(96, 32);
         this.bridge1 = this.physics.add.staticSprite(335, 818, 'bridge');
         this.bridge1.anims.play('falseBridge');
+
+        // RONCES 
+
+        this.ronces = this.physics.add.staticGroup();
+
+        this.ronces_layer = this.map.getObjectLayer('ronces_layer');
+        this.ronces_layer.objects.forEach(ronces_layer => {
+            this.ronces_create = this.physics.add.staticSprite(ronces_layer.x + 16, ronces_layer.y + 16, 'ronces');
+            this.ronces.add(this.ronces_create);
+        });
+
+        // PNJ
+        this.npc = this.physics.add.staticSprite(400, 1750, 'npc');
+
+        //Création Attaques CaC et Distance
+        this.attaque_sword = this.physics.add.staticGroup();
+        this.attaque_shoot = this.physics.add.group();
+
+        // CALQUE DE TUILE "OBSTACLES" (placé dans le code après le joueur, pour qu'il puisse se déplacer derrière)
+        this.obstacles = this.map.createLayer('obstacle_layer', this.tileset);
 
         // CALQUES OBJETS
 
@@ -102,7 +130,7 @@ class sceneZone2 extends Phaser.Scene {
         this.mobADown.setVelocityY(100);
 
         // Va vers le haut
-
+        
         this.mobAUp = this.physics.add.group();
 
         this.mobAUp_layer = this.map.getObjectLayer('mobAUp_layer');
@@ -127,6 +155,29 @@ class sceneZone2 extends Phaser.Scene {
 
         this.attaquemobB = this.physics.add.group();
 
+        // Va vers la droite
+        this.mobBRight = this.physics.add.staticGroup();
+
+        this.mobBRight_layer = this.map.getObjectLayer('mobBRight_layer');
+        this.mobBRight_layer.objects.forEach(mobBRight_layer => {
+            this.mobBRight_create = this.physics.add.staticSprite(mobBRight_layer.x + 16, mobBRight_layer.y + 16, 'mobB');
+            this.mobBRight.add(this.mobBRight_create);
+        });
+
+        // Va vers la gauche
+
+        this.mobBLeft = this.physics.add.staticGroup();
+
+        this.mobBLeft_layer = this.map.getObjectLayer('mobBLeft_layer');
+        this.mobBLeft_layer.objects.forEach(mobBLeft_layer => {
+            this.mobBLeft_create = this.physics.add.staticSprite(mobBLeft_layer.x + 16, mobBLeft_layer.y + 16, 'mobB');
+            this.mobBLeft.add(this.mobBLeft_create);
+        });
+
+        this.attaquemobBDown = this.physics.add.group();
+        this.attaquemobBLeft = this.physics.add.group();
+        this.attaquemobBRight = this.physics.add.group();
+
         // MOB C
 
         this.mobC = this.physics.add.group();
@@ -136,7 +187,7 @@ class sceneZone2 extends Phaser.Scene {
             this.mobC_create.anims.play('mobC_anims');
             this.mobC.add(this.mobC_create);
         });
-
+    
         //Passages vol
 
         this.passageVol = this.physics.add.staticGroup();
@@ -166,36 +217,29 @@ class sceneZone2 extends Phaser.Scene {
         this.switchUp_Layer = this.map.createLayer('switchUp_Layer', this.tileset);
         this.switchUp_Layer.setVisible(false);
 
-        // RONCES 
-
-        this.ronces = this.physics.add.staticGroup();
-
-        this.ronces_layer = this.map.getObjectLayer('ronces_layer');
-        this.ronces_layer.objects.forEach(ronces_layer => {
-            this.ronces_create = this.physics.add.staticSprite(ronces_layer.x + 16, ronces_layer.y + 16, 'mobA');
-            this.ronces_create.anims.play('down_mob');
-            this.ronces.add(this.ronces_create);
-        });
-
-        // Passage scene HUB
-        this.sceneSuivante = this.physics.add.staticGroup();
-        this.sceneSuivante.create(2064, 16, "passage3x1");
+        // création joueur
+        //this.player = this.physics.add.sprite(500, 1800, 'player');
+        this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'player');
+        this.player.setSize(25, 30);
+        this.player.setOffset(19, 23);
 
         // CAMERA et LIMITES DU MONDE
-        this.physics.world.setBounds(0, 0, 3584, 4096);
-        this.cameras.main.setBounds(0, 32, 3584, 4096);
-        this.cameras.main.setSize(683, 384); //format 16/9
+        //this.physics.world.setBounds(0, 0, 2496, 2496);
+        //this.cameras.main.setBounds(0, 32, 2496, 2496);
+        //this.cameras.main.setSize(683, 384)  ; //format 16/9
         this.cameras.main.startFollow(this.player);
         //player.setCollideWorldBounds(true); (bloque le joueur, NE PAS ACTIVER)
 
         // UI
 
         //Barre de vie
-        this.UIvie = this.add.sprite(100, 40, "CadreVie").setScrollFactor(0);
-        this.barreVie = this.add.sprite(this.UIvie.x, this.UIvie.y, "BarreVie").setScrollFactor(0);
-        this.healthMask = this.add.sprite(this.barreVie.x, this.barreVie.y, "BarreVie").setScrollFactor(0);
-        this.healthMask.visible = false;
-        this.barreVie.mask = new Phaser.Display.Masks.BitmapMask(this, this.healthMask);
+        this.interface = this.add.sprite(342,40, 'interface').setScrollFactor(0);
+        this.textScore =this.add.text(632,36,`${this.graineScore}`,{fontSize:'14px',fill:'#963d17', align: 'center'}).setOrigin(0,0).setScrollFactor(0);
+
+        this.lifeUI = this.add.sprite(342,40, 'life1').setScrollFactor(0);
+        this.serpeUI = this.add.sprite(342,40, 'serpe_ui').setScrollFactor(0);
+        this.graineCourgeUI = this.add.sprite(342,40, 'graineCourge_ui').setScrollFactor(0);
+        this.saladeUI = this.add.sprite(342,40, 'salade_ui').setScrollFactor(0);
 
         // COMMANDES
 
@@ -239,11 +283,22 @@ class sceneZone2 extends Phaser.Scene {
         // Joueur - Ennemi (perte de vie)
         this.physics.add.overlap(this.player, this.mobC, this.perteVieMobC, null, this);
         this.physics.add.collider(this.player, this.mobBDown);
-        this.physics.add.overlap(this.player, this.mobADown, this.perteVie, null, this);
-        this.physics.add.overlap(this.player, this.mobAUp, this.perteVie, null, this);
+        this.physics.add.overlap(this.player, this.mobADown, this.perteVieMobA, null, this);
+        this.physics.add.overlap(this.player, this.mobAUp, this.perteVieMobA, null, this);
         this.physics.add.collider(this.player, this.ronces);
+        
+        this.physics.add.overlap(this.player, this.attaquemobBDown, this.perteVieMobB, null, this);
+        this.physics.add.overlap(this.player, this.attaquemobBLeft, this.perteVieMobB, null, this);
+        this.physics.add.overlap(this.player, this.attaquemobBRight, this.perteVieMobB, null, this);
 
-        this.physics.add.overlap(this.player, this.attaquemobB, this.perteVieMobB, null, this);
+        this.physics.add.collider(this.attaquemobBDown, this.murs, this.clean_projMobB, null, this);
+        this.physics.add.collider(this.attaquemobBLeft, this.murs, this.clean_projMobB, null, this);
+        this.physics.add.collider(this.attaquemobBRight, this.murs, this.clean_projMobB, null, this);
+
+        // Loot
+
+        this.physics.add.overlap(this.player, this.money, this.collectLoot, null, this);
+        this.physics.add.overlap(this.player, this.heal, this.collectHeal, null, this);
 
         // Joueur attaques - CaC et distance
         this.physics.add.overlap(this.attaque_sword, this.murs, this.clean_sword, this.if_clean_sword, this);
@@ -254,7 +309,10 @@ class sceneZone2 extends Phaser.Scene {
         this.physics.add.collider(this.ronces, this.attaque_sword, this.destroyRonces, null, this);
         this.physics.add.collider(this.mobADown, this.attaque_sword, this.kill_mob, null, this);
         this.physics.add.collider(this.mobAUp, this.attaque_sword, this.kill_mob, null, this);
+
         this.physics.add.collider(this.mobBDown, this.attaque_sword, this.kill_mob, null, this);
+        this.physics.add.collider(this.mobBLeft, this.attaque_sword, this.kill_mob, null, this);
+        this.physics.add.collider(this.mobBRight, this.attaque_sword, this.kill_mob, null, this);
 
         this.physics.add.collider(this.mobADown, this.attaque_shoot, this.kill_mob_shoot, null, this);
         this.physics.add.collider(this.mobAUp, this.attaque_shoot, this.kill_mob_shoot, null, this);
@@ -271,15 +329,33 @@ class sceneZone2 extends Phaser.Scene {
 
         this.physics.add.collider(this.mobADown, this.switchRight_Layer, this.mob_switch_right, null, this);
         this.physics.add.collider(this.mobAUp, this.switchRight_Layer, this.mob_switch_right, null, this);
-
-        //Trou à graine
+        
+        //Trou à graine courge
         this.physics.add.collider(this.player, this.murBridge1);
         this.physics.add.collider(this.holeSeed1, this.attaque_shoot, this.createBridge, null, this);
 
+        // Trou à graine haricot
         this.physics.add.collider(this.player, this.murHaricot1);
-        this.physics.add.overlap(this.trouHaricot1, this.grainesHaricot, this.createEchelle, null, this);
+        this.physics.add.overlap(this.echelleHaricot1, this.grainesHaricot, this.createEchelle, null, this);
 
         this.stateMobC();
+
+        // boite de dialogue
+
+        // Create dialogue box and text
+        this.dialogueBox = this.add.graphics().setScrollFactor(0);
+        this.dialogueBox.fillStyle(0x222222, 0.8); // couleur + transparence
+        this.dialogueBox.fillRect(225, 300, 250, 50); // position + taille
+        this.dialogueText = this.add.text(270, 310, '', { font: '12px Arial', fill: '#ffffff', align: 'justify' }).setScrollFactor(0); // place + style du texte
+        this.dialogueText.setWordWrapWidth(600);
+
+        this.dialogue1 = ["Pirlouit ! Te voilà enfin !", "J'ai de tristes nouvelles !"];
+        this.dialogue2 = ["Pendant ton absence, le", "Royaume Potager a été corrompu !"];
+        this.dialogue3 = ["Des habitants sont transformés", "en monstres aggressifs."];
+        this.dialogue4 = ["La corruption semble provenir", "de la Grande Laitue."];
+        this.dialogue5 = ["Pars, noble Gardien du Potager.", "Sauve le Royaume !"];
+        
+        this.dialogues = [this.dialogue1, this.dialogue2, this.dialogue3, this.dialogue4, this.dialogue5]
     }
 
     update() {
@@ -291,27 +367,87 @@ class sceneZone2 extends Phaser.Scene {
 
             this.player.body.setVelocity(0); // l'empêche de continuer dans une direction sans presser lb outon
 
-            if (this.cursors.right.isDown) { // DROITE
+            if(this.cursors.up.isDown && this.cursors.right.isDown && this.cursors.left.isDown){ // HAUT && DROITE && GAUCHE
+                this.player.setVelocityY(-this.speed);
+                this.player.anims.play('walk_up', true);
+                this.player_facing = "up";
+            }
+
+            else if(this.cursors.down.isDown && this.cursors.right.isDown && this.cursors.left.isDown){ // BAS && DROITE && GAUCHE
+                this.player.setVelocityY(this.speed);
+                this.player.anims.play('walk_down', true);
+                this.player_facing = "up";
+            }
+
+            else if (this.cursors.up.isDown && this.cursors.right.isDown) { // HAUT && DROITE
+                this.player.setVelocityY(-this.speed);
                 this.player.setVelocityX(this.speed);
-                this.player.anims.play('right');
+                this.player.anims.play('walk_up', true);
+                this.player_facing = "up";
+            }
+
+            else if (this.cursors.down.isDown && this.cursors.right.isDown) { // BAS && DROITE
+                this.player.setVelocityY(this.speed);
+                this.player.setVelocityX(this.speed);
+                this.player.anims.play('walk_down', true);
+                this.player_facing = "down";
+            }
+
+            else if (this.cursors.up.isDown && this.cursors.left.isDown) { // HAUT && GAUCHE
+                this.player.setVelocityY(-this.speed);
+                this.player.setVelocityX(-this.speed);
+                this.player.anims.play('walk_up', true);
+                this.player_facing = "up";
+            }
+
+            else if (this.cursors.down.isDown && this.cursors.left.isDown) { // BAS && DROITE
+                this.player.setVelocityY(this.speed);
+                this.player.setVelocityX(-this.speed);
+                this.player.anims.play('walk_down', true);
+                this.player_facing = "down";
+            }
+
+            else if (this.cursors.right.isDown) { // DROITE
+                this.player.setVelocityX(this.speed);
+                this.player.anims.play('walk_right', true);
                 this.player_facing = "right";
             }
+
             else if (this.cursors.left.isDown) { // GAUCHE
                 this.player.setVelocityX(-this.speed);
-                this.player.anims.play('left');
+                this.player.anims.play('walk_left', true);
                 this.player_facing = "left";
             }
 
-            if (this.cursors.up.isDown) { // HAUT
+            else if (this.cursors.up.isDown) { // HAUT
                 this.player.setVelocityY(-this.speed);
-                this.player.anims.play('up');
+                this.player.anims.play('walk_up', true);
                 this.player_facing = "up";
             }
+
             else if (this.cursors.down.isDown) { // BAS
                 this.player.setVelocityY(this.speed);
-                this.player.anims.play('down');
+                this.player.anims.play('walk_down', true);
                 this.player_facing = "down";
             }
+
+            else{
+                if(this.player_facing == "left"){
+                    this.player.anims.play('left', true);
+                }
+        
+                if(this.player_facing == "right"){
+                    this.player.anims.play('right', true);
+                }
+        
+                if(this.player_facing == "up"){
+                    this.player.anims.play('up', true);
+                }
+        
+                if(this.player_facing == "down"){
+                    this.player.anims.play('down', true);
+                }
+            }   
 
             //Attaque
             if (this.cursors.space.isDown && this.attackCaCLoot == true) {
@@ -366,46 +502,269 @@ class sceneZone2 extends Phaser.Scene {
 
         this.mobBSpit();
         this.putGraine();
+        this.gestionUI();
+        this.checkLoot();
+        
+        this.checkSpeak();
     }
 
-    //Gestion Pattern Mob
-    mob_switch_right(mobA) {
-        mobA.setVelocityX(150);
-        mobA.setVelocityY(0);
-        mobA.anims.play('right_mob')
+    // FONCTIONS COMPORTEMENTS MOBS
+
+        //Gestion Pattern Mob A
+        mob_switch_right(mobA) {
+            mobA.setVelocityX(150);
+            mobA.setVelocityY(0);
+            mobA.anims.play('right_mob')
+        }
+    
+        mob_switch_left(mobA) {
+            mobA.setVelocityX(-150);
+            mobA.setVelocityY(0);
+            mobA.anims.play('left_mob')
+        }
+    
+        mob_switch_up(mobA) {
+            mobA.setVelocityX(0);
+            mobA.setVelocityY(-150);
+            mobA.anims.play('up_mob')
+        }
+    
+        mob_switch_down(mobA) {
+            mobA.setVelocityX(0);
+            mobA.setVelocityY(150);
+            mobA.anims.play('down_mob')
+        }
+
+        // Gestion crachat des mobs B
+
+        mobBSpit() {
+            if (this.ableSpitMobBDown) {
+                this.mobBDown.children.each(mobBDown => {
+                    this.attaquemobBDown_create = this.physics.add.sprite(mobBDown.x, mobBDown.y + 16, 'projmobB');
+                    this.attaquemobBDown.add(this.attaquemobBDown_create);
+                });
+    
+                this.attaquemobBDown.setVelocityY(250);
+                this.ableSpitMobBDown = false;
+                this.time.delayedCall(1000, this.enableSpitmobB, [], this);
+            }
+    
+            if (this.ableSpitMobBLeft) {
+                this.mobBLeft.children.each(mobBLeft => {
+                    this.attaquemobBLeft_create = this.physics.add.sprite(mobBLeft.x - 16, mobBLeft.y, 'projmobB');
+                    this.attaquemobBRight.add(this.attaquemobBLeft_create);
+                });
+    
+                this.attaquemobBRight.setVelocityX(-250);
+                this.ableSpitMobBLeft = false;
+                this.time.delayedCall(1000, this.enableSpitmobB, [], this);
+            }
+    
+            if (this.ableSpitMobBRight) {
+                this.mobBRight.children.each(mobBRight => {
+                    this.attaquemobBRight_create = this.physics.add.sprite(mobBRight.x + 16, mobBRight.y, 'projmobB');
+                    this.attaquemobBLeft.add(this.attaquemobBRight_create);
+                });
+    
+                this.attaquemobBLeft.setVelocityX(250);
+                this.ableSpitMobBRight = false;
+                this.time.delayedCall(1000, this.enableSpitmobB, [], this);
+            }
+        }
+    
+        // Fonction qui fait ping pong avec le mobBSpit pour gérer le cooldown de crachat
+        enableSpitmobB() {
+            this.ableSpitMobBDown = true;
+            this.ableSpitMobBLeft = true;
+            this.ableSpitMobBRight = true;
+        }
+
+        // fais disparaître le projectile si collider
+        clean_projMobB(proj) {
+            proj.disableBody(true, true);
+        }
+    
+        // GESTION MOB C - Fonctions ping pong pour gérer cooldown 
+
+        stateMobC() {
+            if(this.ableMobC){
+                this.ableMobC = false;
+                this.mobCDanger = false; 
+                this.time.delayedCall(2000, this.enableMobC, [], this);
+            }
+        }
+    
+        enableMobC(){
+            this.ableMobC = true;
+            this.mobCDanger = true;
+            this.time.delayedCall(2000, this.stateMobC, [], this);
+        }
+
+
+    // FONCTIONS PRISE DE DEGATS
+
+    //Perte de vie si touché par mob A
+    perteVieMobA(player, mobA) {
+
+        if (this.player_beHit == false) {
+
+            // On ne peut plus se déplacer
+            this.player_block = true;
+            // variable qui empêchera de se faire taper pendant la frame d'invul
+            this.player_beHit = true;
+
+            // repoussoir du personnage
+            if (mobA.body.touching.left) {
+                player.setVelocityX(-600);
+            }
+            else if (mobA.body.touching.right) {
+                player.setVelocityX(600);
+            }
+            else if (mobA.body.touching.up) {
+                player.setVelocityY(-600);
+            }
+            else if (mobA.body.touching.down) {
+                player.setVelocityY(600);
+            }
+
+            // Visuel de la frame d'invulnérabilité
+            this.pinvisible();
+
+            // retrait des pv dans la variable
+            this.health -= 1;
+
+            // si la vie est en-dessous de 0, on meurt.
+            if (this.health == 0) {
+                this.player_block = true;
+                player.setTint(0xff0000);
+                this.physics.pause();
+            }
+
+            // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
+            else {
+                this.time.delayedCall(500, this.delock_joueur, [], this);
+                this.time.delayedCall(1500, this.able_hit, [], this);
+            }
+        }
     }
 
-    mob_switch_left(mobA) {
-        console.log("CHECK")
-        mobA.setVelocityX(-150);
-        mobA.setVelocityY(0);
-        mobA.anims.play('left_mob')
+    //Perte de vie si touché par mob B
+    perteVieMobB(player, mobB) {
+
+        if (this.player_beHit == false) {
+
+            // On ne peut plus se déplacer
+            this.player_block = true;
+            // variable qui empêchera de se faire taper pendant la frame d'invul
+            this.player_beHit = true;
+
+            // repoussoir du personnage
+            if (mobB.body.touching.left) {
+                player.setVelocityX(-600);
+            }
+            else if (mobB.body.touching.right) {
+                player.setVelocityX(600);
+            }
+            else if (mobB.body.touching.up) {
+                player.setVelocityY(-600);
+            }
+            else if (mobB.body.touching.down) {
+                player.setVelocityY(600);
+            }
+
+            // Visuel de la frame d'invulnérabilité
+            this.pinvisible();
+
+            // retrait des pv dans la variable
+            this.health -= 1;
+
+            // si la vie est en-dessous de 0, on meurt.
+            if (this.health == 0) {
+                this.player_block = true;
+                player.setTint(0xff0000);
+                this.physics.pause();
+            }
+
+            // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
+            else {
+                this.time.delayedCall(500, this.delock_joueur, [], this);
+                this.time.delayedCall(1500, this.able_hit, [], this);
+            }
+        }
+        mobB.destroy();
+    }
+    
+    //Perte de vie si touché par mob C
+    perteVieMobC(player, mobC) {
+        if (this.player_beHit == false && this.mobCDanger) {
+
+            // On ne peut plus se déplacer
+            this.player_block = true;
+            // variable qui empêchera de se faire taper pendant la frame d'invul
+            this.player_beHit = true;
+
+            // repoussoir du personnage
+            if (mobC.body.touching.left) {
+                player.setVelocityX(-600);
+            }
+            else if (mobC.body.touching.right) {
+                player.setVelocityX(600);
+            }
+            else if (mobC.body.touching.up) {
+                player.setVelocityY(-600);
+            }
+            else if (mobC.body.touching.down) {
+                player.setVelocityY(600);
+            }
+
+            // Visuel de la frame d'invulnérabilité
+            this.pinvisible();
+
+            // retrait des pv dans la variable
+            this.health -= 1;
+
+            // si la vie est en-dessous de 0, on meurt.
+            if (this.health < 0) {
+                this.player_block = true;
+                player.setTint(0xff0000);
+                this.physics.pause();
+            }
+
+            // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
+            else {
+                this.time.delayedCall(500, this.delock_joueur, [], this);
+                this.time.delayedCall(1500, this.able_hit, [], this);
+            }
+        }
     }
 
-    mob_switch_up(mobA) {
-        mobA.setVelocityX(0);
-        mobA.setVelocityY(-150);
-        mobA.anims.play('up_mob')
-    }
+    // FONCTIONS POUR TUER LES MOBS
 
-    mob_switch_down(mobA) {
-        mobA.setVelocityX(0);
-        mobA.setVelocityY(150);
-        mobA.anims.play('down_mob')
-    }
-
-    // KILL MOB
-
-    //CaC
+    // Kill au CAC
     kill_mob(mobA) {
         mobA.destroy();
+        this.lootMob(mobA);
     }
 
-    //Distance
+    // Kill à distance
     kill_mob_shoot(mobA, attaque_shoot) {
         mobA.destroy();
         attaque_shoot.disableBody(true, true);
         this.shoot_lock = false;
+
+        this.lootMob(mobA);
+    }
+
+    // Drop des mobs
+    lootMob(mob) {
+        this.loot = Math.floor(Math.random() * (4 - 1)) + 1;
+        console.log(this.loot);
+        if (this.loot == 1) {
+            this.heal.create(mob.x, mob.y, "heal");
+        }
+        else if (this.loot == 2) {
+            this.money.create(mob.x, mob.y, "grainesScore");
+        }
     }
 
     // FONCTIONS LIEES A L'ATTAQUE CAC
@@ -493,107 +852,78 @@ class sceneZone2 extends Phaser.Scene {
         }
     }
 
-    //Perte de vie si touché par mob
-    perteVie(player, mobA) {
+    // GESTION DE L'interface
 
-        if (this.player_beHit == false) {
+    gestionUI(){
+        if (this.health == 5){
+            this.lifeUI.setTexture('life1')
+        }
+        if (this.health == 4){
+            this.lifeUI.setTexture('life2');
+        }
+        if (this.health == 3){
+            this.lifeUI.setTexture('life3');
+        }
+        if (this.health == 2){
+            this.lifeUI.setTexture('life4');
+        }
+        if (this.health == 1){
+            this.lifeUI.setTexture('life5');
+        }
+        if (this.health == 0){
+            this.lifeUI.setTexture('lifeEmpty');
+        }
 
-            // On ne peut plus se déplacer
-            this.player_block = true;
-            // variable qui empêchera de se faire taper pendant la frame d'invul
-            this.player_beHit = true;
+        if (this.attackCaCLoot == true){
+            this.serpeUI.setVisible(true);}
+        else{this.serpeUI.setVisible(false);}
 
-            // repoussoir du personnage
-            if (mobA.body.touching.left) {
-                player.setVelocityX(-600);
-            }
-            else if (mobA.body.touching.right) {
-                player.setVelocityX(600);
-            }
-            else if (mobA.body.touching.up) {
-                player.setVelocityY(-600);
-            }
-            else if (mobA.body.touching.down) {
-                player.setVelocityY(600);
-            }
+        if(this.attackDistanceLoot == true){
+            this.graineCourgeUI.setVisible(true);}
+        else{this.graineCourgeUI.setVisible(false);}
 
-            // Visuel de la frame d'invulnérabilité
-            this.pinvisible();
+        if(this.volerLoot == true){
+            this.saladeUI.setVisible(true);}
+        else{this.saladeUI.setVisible(false);}
+    }
 
-            // Retrait de vie sur interface
-            this.healthMask.x -= 10;
+    // GESTION DES COLLECTIBLES
 
-            // retrait des pv dans la variable
-            this.health -= 1;
+    // récupération du heal (si on n'a pas toute sa vie)
+    collectHeal(player, heal){
 
-            // si la vie est en-dessous de 0, on meurt.
-            if (this.health < 0) {
-                this.player_block = true;
-                player.setTint(0xff0000);
-                this.physics.pause();
-            }
+        if(this.health < 5){
+        heal.destroy(heal.x, heal.y);
+        this.health ++;}
+    }
 
-            // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
-            else {
-                this.time.delayedCall(500, this.delock_joueur, [], this);
-                this.time.delayedCall(1500, this.able_hit, [], this);
-            }
+    // récupération du loot
+    collectLoot(player, loot){
+        loot.destroy(loot.x, loot.y); // détruit l'esprit collecté
+        this.graineScore ++; // incrémente le score
+        this.textScore.setText(`${this.graineScore}`); // montre le score actuel
+    }
+
+    // changement d'affichage de l'interface de loot (pour centrer la numération)
+    checkLoot(){
+        if(this.graineScore > 9){
+            this.textScore.setPosition(628,36)
+        }
+        else if(this.graineScore < 10){
+            this.textScore.setPosition(632,36);
         }
     }
 
-    //Perte de vie si touché par mob
-    perteVieMobB(player, mobA) {
+// FONCTIONS GESTION D'OBSTACLES
 
-        if (this.player_beHit == false) {
-
-            // On ne peut plus se déplacer
-            this.player_block = true;
-            // variable qui empêchera de se faire taper pendant la frame d'invul
-            this.player_beHit = true;
-
-            // repoussoir du personnage
-            if (mobA.body.touching.left) {
-                player.setVelocityX(-600);
-            }
-            else if (mobA.body.touching.right) {
-                player.setVelocityX(600);
-            }
-            else if (mobA.body.touching.up) {
-                player.setVelocityY(-600);
-            }
-            else if (mobA.body.touching.down) {
-                player.setVelocityY(600);
-            }
-
-            // Visuel de la frame d'invulnérabilité
-            this.pinvisible();
-
-            // Retrait de vie sur interface
-            this.healthMask.x -= 10;
-
-            // retrait des pv dans la variable
-            this.health -= 1;
-
-            // si la vie est en-dessous de 0, on meurt.
-            if (this.health < 0) {
-                this.player_block = true;
-                player.setTint(0xff0000);
-                this.physics.pause();
-            }
-
-            // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
-            else {
-                this.time.delayedCall(500, this.delock_joueur, [], this);
-                this.time.delayedCall(1500, this.able_hit, [], this);
-            }
-        }
-        mobA.destroy();
-    }
+    // RONCES
 
     // destruction d'une ronce si frappé par la serpe
     destroyRonces(ronces) {
         ronces.disableBody(true, true);
     }
+
+    // PONTS COURGES
 
     // valide la création du pont si graine de courge détecté
     createBridge(trou, graine) {
@@ -601,13 +931,6 @@ class sceneZone2 extends Phaser.Scene {
         graine.disableBody(true, true);
         this.shoot_lock = false;
         this.bridge1Done = true;
-    }
-
-    // affiche une échelle si graine de haricot plantée, et enlève le mur invisible qui bloque
-    createEchelle(trou, graine) {
-        graine.disableBody(true, true);
-        this.echelleHaricot1.anims.play('trueEchelle');
-        this.murHaricot1.disableBody(true, true);
     }
 
     // affiche un pont si graine de courge plantée, et enlève le mur invisible qui bloque
@@ -622,111 +945,28 @@ class sceneZone2 extends Phaser.Scene {
         }
     }
 
-    //Passage scène suivante
-    passageScene() {
-        this.scene.start('sceneHub', {
-            argent: this.argent,
+    // ECHELLES HARICOTS
 
-            // Variables pour débloquer les mécaniques
-            attackCaCLoot: this.attackCaCLoot,
-            attackDistanceLoot: this.attackDistanceLoot,
-            volerLoot: this.volerLoot,
+    // affiche une échelle si graine de haricot plantée, et enlève le mur invisible qui bloque
+    createEchelle(trou, graine) {
+        graine.disableBody(true, true);
+        this.echelleHaricot1.anims.play('trueEchelle');
 
-            speed: this.speed,
-            health: this.health,
-            spawnX: 528,
-            spawnY: 816
-        })
+        this.time.delayedCall(1500, function () {
+            this.murHaricot1.disableBody(true, true);                    
+        }, [], this);
     }
 
-    mobBSpit() {
-        if (this.ableSpitMobB) {
-            this.mobBDown.children.each(mobBDown => {
-                this.attaquemobB_create = this.physics.add.sprite(mobBDown.x, mobBDown.y + 16, 'projmobB');
-                this.attaquemobB.add(this.attaquemobB_create);
-            });
-
-            this.attaquemobB.setVelocityY(250);
-            this.ableSpitMobB = false;
-            this.time.delayedCall(1000, this.enableSpitmobB, [], this);
-        }
-    }
-
-    // Duo de fonctions qui font ping pong pour frames d'invulnérabilités
-    enableSpitmobB() {
-        this.ableSpitMobB = true;
-    }
-
-    stateMobC() {
-        if (this.ableMobC) {
-            this.ableMobC = false;
-            this.mobCDanger = false;
-            this.time.delayedCall(2000, this.enableMobC, [], this);
-        }
-    }
-
-    enableMobC() {
-        this.ableMobC = true;
-        this.mobCDanger = true;
-        this.time.delayedCall(2000, this.stateMobC, [], this);
-    }
-
-    perteVieMobC(player, mobC) {
-        if (this.player_beHit == false && this.mobCDanger) {
-
-            // On ne peut plus se déplacer
-            this.player_block = true;
-            // variable qui empêchera de se faire taper pendant la frame d'invul
-            this.player_beHit = true;
-
-            // repoussoir du personnage
-            if (mobC.body.touching.left) {
-                player.setVelocityX(-600);
-            }
-            else if (mobC.body.touching.right) {
-                player.setVelocityX(600);
-            }
-            else if (mobC.body.touching.up) {
-                player.setVelocityY(-600);
-            }
-            else if (mobC.body.touching.down) {
-                player.setVelocityY(600);
-            }
-
-            // Visuel de la frame d'invulnérabilité
-            this.pinvisible();
-
-            // Retrait de vie sur interface
-            this.healthMask.x -= 10;
-
-            // retrait des pv dans la variable
-            this.health -= 1;
-
-            // si la vie est en-dessous de 0, on meurt.
-            if (this.health < 0) {
-                this.player_block = true;
-                player.setTint(0xff0000);
-                this.physics.pause();
-            }
-
-            // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
-            else {
-                this.time.delayedCall(500, this.delock_joueur, [], this);
-                this.time.delayedCall(1500, this.able_hit, [], this);
-            }
-        }
-    }
-
-    grabGraine(player, graine) {
-        if (Phaser.Input.Keyboard.JustDown(this.FKey) && this.carryGraine == false) {
+    grabGraine(player, graine){
+        if(Phaser.Input.Keyboard.JustDown(this.FKey) && this.carryGraine == false){
             graine.destroy();
             this.speed = 100;
             this.carryGraine = true;
         }
     }
 
-    putGraine() {
-        if (Phaser.Input.Keyboard.JustDown(this.FKey) && this.carryGraine == true) {
+    putGraine(){
+        if(Phaser.Input.Keyboard.JustDown(this.FKey) && this.carryGraine == true){
             this.graines_create = this.physics.add.staticSprite(this.player.x, this.player.y, 'box');
             this.grainesHaricot.add(this.graines_create);
             this.carryGraine = false;
@@ -734,8 +974,10 @@ class sceneZone2 extends Phaser.Scene {
         }
     }
 
-    sautVide() {
-        if (Phaser.Input.Keyboard.JustDown(this.EKey) && this.volerLoot == true && this.carryGraine == false) {
+    // SAUTS - FEUILLE DE SALADE
+
+    sautVide(){
+        if(Phaser.Input.Keyboard.JustDown(this.EKey) && this.volerLoot == true && this.carryGraine == false){
             console.log("CHECK");
             this.physics.world.removeCollider(this.collisionMur);
             this.physics.world.removeCollider(this.collisionEau);
@@ -745,8 +987,8 @@ class sceneZone2 extends Phaser.Scene {
         }
     }
 
-    stopSaut() {
-        if (this.flyingMod == true) {
+    stopSaut(){
+        if(this.flyingMod == true){
             console.log("CHECK 2");
             this.physics.world.colliders.add(this.collisionMur);
             this.physics.world.colliders.add(this.collisionEau);
@@ -755,4 +997,26 @@ class sceneZone2 extends Phaser.Scene {
         }
     }
 
+    // DIALOGUES
+
+    checkSpeak() {
+        const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc.x, this.npc.y);
+        if (distance < 50) { // la distance de déclenchement du dialogue
+            if (!this.dialogueBox.visible) { // affiche le dialogue si la boîte de dialogue n'est pas déjà visible
+                this.dialogueBox.visible = true;
+                this.dialogueText.setText(this.dialogues[0]);
+                let temps = 3000;
+                
+                for (let step = 1; step < 5; step++){                
+                    this.time.delayedCall(temps, function () {
+                        this.dialogueText.setText(this.dialogues[step]);                    
+                }, [], this);
+                    temps += 5000
+                }
+            }
+        } else {
+            this.dialogueBox.visible = false;
+            this.dialogueText.setText('');
+        }
+    }
 }

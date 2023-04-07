@@ -49,13 +49,14 @@ class mainScreen extends Phaser.Scene {
 
         this.load.image('ronces', 'assets/ronces.png');
 
-        this.load.image('panneau', 'assets/panneau.png');
+        this.load.image('panneauG', 'assets/panel_left.png');
+        this.load.image('panneauD', 'assets/panel_right.png');
 
         this.load.image('buff', 'assets/buff.png');
 
         // LOOT
         this.load.image("grainesScore", "assets/loot.png");
-        this.load.image("heal", "assets/Soin.png");
+        this.load.image("heal", "assets/heal.png");
 
         //Attaque serpe
         this.load.image("sword_y", "assets/attaque_joueur_y.png");
@@ -235,7 +236,7 @@ class mainScreen extends Phaser.Scene {
     }
 
     launchGame(){
-        this.scene.start('sceneHub', {
+        this.scene.start('sceneTuto', {
             graineScore : 5,
 
             // Variables pour débloquer les mécaniques
@@ -247,11 +248,11 @@ class mainScreen extends Phaser.Scene {
             //speed : 800,
             health : 5,
             
-            //spawnX : 400,
-            //spawnY : 1808
+            spawnX : 400,
+            spawnY : 1808
 
-            spawnX : 528,
-            spawnY : 805
+            //spawnX : 528,
+            //spawnY : 805
         });
     }
 }
