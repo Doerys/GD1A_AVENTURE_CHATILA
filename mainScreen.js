@@ -39,6 +39,8 @@ class mainScreen extends Phaser.Scene {
         this.load.tilemapTiledJSON('map_zone2', 'assets/Tiled/map_part2.json')
 
         // IMAGES
+        this.load.image('mainScreen', 'assets/Ecran_accueil.png');
+
         this.load.image('box', 'assets/graine_haricot.png');
         this.load.image('trou', 'assets/trouGraine.png');
 
@@ -73,7 +75,8 @@ class mainScreen extends Phaser.Scene {
         //////
         
         //Bouton de lancement
-        this.load.image("Button_Game", "assets/launchGame.png");
+        this.load.spritesheet("Button_Game", "assets/Bouton_play.png",
+            { frameWidth: 180, frameHeight: 73 });
 
         this.load.image('passage3x1', "assets/3x1_cases.png");
         this.load.image('passage1x3', "assets/1x3_cases.png");
@@ -81,7 +84,22 @@ class mainScreen extends Phaser.Scene {
     }
 
     create() {
-        this.gameButton = this.add.image(350, 200, "Button_Game").setInteractive();
+
+        // Animation boutons
+
+        this.anims.create({
+            frames: [{ key: 'Button_Game', frame: 0 }],
+        });
+        this.anims.create({
+            frames: [{ key: 'Button_Game', frame: 1 }],
+        });
+
+
+
+        this.add.image(341, 192, 'mainScreen');
+        this.gameButton = this.add.sprite(225, 270, "Button_Game").setInteractive({ cursor: 'pointer' });
+        this.gameButton.setFrame(1)
+
         this.gameButton.on("pointerdown", this.launchGame, this);
 
         // ANIMATIONS 
@@ -194,6 +212,19 @@ class mainScreen extends Phaser.Scene {
     }
 
     update() {
+
+        this.gameButton.on('pointerover', this.changeOver, this); 
+
+        this.gameButton.on('pointerout', this.changeOut, this);
+
+    }
+
+    changeOver(){
+        this.gameButton.setFrame(0);
+    }
+
+    changeOut(){
+        this.gameButton.setFrame(1);
     }
 
     launchGame(){
