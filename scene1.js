@@ -105,6 +105,9 @@ class sceneTuto extends Phaser.Scene {
             this.ronces.add(this.ronces_create);
         });
 
+        // PNJ
+        this.npc = this.physics.add.staticSprite(400, 1750, 'npc');
+
         // création joueur
         //this.player = this.physics.add.sprite(500, 1800, 'player');
         this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'player');
@@ -341,6 +344,23 @@ class sceneTuto extends Phaser.Scene {
         this.physics.add.overlap(this.echelleHaricot1, this.grainesHaricot, this.createEchelle, null, this);
 
         this.stateMobC();
+
+        // boite de dialogue
+
+        // Create dialogue box and text
+        this.dialogueBox = this.add.graphics().setScrollFactor(0);
+        this.dialogueBox.fillStyle(0x222222, 0.8); // couleur + transparence
+        this.dialogueBox.fillRect(225, 300, 250, 50); // position + taille
+        this.dialogueText = this.add.text(270, 310, '', { font: '12px Arial', fill: '#ffffff', align: 'justify' }).setScrollFactor(0); // place + style du texte
+        this.dialogueText.setWordWrapWidth(600);
+
+        this.dialogue1 = ["Pirlouit ! Te voilà enfin !", "J'ai de tristes nouvelles !"];
+        this.dialogue2 = ["Pendant ton absence, le", "Royaume Potager a été corrompu !"];
+        this.dialogue3 = ["Des habitants sont transformés", "en monstres aggressifs."];
+        this.dialogue4 = ["La corruption semble provenir", "de la Grande Laitue."];
+        this.dialogue5 = ["Pars, noble Gardien du Potager.", "Sauve le Royaume !"];
+        
+        this.dialogues = [this.dialogue1, this.dialogue2, this.dialogue3, this.dialogue4, this.dialogue5]
     }
 
     update() {
@@ -489,6 +509,8 @@ class sceneTuto extends Phaser.Scene {
         this.putGraine();
         this.gestionUI();
         this.checkLoot();
+        
+        this.checkSpeak();
     }
 
     // FONCTIONS COMPORTEMENTS MOBS
@@ -934,7 +956,10 @@ class sceneTuto extends Phaser.Scene {
     createEchelle(trou, graine) {
         graine.disableBody(true, true);
         this.echelleHaricot1.anims.play('trueEchelle');
-        this.murHaricot1.disableBody(true, true);
+
+        this.time.delayedCall(1500, function () {
+            this.murHaricot1.disableBody(true, true);                    
+        }, [], this);
     }
 
     grabGraine(player, graine){
@@ -977,10 +1002,33 @@ class sceneTuto extends Phaser.Scene {
         }
     }
 
+    // DIALOGUES
+
+    checkSpeak() {
+        const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc.x, this.npc.y);
+        if (distance < 50) { // la distance de déclenchement du dialogue
+            if (!this.dialogueBox.visible) { // affiche le dialogue si la boîte de dialogue n'est pas déjà visible
+                this.dialogueBox.visible = true;
+                this.dialogueText.setText(this.dialogues[0]);
+                let temps = 3000;
+                
+                for (let step = 1; step < 5; step++){                
+                    this.time.delayedCall(temps, function () {
+                        this.dialogueText.setText(this.dialogues[step]);                    
+                }, [], this);
+                    temps += 5000
+                }
+            }
+        } else {
+            this.dialogueBox.visible = false;
+            this.dialogueText.setText('');
+        }
+    }
+
     //Passage scène suivante
     passageScene() {
         this.scene.start('sceneHub', {
-            argent : this.argent,
+            graineScore : this.graineScore,
 
             // Variables pour débloquer les mécaniques
             attackCaCLoot : this.attackCaCLoot,
@@ -990,7 +1038,7 @@ class sceneTuto extends Phaser.Scene {
             speed : this.speed,
             health : this.health,
             spawnX : 528,
-            spawnY : 816
+            spawnY : 805
         })
     }
 

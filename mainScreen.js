@@ -10,6 +10,9 @@ class mainScreen extends Phaser.Scene {
         this.load.spritesheet('player', 'assets/perso.png',
             { frameWidth: 64, frameHeight: 64 });
 
+        // PNJ
+        this.load.image('npc', 'assets/pnj.png');
+
         // Mob A (32 x 32)
         this.load.spritesheet('mobA', 'assets/mobA.png',
             { frameWidth: 32, frameHeight: 32 });
@@ -45,6 +48,10 @@ class mainScreen extends Phaser.Scene {
         this.load.image('trou', 'assets/trouGraine.png');
 
         this.load.image('ronces', 'assets/ronces.png');
+
+        this.load.image('panneau', 'assets/panneau.png');
+
+        this.load.image('buff', 'assets/buff.png');
 
         // LOOT
         this.load.image("grainesScore", "assets/loot.png");
@@ -228,24 +235,23 @@ class mainScreen extends Phaser.Scene {
     }
 
     launchGame(){
-        this.scene.start('sceneTuto', {
-            argent : 0,
+        this.scene.start('sceneHub', {
+            graineScore : 5,
 
             // Variables pour débloquer les mécaniques
             attackCaCLoot : true,
             attackDistanceLoot : true,
             volerLoot : true,
-            graineScore : 7,
 
-            //speed : 175,
-            speed : 800,
+            speed : 175,
+            //speed : 800,
             health : 5,
             
-            spawnX : 400,
-            spawnY : 1808
+            //spawnX : 400,
+            //spawnY : 1808
 
-            //spawnX : 528,
-            //spawnY : 816
+            spawnX : 528,
+            spawnY : 805
         });
     }
 }
