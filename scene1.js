@@ -143,7 +143,9 @@ class sceneTuto extends Phaser.Scene {
         this.mobADown_layer = this.map.getObjectLayer('mobADown_layer');
         this.mobADown_layer.objects.forEach(mobADown_layer => {
             this.mobADown_create = this.physics.add.sprite(mobADown_layer.x + 16, mobADown_layer.y + 16, 'mobA');
-            this.mobADown_create.anims.play('down_mob');
+            this.mobADown_create.setSize(32, 32);
+            this.mobADown_create.setOffset(0, 0);
+            this.mobADown_create.anims.play('mobAanim');
             this.mobADown.add(this.mobADown_create);
         });
         this.mobADown.setVelocityY(100);
@@ -155,7 +157,9 @@ class sceneTuto extends Phaser.Scene {
         this.mobAUp_layer = this.map.getObjectLayer('mobAUp_layer');
         this.mobAUp_layer.objects.forEach(mobAUp_layer => {
             this.mobAUp_create = this.physics.add.sprite(mobAUp_layer.x + 16, mobAUp_layer.y + 16, 'mobA');
-            this.mobAUp_create.anims.play('up_mob');
+            this.mobAUp_create.setSize(32, 32);
+            this.mobAUp_create.setOffset(0, 0);
+            this.mobAUp_create.anims.play('mobAanim');
             this.mobAUp.add(this.mobAUp_create);
         });
         this.mobAUp.setVelocityY(-100);
@@ -180,6 +184,7 @@ class sceneTuto extends Phaser.Scene {
         this.mobBRight_layer = this.map.getObjectLayer('mobBRight_layer');
         this.mobBRight_layer.objects.forEach(mobBRight_layer => {
             this.mobBRight_create = this.physics.add.staticSprite(mobBRight_layer.x + 16, mobBRight_layer.y + 16, 'mobB');
+            this.mobBRight_create.anims.play('mobBRightanim');
             this.mobBRight.add(this.mobBRight_create);
         });
 
@@ -190,6 +195,7 @@ class sceneTuto extends Phaser.Scene {
         this.mobBLeft_layer = this.map.getObjectLayer('mobBLeft_layer');
         this.mobBLeft_layer.objects.forEach(mobBLeft_layer => {
             this.mobBLeft_create = this.physics.add.staticSprite(mobBLeft_layer.x + 16, mobBLeft_layer.y + 16, 'mobB');
+            this.mobBLeft_create.anims.play('mobBLeftanim');
             this.mobBLeft.add(this.mobBLeft_create);
         });
 
@@ -202,7 +208,7 @@ class sceneTuto extends Phaser.Scene {
         this.mobC = this.physics.add.group();
         this.mobC_layer = this.map.getObjectLayer('mobC_layer');
         this.mobC_layer.objects.forEach(mobC_layer => {
-            this.mobC_create = this.physics.add.sprite(mobC_layer.x + 16, mobC_layer.y + 16, 'mobC');
+            this.mobC_create = this.physics.add.sprite(mobC_layer.x, mobC_layer.y, 'mobC');
             this.mobC_create.anims.play('mobC_anims');
             this.mobC.add(this.mobC_create);
         });
@@ -307,6 +313,8 @@ class sceneTuto extends Phaser.Scene {
         // Joueur - Ennemi (perte de vie)
         this.physics.add.overlap(this.player, this.mobC, this.perteVieMobC, null, this);
         this.physics.add.collider(this.player, this.mobBDown);
+        this.physics.add.collider(this.player, this.mobBRight);
+        this.physics.add.collider(this.player, this.mobBLeft);
         this.physics.add.overlap(this.player, this.mobADown, this.perteVieMobA, null, this);
         this.physics.add.overlap(this.player, this.mobAUp, this.perteVieMobA, null, this);
         this.physics.add.collider(this.player, this.ronces);
@@ -393,131 +401,200 @@ class sceneTuto extends Phaser.Scene {
 
             if(this.cursors.up.isDown && this.cursors.right.isDown && this.cursors.left.isDown){ // HAUT && DROITE && GAUCHE
                 this.player.setVelocityY(-this.speed);
-                this.player.anims.play('walk_up', true);
+
+                if(this.carryGraine){
+                    this.player.anims.play('walk_up_carry', true);
+                }
+                else{this.player.anims.play('walk_up', true);}
+
                 this.player_facing = "up";
             }
 
             else if(this.cursors.down.isDown && this.cursors.right.isDown && this.cursors.left.isDown){ // BAS && DROITE && GAUCHE
                 this.player.setVelocityY(this.speed);
-                this.player.anims.play('walk_down', true);
-                this.player_facing = "up";
+                
+                if(this.carryGraine){
+                    this.player.anims.play('walk_down_carry', true);
+                }
+                else{this.player.anims.play('walk_down', true);}
+
+                this.player_facing = "down";
             }
 
             else if (this.cursors.up.isDown && this.cursors.right.isDown) { // HAUT && DROITE
                 this.player.setVelocityY(-this.speed);
                 this.player.setVelocityX(this.speed);
-                this.player.anims.play('walk_up', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_up_carry', true);
+                }
+                else{this.player.anims.play('walk_up', true);}
                 this.player_facing = "up";
             }
 
             else if (this.cursors.down.isDown && this.cursors.right.isDown) { // BAS && DROITE
                 this.player.setVelocityY(this.speed);
                 this.player.setVelocityX(this.speed);
-                this.player.anims.play('walk_down', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_down_carry', true);
+                }
+                else{this.player.anims.play('walk_down', true);}
                 this.player_facing = "down";
             }
 
             else if (this.cursors.up.isDown && this.cursors.left.isDown) { // HAUT && GAUCHE
                 this.player.setVelocityY(-this.speed);
                 this.player.setVelocityX(-this.speed);
-                this.player.anims.play('walk_up', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_up_carry', true);
+                }
+                else{this.player.anims.play('walk_up', true);}
                 this.player_facing = "up";
             }
 
             else if (this.cursors.down.isDown && this.cursors.left.isDown) { // BAS && DROITE
                 this.player.setVelocityY(this.speed);
                 this.player.setVelocityX(-this.speed);
-                this.player.anims.play('walk_down', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_down_carry', true);
+                }
+                else{this.player.anims.play('walk_down', true);}
                 this.player_facing = "down";
             }
 
             else if (this.cursors.right.isDown) { // DROITE
                 this.player.setVelocityX(this.speed);
-                this.player.anims.play('walk_right', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_right_carry', true);
+                }
+                else{this.player.anims.play('walk_right', true);}
                 this.player_facing = "right";
             }
 
             else if (this.cursors.left.isDown) { // GAUCHE
                 this.player.setVelocityX(-this.speed);
-                this.player.anims.play('walk_left', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_left_carry', true);
+                }
+                else{this.player.anims.play('walk_left', true);}
                 this.player_facing = "left";
             }
 
             else if (this.cursors.up.isDown) { // HAUT
                 this.player.setVelocityY(-this.speed);
-                this.player.anims.play('walk_up', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_up_carry', true);
+                }
+                else{this.player.anims.play('walk_up', true);}
                 this.player_facing = "up";
             }
 
             else if (this.cursors.down.isDown) { // BAS
                 this.player.setVelocityY(this.speed);
-                this.player.anims.play('walk_down', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_down_carry', true);
+                }
+                else{this.player.anims.play('walk_down', true);}
                 this.player_facing = "down";
             }
 
             else{
                 if(this.player_facing == "left"){
-                    this.player.anims.play('left', true);
+                    if(this.carryGraine){
+                        this.player.anims.play('left_carry', true);
+                    }
+                    else{this.player.anims.play('left', true);}
+
                 }
         
                 if(this.player_facing == "right"){
-                    this.player.anims.play('right', true);
+                    if(this.carryGraine){
+                        this.player.anims.play('right_carry', true);
+                    }
+                    else{this.player.anims.play('right', true);}
                 }
         
                 if(this.player_facing == "up"){
-                    this.player.anims.play('up', true);
+                    if(this.carryGraine){
+                        this.player.anims.play('up_carry', true);
+                    }
+                    else{this.player.anims.play('up', true);}
                 }
         
                 if(this.player_facing == "down"){
-                    this.player.anims.play('down', true);
+                    if(this.carryGraine){
+                        this.player.anims.play('down_carry', true);
+                    }
+                    else{this.player.anims.play('down', true);}
                 }
             }   
 
             //Attaque
-            if (this.cursors.space.isDown && this.attackCaCLoot == true) {
+            if (this.cursors.space.isDown && this.attackCaCLoot == true && !this.carryGraine) {
                 if (this.player_facing == "up") {
-                    this.attaque_sword.create(this.player.x, this.player.y - 32, "sword_y");
+                    this.player.anims.play('attack_up', true);
+                    this.attaque_sword.create(this.player.x, this.player.y - 32, "sword_y").setVisible(false);
                 }
                 else if (this.player_facing == "down") {
-                    this.attaque_sword.create(this.player.x, this.player.y + 32, "sword_y");
+                    this.player.anims.play('attack_down', true);
+                    this.attaque_sword.create(this.player.x, this.player.y + 32, "sword_y").setVisible(false);
                 }
                 else if (this.player_facing == "right") {
-                    this.attaque_sword.create(this.player.x + 32, this.player.y, "sword_x");
+                    this.player.anims.play('attack_right', true);
+                    this.attaque_sword.create(this.player.x + 32, this.player.y, "sword_x").setVisible(false);
                 }
                 else if (this.player_facing == "left") {
-                    this.attaque_sword.create(this.player.x - 32, this.player.y, "sword_x");
+                    this.player.anims.play('attack_left', true);
+                    this.attaque_sword.create(this.player.x - 32, this.player.y, "sword_x").setVisible(false);
                 }
                 this.player_block = true;
                 this.player.setVelocityX(0);
                 this.player.setVelocityY(0);
-                this.time.delayedCall(250, this.delock_attaque, [], this);
+                this.time.delayedCall(500, this.delock_attaque, [], this);
             }
 
             //tir
 
-            if (this.shiftKey.isDown && this.shoot_lock == false && this.attackDistanceLoot == true) {
+            if (this.shiftKey.isDown && this.shoot_lock == false && this.attackDistanceLoot == true && !this.carryGraine) {
                 if (this.player_facing == "up") {
-                    this.attaque_shoot.create(this.player.x, this.player.y - 32, "proj");
-                    this.attaque_shoot.setVelocityY(-500);
+                    this.player.anims.play('shoot_up');
+                    this.time.delayedCall(300, function () {
+                        this.attaque_shoot.create(this.player.x, this.player.y - 32, "proj");
+                        this.attaque_shoot.setVelocityY(-500);             
+                    }, [], this);
                 }
                 else if (this.player_facing == "down") {
-                    this.attaque_shoot.create(this.player.x, this.player.y + 32, "proj");
-                    this.attaque_shoot.setVelocityY(500);
+                    this.player.anims.play('shoot_down');
+                    this.time.delayedCall(300, function () {
+                        this.attaque_shoot.create(this.player.x, this.player.y + 32, "proj");  
+                        this.attaque_shoot.setVelocityY(500);                
+                    }, [], this);
                 }
                 else if (this.player_facing == "right") {
-                    this.attaque_shoot.create(this.player.x + 32, this.player.y, "proj");
-                    this.attaque_shoot.setVelocityX(500);
+                    this.player.anims.play('shoot_right');
+
+                    this.time.delayedCall(300, function () {
+                        this.attaque_shoot.create(this.player.x + 32, this.player.y, "proj");
+                        this.attaque_shoot.setVelocityX(500);              
+                    }, [], this);
+
                 }
                 else if (this.player_facing == "left") {
-                    this.attaque_shoot.create(this.player.x - 32, this.player.y, "proj");
-                    this.attaque_shoot.setVelocityX(-500);
+
+                    this.player.anims.play('shoot_left');
+
+                    this.time.delayedCall(300, function () {
+                        this.attaque_shoot.create(this.player.x - 32, this.player.y, "proj");
+                        this.attaque_shoot.setVelocityX(-500);     
+                    }, [], this);
+
+
                 }
                 this.bridge1Done = false;
                 this.player_block = true;
                 this.shoot_lock = true;
                 this.player.setVelocityX(0);
                 this.player.setVelocityY(0);
-                this.time.delayedCall(250, this.delock_joueur, [], this);
+                this.time.delayedCall(500, this.delock_joueur, [], this);
             }
         }
 
@@ -538,25 +615,25 @@ class sceneTuto extends Phaser.Scene {
         mob_switch_right(mobA) {
             mobA.setVelocityX(150);
             mobA.setVelocityY(0);
-            mobA.anims.play('right_mob')
+            //mobA.anims.play('right_mob')
         }
     
         mob_switch_left(mobA) {
             mobA.setVelocityX(-150);
             mobA.setVelocityY(0);
-            mobA.anims.play('left_mob')
+            //mobA.anims.play('left_mob')
         }
     
         mob_switch_up(mobA) {
             mobA.setVelocityX(0);
             mobA.setVelocityY(-150);
-            mobA.anims.play('up_mob')
+            //mobA.anims.play('up_mob')
         }
     
         mob_switch_down(mobA) {
             mobA.setVelocityX(0);
             mobA.setVelocityY(150);
-            mobA.anims.play('down_mob')
+            //mobA.anims.play('down_mob')
         }
 
         // Gestion crachat des mobs B
@@ -574,6 +651,7 @@ class sceneTuto extends Phaser.Scene {
             }
     
             if (this.ableSpitMobBLeft) {
+                console.log("FEU !")
                 this.mobBLeft.children.each(mobBLeft => {
                     this.attaquemobBLeft_create = this.physics.add.sprite(mobBLeft.x - 16, mobBLeft.y, 'projmobB');
                     this.attaquemobBRight.add(this.attaquemobBLeft_create);
@@ -1010,7 +1088,7 @@ class sceneTuto extends Phaser.Scene {
 
     putGraine(){
         if(Phaser.Input.Keyboard.JustDown(this.FKey) && this.carryGraine == true){
-            this.graines_create = this.physics.add.staticSprite(this.player.x, this.player.y, 'box');
+            this.graines_create = this.physics.add.staticSprite(this.player.x, this.player.y+16, 'box');
             this.grainesHaricot.add(this.graines_create);
             this.carryGraine = false;
             this.speed = 175;
@@ -1076,7 +1154,7 @@ class sceneTuto extends Phaser.Scene {
             speed : this.speed,
             health : this.health,
             spawnX : 528,
-            spawnY : 805
+            spawnY : 1445
         })
     }
 

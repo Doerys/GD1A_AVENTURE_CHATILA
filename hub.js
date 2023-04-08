@@ -44,6 +44,7 @@ class sceneHub extends Phaser.Scene {
         //Load Map
         this.map = this.add.tilemap("map_hub");
         this.tileset = this.map.addTilesetImage('tileset', 'tiles')
+        this.tileset_laitue = this.map.addTilesetImage('grande_laitue', 'grande_laitue')
 
         // loads calques de tuiles
 
@@ -51,6 +52,7 @@ class sceneHub extends Phaser.Scene {
         this.eau = this.map.createLayer('eau_layer', this.tileset);
         this.murs = this.map.createLayer('murs_layer', this.tileset); //calque mur
         this.decor = this.map.createLayer('decor_layer', this.tileset);
+        this.laitue = this.map.createLayer('laitue_layer', this.tileset_laitue);
 
         // Sprites et groupes
 
@@ -90,11 +92,12 @@ class sceneHub extends Phaser.Scene {
         // Fleur de courge 
 
         this.bridge1Done = false;
-        this.holeSeed1 = this.physics.add.staticSprite(270, 818, 'box');
-        this.murBridge1 = this.physics.add.staticSprite(335, 818);
-        this.murBridge1.setSize(96, 32);
-        this.bridge1 = this.physics.add.staticSprite(335, 818, 'bridge');
+        this.bridge1 = this.physics.add.staticSprite(592, 800, 'bridge');
         this.bridge1.anims.play('falseBridge');
+
+        this.murBridge1 = this.physics.add.staticSprite(592, 784);
+        this.murBridge1.setSize(32, 96);
+
 
         // RONCES 
 
@@ -107,10 +110,11 @@ class sceneHub extends Phaser.Scene {
         });
 
         // PNJ
-        this.panneau1 = this.physics.add.staticSprite(272, 328, 'panneauG');
-        this.panneau2 = this.physics.add.staticSprite(1040, 392, 'panneauD');
+        this.panneau1 = this.physics.add.staticSprite(272, 968, 'panneauG');
+        this.panneau2 = this.physics.add.staticSprite(1040, 1032, 'panneauD');
+        this.panneau3 = this.physics.add.staticSprite(528, 1000, 'panneauD');
 
-        this.buffHole = this.physics.add.staticSprite(448, 520, 'buff');
+        this.buffHole = this.physics.add.staticSprite(448, 1180, 'buff');
 
         //Création Attaques CaC et Distance
         this.attaque_sword = this.physics.add.staticGroup();
@@ -230,17 +234,17 @@ class sceneHub extends Phaser.Scene {
 
         // Passage scenes suivantes
         this.versTuto = this.physics.add.staticGroup();
-        this.versTuto.create(528, 848, "passage3x1");
+        this.versTuto.create(528, 1488, "passage3x1");
 
         this.versZone1 = this.physics.add.staticGroup();
-        this.versZone1.create(16, 336, "passage1x3");
+        this.versZone1.create(16, 996, "passage1x3");
 
         this.versZone2 = this.physics.add.staticGroup();
-        this.versZone2.create(1168, 448, "passage1x4");
+        this.versZone2.create(1168, 1088, "passage1x4");
 
         // CAMERA et LIMITES DU MONDE
-        this.physics.world.setBounds(0, 0, 1184, 864);
-        this.cameras.main.setBounds(32, 0, 1120, 832);
+        this.physics.world.setBounds(0, 0, 1184, 1504);
+        this.cameras.main.setBounds(32, 0, 1120, 1470);
         this.cameras.main.setSize(683, 384); //format 16/9
         this.cameras.main.startFollow(this.player);
         //player.setCollideWorldBounds(true); (bloque le joueur, NE PAS ACTIVER)
@@ -272,6 +276,7 @@ class sceneHub extends Phaser.Scene {
         this.murs.setCollisionByProperty({ estSolide: true });
         this.eau.setCollisionByProperty({ estLiquide: true });
         this.obstacles.setCollisionByProperty({ estSolide: true });
+        this.laitue.setCollisionByProperty({ estSolide: true });
 
         // Pattern déplacement mob A
         this.switchRight_Layer.setCollisionByProperty({ estSolide: true });
@@ -294,8 +299,10 @@ class sceneHub extends Phaser.Scene {
         this.collisionMur = this.physics.add.collider(this.player, this.murs);
         this.collisionEau = this.physics.add.collider(this.player, this.eau);
         this.collisionObstacles = this.physics.add.collider(this.player, this.obstacles);
+        this.physics.add.collider(this.player, this.laitue);
         this.physics.add.collider(this.player, this.panneau1);
         this.physics.add.collider(this.player, this.panneau2);
+        this.physics.add.collider(this.player, this.panneau3);
         this.physics.add.overlap(this.player, this.grainesHaricot, this.grabGraine, null, this);
 
         this.physics.add.overlap(this.player, this.passageVol, this.sautVide, null, this);
@@ -355,7 +362,7 @@ class sceneHub extends Phaser.Scene {
         
         //Trou à graine courge
         this.physics.add.collider(this.player, this.murBridge1);
-        this.physics.add.collider(this.holeSeed1, this.attaque_shoot, this.createBridge, null, this);
+        this.physics.add.collider(this.bridge1, this.attaque_shoot, this.createBridge, null, this);
 
         // Trou à graine haricot
         this.physics.add.collider(this.player, this.murHaricot1);
@@ -374,10 +381,11 @@ class sceneHub extends Phaser.Scene {
 
         this.contenuPanneau1 = "Vers les Collines Fertiles";
         this.contenuPanneau2 = "Vers les Contrées Arrosées";
+        this.contenuPanneau3 = "Vers la Grande Laitue";
     }
 
     update() {
-
+                
         this.stateBridge(); // check pont activé/désactivé
 
         if (this.player_block == false) {
@@ -506,7 +514,9 @@ class sceneHub extends Phaser.Scene {
                     this.attaque_shoot.create(this.player.x - 32, this.player.y, "proj");
                     this.attaque_shoot.setVelocityX(-500);
                 }
+
                 this.bridge1Done = false;
+                this.bridge1_changeLook = true;
                 this.player_block = true;
                 this.shoot_lock = true;
                 this.player.setVelocityX(0);
@@ -951,18 +961,32 @@ class sceneHub extends Phaser.Scene {
     createBridge(trou, graine) {
         console.log("création pont");
         graine.disableBody(true, true);
+        this.bridge1_changeLook = true;
         this.shoot_lock = false;
         this.bridge1Done = true;
+        this.bridge1Active = true; // pour rétracter le pont seulement quand il a déjà été posé
     }
 
     // affiche un pont si graine de courge plantée, et enlève le mur invisible qui bloque
     stateBridge() {
+        //changement d'apparence
+        if (this.bridge1_changeLook == true){
+            if(this.bridge1Done == true){
+                this.bridge1.anims.play('trueBridge');
+            }
+            if (this.bridge1Done == false && this.bridge1Active == true){
+                this.bridge1.anims.play('falseBridge');
+                this.bridge1Active = false;
+            }
+            this.bridge1_changeLook = false;
+        }
+
+        // retrait ou ajout du mur invisible
+
         if (this.bridge1Done == true) {
-            this.bridge1.anims.play('trueBridge');
             this.murBridge1.disableBody(true, true);
         }
         if (this.bridge1Done == false) {
-            this.bridge1.anims.play('falseBridge');
             this.murBridge1.enableBody();
         }
     }
@@ -1024,6 +1048,7 @@ class sceneHub extends Phaser.Scene {
     checkSpeak() {
         const distance1 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.panneau1.x, this.panneau1.y);
         const distance2 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.panneau2.x, this.panneau2.y);
+        const distance3 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.panneau3.x, this.panneau3.y);
         
         if (distance1 < 50) { // la distance de déclenchement du dialogue
             if (!this.dialogueBox.visible) { // affiche le dialogue si la boîte de dialogue n'est pas déjà visible
@@ -1037,7 +1062,13 @@ class sceneHub extends Phaser.Scene {
                 this.dialogueText.setText(this.contenuPanneau2);
             }
         }
-        else {
+        else if (distance3 < 50){
+            if (!this.dialogueBox.visible) { // affiche le dialogue si la boîte de dialogue n'est pas déjà visible
+                this.dialogueBox.visible = true;
+                this.dialogueText.setText(this.contenuPanneau3);
+            }
+        }
+         else {
             this.dialogueBox.visible = false;
             this.dialogueText.setText('');
         }

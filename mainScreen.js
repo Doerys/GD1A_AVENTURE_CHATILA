@@ -15,10 +15,11 @@ class mainScreen extends Phaser.Scene {
 
         // Mob A (32 x 32)
         this.load.spritesheet('mobA', 'assets/mobA.png',
+            { frameWidth: 32, frameHeight: 44 });
+        // Mob B (32 x 32)
+        this.load.spritesheet('mobB', 'assets/mobB.png',
             { frameWidth: 32, frameHeight: 32 });
 
-        // Mob B (32 x 32)
-        this.load.image('mobB', 'assets/mobB.png');
         this.load.image("projmobB", "assets/projMobB.png");
 
         // Mob C (32 x 32)
@@ -31,11 +32,12 @@ class mainScreen extends Phaser.Scene {
             { frameWidth: 32, frameHeight: 64 });
 
         this.load.spritesheet('bridge', 'assets/pont.png',
-            { frameWidth: 96, frameHeight: 32 });
+            { frameWidth: 32, frameHeight: 128 });
 
         // TILED 
 
         this.load.image('tiles', 'assets/Tiled/tileset.png'); //Tileset 
+        this.load.image('grande_laitue', 'assets/grande_laitue.png'); //Tileset 
         this.load.tilemapTiledJSON('map_tuto', 'assets/Tiled/map_tuto.json'); //fichier JSON
         this.load.tilemapTiledJSON('map_hub', 'assets/Tiled/map_hub.json')
         this.load.tilemapTiledJSON('map_zone1', 'assets/Tiled/map_part1.json')
@@ -45,7 +47,6 @@ class mainScreen extends Phaser.Scene {
         this.load.image('mainScreen', 'assets/Ecran_accueil.png');
 
         this.load.image('box', 'assets/graine_haricot.png');
-        this.load.image('trou', 'assets/trouGraine.png');
 
         this.load.image('ronces', 'assets/ronces.png');
 
@@ -138,6 +139,7 @@ class mainScreen extends Phaser.Scene {
             frameRate: 4,
             repeat : -1
         });
+
         this.anims.create({
             key: 'walk_down',
             frames: this.anims.generateFrameNumbers('player', {start:16,end:19}),
@@ -163,16 +165,110 @@ class mainScreen extends Phaser.Scene {
             repeat : -1
         });
 
+        this.anims.create({
+            key: 'attack_down',
+            frames: this.anims.generateFrameNumbers('player', {start:32,end:35}),
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: 'attack_up',
+            frames: this.anims.generateFrameNumbers('player', {start:36,end:39}),
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: 'attack_right',
+            frames: this.anims.generateFrameNumbers('player', {start:40,end:43}),
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: 'attack_left',
+            frames: this.anims.generateFrameNumbers('player', {start:44,end:47}),
+            frameRate: 10,
+        });
+
+        this.anims.create({
+            key: 'shoot_down',
+            frames: this.anims.generateFrameNumbers('player', {start:48,end:51}),
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: 'shoot_up',
+            frames: this.anims.generateFrameNumbers('player', {start:52,end:55}),
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: 'shoot_right',
+            frames: this.anims.generateFrameNumbers('player', {start:56,end:59}),
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: 'shoot_left',
+            frames: this.anims.generateFrameNumbers('player', {start:60,end:63}),
+            frameRate: 10,
+        });
+
+        this.anims.create({
+            key: 'down_carry',
+            frames: this.anims.generateFrameNumbers('player', {start:64,end:67}),
+            frameRate: 4,
+            repeat : -1
+        });
+        this.anims.create({
+            key: 'up_carry',
+            frames: this.anims.generateFrameNumbers('player', {start:68,end:71}),
+            frameRate: 4,
+            repeat : -1
+        });
+        this.anims.create({
+            key: 'right_carry',
+            frames: this.anims.generateFrameNumbers('player', {start:72,end:75}),
+            frameRate: 4,
+            repeat : -1
+        });
+        this.anims.create({
+            key: 'left_carry',
+            frames: this.anims.generateFrameNumbers('player', {start:76,end:79}),
+            frameRate: 4,
+            repeat : -1
+        });
+
+        this.anims.create({
+            key: 'walk_down_carry',
+            frames: this.anims.generateFrameNumbers('player', {start:80,end:83}),
+            frameRate: 4,
+            repeat : -1
+        });
+        this.anims.create({
+            key: 'walk_up_carry',
+            frames: this.anims.generateFrameNumbers('player', {start:84,end:87}),
+            frameRate: 4,
+            repeat : -1
+        });
+        this.anims.create({
+            key: 'walk_right_carry',
+            frames: this.anims.generateFrameNumbers('player', {start:88,end:91}),
+            frameRate: 4,
+            repeat : -1
+        });
+        this.anims.create({
+            key: 'walk_left_carry',
+            frames: this.anims.generateFrameNumbers('player', {start:92,end:95}),
+            frameRate: 4,
+            repeat : -1
+        });
 
         // animation pont
 
         this.anims.create({
             key: 'trueBridge',
-            frames: [{ key: 'bridge', frame: 0 }],
+            frames: this.anims.generateFrameNumbers('bridge', {start:1,end:5}),
+            frameRate: 5,
         });
         this.anims.create({
             key: 'falseBridge',
-            frames: [{ key: 'bridge', frame: 1 }],
+            //frames: [{ key: 'bridge', frame: 0 }],
+            frames: this.anims.generateFrameNumbers('bridge', {start:5,end:10}),
+            frameRate: 5,
         });
 
         this.anims.create({
@@ -188,11 +284,26 @@ class mainScreen extends Phaser.Scene {
         // animation mob A
 
         this.anims.create({
-            key: 'left_mob',
-            frames: [{ key: 'mobA', frame: 3 }],
-            frameRate: 20
+            key: 'mobAanim',
+            frames: this.anims.generateFrameNumbers('mobA', {start:0,end:3}),
+            frameRate: 5,
+            repeat : -1
         });
+
         this.anims.create({
+            key: 'mobBLeftanim',
+            frames: this.anims.generateFrameNumbers('mobB', {start:0,end:3}),
+            frameRate: 4,
+            repeat : -1
+        });
+
+        this.anims.create({
+            key: 'mobBRightanim',
+            frames: this.anims.generateFrameNumbers('mobB', {start:4,end:7}),
+            frameRate: 4,
+            repeat : -1
+        });
+        /*this.anims.create({
             key: 'up_mob',
             frames: [{ key: 'mobA', frame: 0 }],
             frameRate: 20
@@ -206,14 +317,14 @@ class mainScreen extends Phaser.Scene {
             key: 'right_mob',
             frames: [{ key: 'mobA', frame: 1 }],
             frameRate: 20
-        });
+        });*/
 
         //animation mob C
 
         this.anims.create({
             key: 'mobC_anims',
-            frames: this.anims.generateFrameNumbers('mobC', {start:1,end:0}),
-            frameRate: .5,
+            frames: this.anims.generateFrameNumbers('mobC', {start:0,end:19}),
+            frameRate: 5,
             repeat: -1
         });
 
@@ -252,7 +363,7 @@ class mainScreen extends Phaser.Scene {
             spawnY : 1808
 
             //spawnX : 528,
-            //spawnY : 805
+            //spawnY : 1445
         });
     }
 }
