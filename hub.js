@@ -1155,7 +1155,7 @@ class sceneHub extends Phaser.Scene {
                 this.dialogueText.setText(this.contenuPanneau3);
             }
         }
-        else if (distance4 < 75){
+        else if (distance4 < 50){
             if (!this.dialogueBox.visible) { // affiche le dialogue si la boîte de dialogue n'est pas déjà visible
                 this.dialogueBox.visible = true;
                 this.dialogueText.setText(this.statueDialogue[0]);
