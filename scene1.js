@@ -34,6 +34,8 @@ class sceneTuto extends Phaser.Scene {
         this.carryGraine = false;
         this.flyingMod = false;
 
+        this.controller = false;
+
         this.player_facing = "down"; // rotation du personnage standard
 
         // CHARGEMENT DE LA MAP
@@ -282,6 +284,11 @@ class sceneTuto extends Phaser.Scene {
         this.FKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
         this.EKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
 
+        // MANETTE
+        this.input.gamepad.once('connected', function (pad) {
+            this.controller = pad;
+        }, this);
+
         // COLLISIONS
 
         // SET BY PROPERTY
@@ -479,7 +486,7 @@ class sceneTuto extends Phaser.Scene {
                 this.player_facing = "down";
             }
 
-            else if (this.cursors.right.isDown) { // DROITE
+            else if (this.cursors.right.isDown || this.controller.right) { // DROITE
                 this.player.setVelocityX(this.speed);
                 if(this.carryGraine){
                     this.player.anims.play('walk_right_carry', true);
@@ -488,7 +495,7 @@ class sceneTuto extends Phaser.Scene {
                 this.player_facing = "right";
             }
 
-            else if (this.cursors.left.isDown) { // GAUCHE
+            else if (this.cursors.left.isDown || this.controller.left) { // GAUCHE
                 this.player.setVelocityX(-this.speed);
                 if(this.carryGraine){
                     this.player.anims.play('walk_left_carry', true);
@@ -497,7 +504,7 @@ class sceneTuto extends Phaser.Scene {
                 this.player_facing = "left";
             }
 
-            else if (this.cursors.up.isDown) { // HAUT
+            else if (this.cursors.up.isDown || this.controller.up) { // HAUT
                 this.player.setVelocityY(-this.speed);
                 if(this.carryGraine){
                     this.player.anims.play('walk_up_carry', true);
@@ -506,7 +513,7 @@ class sceneTuto extends Phaser.Scene {
                 this.player_facing = "up";
             }
 
-            else if (this.cursors.down.isDown) { // BAS
+            else if (this.cursors.down.isDown || this.controller.down) { // BAS
                 this.player.setVelocityY(this.speed);
                 if(this.carryGraine){
                     this.player.anims.play('walk_down_carry', true);
@@ -547,7 +554,7 @@ class sceneTuto extends Phaser.Scene {
             }   
 
             //Attaque
-            if (this.cursors.space.isDown && this.attackCaCLoot == true && !this.carryGraine) {
+            if ((this.cursors.space.isDown|| this.controller.A) && this.attackCaCLoot == true && !this.carryGraine) {
                 if (this.player_facing == "up") {
                     this.player.anims.play('attack_up', true);
                     this.attaque_sword.create(this.player.x, this.player.y - 32, "sword_y").setVisible(false);
@@ -572,7 +579,7 @@ class sceneTuto extends Phaser.Scene {
 
             //tir
 
-            if (this.shiftKey.isDown && this.shoot_lock == false && this.attackDistanceLoot == true && !this.carryGraine) {
+            if ((this.shiftKey.isDown || this.controller.R2) && this.shoot_lock == false && this.attackDistanceLoot == true && !this.carryGraine) {
                 if (this.player_facing == "up") {
                     this.player.anims.play('shoot_up');
                     this.time.delayedCall(300, function () {
@@ -1095,7 +1102,7 @@ class sceneTuto extends Phaser.Scene {
     }
 
     grabGraine(player, graine){
-        if(Phaser.Input.Keyboard.JustDown(this.FKey) && this.carryGraine == false){
+        if((Phaser.Input.Keyboard.JustDown(this.FKey) || this.controller.L1) && this.carryGraine == false){
             graine.destroy();
             this.speed = 100;
             this.carryGraine = true;
@@ -1103,7 +1110,7 @@ class sceneTuto extends Phaser.Scene {
     }
 
     putGraine(){
-        if(Phaser.Input.Keyboard.JustDown(this.FKey) && this.carryGraine == true){
+        if((Phaser.Input.Keyboard.JustDown(this.FKey) || this.controller.L1) && this.carryGraine == true){
             this.graines_create = this.physics.add.staticSprite(this.player.x, this.player.y+16, 'box');
             this.grainesHaricot.add(this.graines_create);
             this.carryGraine = false;
@@ -1114,7 +1121,7 @@ class sceneTuto extends Phaser.Scene {
     // SAUTS - FEUILLE DE SALADE
 
     sautVide(){
-        if(Phaser.Input.Keyboard.JustDown(this.EKey) && this.volerLoot == true && this.carryGraine == false){
+        if((Phaser.Input.Keyboard.JustDown(this.EKey) || this.controller.B) && this.volerLoot == true && this.carryGraine == false){
             console.log("CHECK");
             this.physics.world.removeCollider(this.collisionMur);
             this.physics.world.removeCollider(this.collisionEau);
