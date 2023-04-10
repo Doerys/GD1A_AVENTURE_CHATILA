@@ -3509,7 +3509,7 @@
   <object id="320" x="1344" y="480" width="32" height="32"/>
   <object id="321" x="1344" y="384" width="32" height="32"/>
  </objectgroup>
- <objectgroup id="16" name="mobC1_layer" visible="0">
+ <objectgroup id="16" name="mobC1_layer">
   <object id="1" x="736" y="1696" width="32" height="32"/>
   <object id="2" x="736" y="1728" width="32" height="32"/>
   <object id="4" x="736" y="1760" width="32" height="32"/>
@@ -3536,17 +3536,15 @@
   <object id="366" x="1216" y="832" width="32" height="32"/>
   <object id="373" x="1248" y="704" width="32" height="32"/>
   <object id="374" x="1280" y="736" width="32" height="32"/>
-  <object id="375" x="1216" y="736" width="32" height="32"/>
   <object id="376" x="1184" y="672" width="32" height="32"/>
   <object id="377" x="1184" y="768" width="32" height="32"/>
-  <object id="378" x="1024" y="704" width="32" height="32"/>
+  <object id="378" x="1056" y="736" width="32" height="32"/>
   <object id="379" x="992" y="640" width="32" height="32"/>
   <object id="380" x="960" y="672" width="32" height="32"/>
-  <object id="381" x="992" y="704" width="32" height="32"/>
+  <object id="381" x="1024" y="672" width="32" height="32"/>
   <object id="382" x="960" y="736" width="32" height="32"/>
-  <object id="383" x="1056" y="672" width="32" height="32"/>
  </objectgroup>
- <objectgroup id="23" name="mobC2_layer" visible="0">
+ <objectgroup id="23" name="mobC2_layer">
   <object id="5" x="832" y="1696" width="32" height="32"/>
   <object id="6" x="832" y="1728" width="32" height="32"/>
   <object id="7" x="832" y="1760" width="32" height="32"/>
@@ -3572,8 +3570,8 @@
   <object id="385" x="1248" y="768" width="32" height="32"/>
   <object id="386" x="1152" y="736" width="32" height="32"/>
   <object id="387" x="1024" y="736" width="32" height="32"/>
-  <object id="388" x="992" y="672" width="32" height="32"/>
-  <object id="389" x="1088" y="672" width="32" height="32"/>
+  <object id="388" x="928" y="704" width="32" height="32"/>
+  <object id="389" x="1056" y="704" width="32" height="32"/>
  </objectgroup>
  <objectgroup id="17" name="mobBLeft_layer">
   <object id="34" x="1920" y="1568" width="32" height="32"/>
@@ -3594,13 +3592,13 @@
  <objectgroup id="19" name="mobBDown_layer">
   <object id="194" x="1152" y="64" width="32" height="32"/>
  </objectgroup>
- <objectgroup id="21" name="mobADown_layer" visible="0">
+ <objectgroup id="21" name="mobADown_layer">
   <object id="199" x="1344" y="352" width="32" height="32"/>
   <object id="200" x="1312" y="32" width="32" height="32"/>
   <object id="360" x="1408" y="1408" width="32" height="32"/>
   <object id="402" x="448" y="2208" width="32" height="32"/>
  </objectgroup>
- <objectgroup id="22" name="mobAUp_layer" visible="0">
+ <objectgroup id="22" name="mobAUp_layer">
   <object id="198" x="1024" y="384" width="32" height="32"/>
   <object id="201" x="1088" y="192" width="32" height="32"/>
   <object id="361" x="2016" y="1760" width="32" height="32"/>
