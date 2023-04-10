@@ -114,7 +114,7 @@ class sceneHub extends Phaser.Scene {
         this.panneau2 = this.physics.add.staticSprite(1040, 1032, 'panneauD');
         this.panneau3 = this.physics.add.staticSprite(528, 1000, 'panneauD');
 
-        this.buffHole = this.physics.add.staticSprite(448, 1180, 'buff');
+        this.buffHole = this.physics.add.staticSprite(448, 1110, 'statue');
 
         //Création Attaques CaC et Distance
         this.attaque_sword = this.physics.add.staticGroup();
@@ -242,6 +242,9 @@ class sceneHub extends Phaser.Scene {
         this.versZone2 = this.physics.add.staticGroup();
         this.versZone2.create(1168, 1088, "passage1x4");
 
+        this.versDonjon = this.physics.add.staticGroup();
+        this.versDonjon.create(592, 560, "passage3x1");
+
         // CAMERA et LIMITES DU MONDE
         this.physics.world.setBounds(0, 0, 1184, 1504);
         this.cameras.main.setBounds(32, 0, 1120, 1470);
@@ -290,9 +293,11 @@ class sceneHub extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.versTuto, this.passageSceneTuto, null, this);
         this.physics.add.overlap(this.player, this.versZone1, this.passageSceneZone1, null, this);
         this.physics.add.overlap(this.player, this.versZone2, this.passageSceneZone2, null, this);
+        this.physics.add.overlap(this.player, this.versDonjon, this.passageSceneDonjon, null, this);
         
         // Achat Hub
 
+        this.physics.add.collider(this.player, this.buffHole);
         this.physics.add.overlap(this.player, this.buffHole, this.unlockBuff, null, this);
 
         // Joueur - Environnement
@@ -335,6 +340,7 @@ class sceneHub extends Phaser.Scene {
         this.physics.add.collider(this.attaque_shoot, this.murs, this.delock_shoot, null, this);
         this.physics.add.collider(this.attaque_shoot, this.obstacles, this.delock_shoot, null, this);
         this.physics.add.collider(this.attaque_shoot, this.mobBDown, this.delock_shoot, null, this);
+        this.physics.add.collider(this.attaque_shoot, this.eau, this.delock_shoot, null, this);
 
         this.physics.add.collider(this.ronces, this.attaque_sword, this.destroyRonces, null, this);
         this.physics.add.collider(this.mobADown, this.attaque_sword, this.kill_mob, null, this);
@@ -382,6 +388,16 @@ class sceneHub extends Phaser.Scene {
         this.contenuPanneau1 = "Vers les Collines Fertiles";
         this.contenuPanneau2 = "Vers les Contrées Arrosées";
         this.contenuPanneau3 = "Vers la Grande Laitue";
+
+        this.dialogue1 = ["Un écriteau se situe", "sous la statue :"];
+        this.dialogue2 = ["Le Royaume Potager est protégé", "depuis toujours par les Gardiens."];
+        this.dialogue3 = ["Leur rapidité légendaire fut transmise", "de génération en génération."];
+        this.dialogue4 = ["Selon la tradition, on offre,", "5 graines pour nous porter chance."];
+        this.dialogue5 = ["Pressez E pour déposer 5 graines", "devant la statue."];
+
+        this.statueDialogue = [this.dialogue1, this.dialogue2, this.dialogue3, this.dialogue4, this.dialogue5]
+
+        this.texteOffrande = ["Les Gardiens passés vous inspirent.", "Vous vous sentez plus rapide."]
     }
 
     update() {
@@ -395,133 +411,203 @@ class sceneHub extends Phaser.Scene {
 
             if(this.cursors.up.isDown && this.cursors.right.isDown && this.cursors.left.isDown){ // HAUT && DROITE && GAUCHE
                 this.player.setVelocityY(-this.speed);
-                this.player.anims.play('walk_up', true);
+
+                if(this.carryGraine){
+                    this.player.anims.play('walk_up_carry', true);
+                }
+                else{this.player.anims.play('walk_up', true);}
+
                 this.player_facing = "up";
             }
 
             else if(this.cursors.down.isDown && this.cursors.right.isDown && this.cursors.left.isDown){ // BAS && DROITE && GAUCHE
                 this.player.setVelocityY(this.speed);
-                this.player.anims.play('walk_down', true);
-                this.player_facing = "up";
+                
+                if(this.carryGraine){
+                    this.player.anims.play('walk_down_carry', true);
+                }
+                else{this.player.anims.play('walk_down', true);}
+
+                this.player_facing = "down";
             }
 
             else if (this.cursors.up.isDown && this.cursors.right.isDown) { // HAUT && DROITE
                 this.player.setVelocityY(-this.speed);
                 this.player.setVelocityX(this.speed);
-                this.player.anims.play('walk_up', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_up_carry', true);
+                }
+                else{this.player.anims.play('walk_up', true);}
                 this.player_facing = "up";
             }
 
             else if (this.cursors.down.isDown && this.cursors.right.isDown) { // BAS && DROITE
                 this.player.setVelocityY(this.speed);
                 this.player.setVelocityX(this.speed);
-                this.player.anims.play('walk_down', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_down_carry', true);
+                }
+                else{this.player.anims.play('walk_down', true);}
                 this.player_facing = "down";
             }
 
             else if (this.cursors.up.isDown && this.cursors.left.isDown) { // HAUT && GAUCHE
                 this.player.setVelocityY(-this.speed);
                 this.player.setVelocityX(-this.speed);
-                this.player.anims.play('walk_up', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_up_carry', true);
+                }
+                else{this.player.anims.play('walk_up', true);}
                 this.player_facing = "up";
             }
 
             else if (this.cursors.down.isDown && this.cursors.left.isDown) { // BAS && DROITE
                 this.player.setVelocityY(this.speed);
                 this.player.setVelocityX(-this.speed);
-                this.player.anims.play('walk_down', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_down_carry', true);
+                }
+                else{this.player.anims.play('walk_down', true);}
                 this.player_facing = "down";
             }
 
             else if (this.cursors.right.isDown) { // DROITE
                 this.player.setVelocityX(this.speed);
-                this.player.anims.play('walk_right', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_right_carry', true);
+                }
+                else{this.player.anims.play('walk_right', true);}
                 this.player_facing = "right";
             }
 
             else if (this.cursors.left.isDown) { // GAUCHE
                 this.player.setVelocityX(-this.speed);
-                this.player.anims.play('walk_left', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_left_carry', true);
+                }
+                else{this.player.anims.play('walk_left', true);}
                 this.player_facing = "left";
             }
 
             else if (this.cursors.up.isDown) { // HAUT
                 this.player.setVelocityY(-this.speed);
-                this.player.anims.play('walk_up', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_up_carry', true);
+                }
+                else{this.player.anims.play('walk_up', true);}
                 this.player_facing = "up";
             }
 
             else if (this.cursors.down.isDown) { // BAS
                 this.player.setVelocityY(this.speed);
-                this.player.anims.play('walk_down', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_down_carry', true);
+                }
+                else{this.player.anims.play('walk_down', true);}
                 this.player_facing = "down";
             }
 
             else{
                 if(this.player_facing == "left"){
-                    this.player.anims.play('left', true);
+                    if(this.carryGraine){
+                        this.player.anims.play('left_carry', true);
+                    }
+                    else{this.player.anims.play('left', true);}
+
                 }
         
                 if(this.player_facing == "right"){
-                    this.player.anims.play('right', true);
+                    if(this.carryGraine){
+                        this.player.anims.play('right_carry', true);
+                    }
+                    else{this.player.anims.play('right', true);}
                 }
         
                 if(this.player_facing == "up"){
-                    this.player.anims.play('up', true);
+                    if(this.carryGraine){
+                        this.player.anims.play('up_carry', true);
+                    }
+                    else{this.player.anims.play('up', true);}
                 }
         
                 if(this.player_facing == "down"){
-                    this.player.anims.play('down', true);
+                    if(this.carryGraine){
+                        this.player.anims.play('down_carry', true);
+                    }
+                    else{this.player.anims.play('down', true);}
                 }
             }   
 
             //Attaque
-            if (this.cursors.space.isDown && this.attackCaCLoot == true) {
+            if (this.cursors.space.isDown && this.attackCaCLoot == true && !this.carryGraine) {
                 if (this.player_facing == "up") {
-                    this.attaque_sword.create(this.player.x, this.player.y - 32, "sword_y");
+                    this.player.anims.play('attack_up', true);
+                    this.attaque_sword.create(this.player.x, this.player.y - 32, "sword_y").setVisible(false);
                 }
                 else if (this.player_facing == "down") {
-                    this.attaque_sword.create(this.player.x, this.player.y + 32, "sword_y");
+                    this.player.anims.play('attack_down', true);
+                    this.attaque_sword.create(this.player.x, this.player.y + 32, "sword_y").setVisible(false);
                 }
                 else if (this.player_facing == "right") {
-                    this.attaque_sword.create(this.player.x + 32, this.player.y, "sword_x");
+                    this.player.anims.play('attack_right', true);
+                    this.attaque_sword.create(this.player.x + 32, this.player.y, "sword_x").setVisible(false);
                 }
                 else if (this.player_facing == "left") {
-                    this.attaque_sword.create(this.player.x - 32, this.player.y, "sword_x");
+                    this.player.anims.play('attack_left', true);
+                    this.attaque_sword.create(this.player.x - 32, this.player.y, "sword_x").setVisible(false);
                 }
                 this.player_block = true;
                 this.player.setVelocityX(0);
                 this.player.setVelocityY(0);
-                this.time.delayedCall(250, this.delock_attaque, [], this);
+                this.time.delayedCall(500, this.delock_attaque, [], this);
             }
 
             //tir
 
-            if (this.shiftKey.isDown && this.shoot_lock == false && this.attackDistanceLoot == true) {
+            if (this.shiftKey.isDown && this.shoot_lock == false && this.attackDistanceLoot == true && !this.carryGraine) {
                 if (this.player_facing == "up") {
-                    this.attaque_shoot.create(this.player.x, this.player.y - 32, "proj");
-                    this.attaque_shoot.setVelocityY(-500);
+                    this.player.anims.play('shoot_up');
+                    this.time.delayedCall(300, function () {
+                        this.attaque_shoot.create(this.player.x, this.player.y - 32, "proj");
+                        this.attaque_shoot.setVelocityY(-500);             
+                    }, [], this);
                 }
                 else if (this.player_facing == "down") {
-                    this.attaque_shoot.create(this.player.x, this.player.y + 32, "proj");
-                    this.attaque_shoot.setVelocityY(500);
+                    this.player.anims.play('shoot_down');
+                    this.time.delayedCall(300, function () {
+                        this.attaque_shoot.create(this.player.x, this.player.y + 32, "proj");  
+                        this.attaque_shoot.setVelocityY(500);                
+                    }, [], this);
                 }
                 else if (this.player_facing == "right") {
-                    this.attaque_shoot.create(this.player.x + 32, this.player.y, "proj");
-                    this.attaque_shoot.setVelocityX(500);
+                    this.player.anims.play('shoot_right');
+
+                    this.time.delayedCall(300, function () {
+                        this.attaque_shoot.create(this.player.x + 32, this.player.y, "proj");
+                        this.attaque_shoot.setVelocityX(500);              
+                    }, [], this);
+
                 }
                 else if (this.player_facing == "left") {
-                    this.attaque_shoot.create(this.player.x - 32, this.player.y, "proj");
-                    this.attaque_shoot.setVelocityX(-500);
+
+                    this.player.anims.play('shoot_left');
+
+                    this.time.delayedCall(300, function () {
+                        this.attaque_shoot.create(this.player.x - 32, this.player.y, "proj");
+                        this.attaque_shoot.setVelocityX(-500);     
+                    }, [], this);
+
+
                 }
 
                 this.bridge1Done = false;
                 this.bridge1_changeLook = true;
+
                 this.player_block = true;
                 this.shoot_lock = true;
                 this.player.setVelocityX(0);
                 this.player.setVelocityY(0);
-                this.time.delayedCall(250, this.delock_joueur, [], this);
+                this.time.delayedCall(500, this.delock_joueur, [], this);
             }
         }
 
@@ -1049,6 +1135,7 @@ class sceneHub extends Phaser.Scene {
         const distance1 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.panneau1.x, this.panneau1.y);
         const distance2 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.panneau2.x, this.panneau2.y);
         const distance3 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.panneau3.x, this.panneau3.y);
+        const distance4 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.buffHole.x, this.buffHole.y);       
         
         if (distance1 < 50) { // la distance de déclenchement du dialogue
             if (!this.dialogueBox.visible) { // affiche le dialogue si la boîte de dialogue n'est pas déjà visible
@@ -1066,6 +1153,27 @@ class sceneHub extends Phaser.Scene {
             if (!this.dialogueBox.visible) { // affiche le dialogue si la boîte de dialogue n'est pas déjà visible
                 this.dialogueBox.visible = true;
                 this.dialogueText.setText(this.contenuPanneau3);
+            }
+        }
+        else if (distance4 < 75){
+            if (!this.dialogueBox.visible) { // affiche le dialogue si la boîte de dialogue n'est pas déjà visible
+                this.dialogueBox.visible = true;
+                this.dialogueText.setText(this.statueDialogue[0]);
+                let temps = 3000;
+                
+                for (let step = 1; step < 5; step++){                
+                    this.time.delayedCall(temps, function () {
+                        this.dialogueText.setText(this.statueDialogue[step]);                    
+                }, [], this);
+                    temps += 5000
+                }
+            }
+            if(Phaser.Input.Keyboard.JustDown(this.EKey) && this.graineScore >= 5){
+                console.log("CHECK 2")
+                this.dialogueText.setText(this.texteOffrande);
+                this.speed += 25;
+                this.graineScore -= 5;
+                this.changementText();
             }
         }
          else {
@@ -1114,11 +1222,11 @@ class sceneHub extends Phaser.Scene {
 
             speed : this.speed,
             health : this.health,
-            //spawnX : 3296,
-            //spawnY : 4032
+            spawnX : 3296,
+            spawnY : 4032
 
-            spawnX : 1583,
-            spawnY : 1713
+            //spawnX : 2464,
+            //spawnY : 1480
         })
     }
 
@@ -1133,11 +1241,30 @@ class sceneHub extends Phaser.Scene {
 
             speed : this.speed,
             health : this.health,
-            spawnX : 880,
-            spawnY : 3008
+            spawnX : 48,
+            spawnY : 3040
     
-            //spawnX : 2384,
-            //spawnY : 2512
+            //spawnX : 1248,
+            //spawnY : 1248
+        })
+    }
+    
+    passageSceneDonjon() {
+        this.scene.start('sceneDonjon', {
+            graineScore : this.graineScore,
+
+            // Variables pour débloquer les mécaniques
+            attackCaCLoot : this.attackCaCLoot,
+            attackDistanceLoot : this.attackDistanceLoot,
+            volerLoot : this.volerLoot,
+
+            speed : this.speed,
+            health : this.health,
+            //spawnX : 48,
+            //spawnY : 3040
+    
+            spawnX : 1136,
+            spawnY : 2720
         })
     }
 }

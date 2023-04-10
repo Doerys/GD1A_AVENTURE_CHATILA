@@ -34,7 +34,7 @@ class sceneZone2 extends Phaser.Scene {
         this.carryGraine = false;
         this.flyingMod = false;
 
-        this.player_facing = "down"; // rotation du personnage standard
+        this.player_facing = "right"; // rotation du personnage standard
 
         // CHARGEMENT DE LA MAP
 
@@ -61,42 +61,90 @@ class sceneZone2 extends Phaser.Scene {
             this.grainesHaricot.add(this.graines_create);
         });
 
-        // LOOTS
+       // LOOTS
 
             //Soin
             this.heal = this.physics.add.group();
             this.heal_layer = this.map.getObjectLayer('heal_layer');
             this.heal_layer.objects.forEach(heal_layer => {
-                const Heal = this.heal.create(heal_layer.x + 16, heal_layer.y + 16, "heal");
+                this.healCreate = this.heal.create(heal_layer.x + 16, heal_layer.y + 16, "heal");
+                this.tweens.add({
+                    targets: this.healCreate,
+                    y: this.healCreate.y + 5,
+                    duration: 500,
+                    yoyo: true,
+                    delay: 50,
+                    repeat : -1
+                });     
             });
 
+            this.heal.add(this.healCreate);
             
             // Graines Scores
             this.money = this.physics.add.group();
             this.money_layer = this.map.getObjectLayer('money_layer');
             this.money_layer.objects.forEach(money_layer => {
-                const Monnaie = this.money.create(money_layer.x + 16, money_layer.y + 16, "grainesScore");
+                this.moneyCreate = this.money.create(money_layer.x + 16, money_layer.y + 16, "grainesScore");
+                this.tweens.add({
+                    targets: this.moneyCreate,
+                    y: this.moneyCreate.y + 5,
+                    duration: 500,
+                    yoyo: true,
+                    delay: 50,
+                    repeat : -1
+                });     
             });
+
+            this.money.add(this.moneyCreate);
+
+            // loot final - Serpe
+
+            this.loot_courge = this.physics.add.sprite(1216, 1248, "courge_loot");
+            this.tweens.add({
+                targets: this.loot_courge,
+                y: this.loot_courge.y + 5,
+                duration: 500,
+                yoyo: true,
+                delay: 50,
+                repeat : -1
+            });     
+            
 
         // Trous Graine Haricot
 
-        this.murHaricot1 = this.physics.add.staticSprite(1776, 2992);
+        this.murHaricot1 = this.physics.add.staticSprite(1296, 3024);
         this.murHaricot1.setSize(32, 32);
-        this.echelleHaricot1 = this.physics.add.staticSprite(1776, 3008, "echelle");
+        this.echelleHaricot1 = this.physics.add.staticSprite(1296, 3040, "echelle");
         this.echelleHaricot1.anims.play('falseEchelle');
 
         // Fleur de courge 
 
         this.bridge1Done = false;
-        this.holeSeed1 = this.physics.add.staticSprite(270, 818, 'box');
-        this.murBridge1 = this.physics.add.staticSprite(335, 818);
-        this.murBridge1.setSize(96, 32);
-        this.bridge1 = this.physics.add.staticSprite(335, 818, 'bridge');
-        this.bridge1.anims.play('falseBridge');
+        this.bridge1 = this.physics.add.staticSprite(976, 3328, 'bridgeDown');
+        this.bridge1.anims.play('falseBridgeDown');
+
+        this.murBridge1 = this.physics.add.staticSprite(976, 3328);
+        this.murBridge1.setSize(32, 58);
+
+
+        this.bridge2Done = false;
+        this.bridge2 = this.physics.add.staticSprite(880, 2496, 'bridgeDown');
+        this.bridge2.anims.play('falseBridgeDown');
+
+        this.murBridge2 = this.physics.add.staticSprite(880, 2496);
+        this.murBridge2.setSize(32, 58);
+
+
+        this.bridge3Done = false;
+        this.bridge3 = this.physics.add.staticSprite(960, 1232, 'bridgeLeft');
+        this.bridge3.anims.play('falseBridgeLeft');
+
+        this.murBridge3 = this.physics.add.staticSprite(944, 1232);
+        this.murBridge3.setSize(96, 96);
 
         // RONCES 
 
-        this.ronces = this.physics.add.staticGroup();
+        this.ronces = this.physics.add.staticGroup()
 
         this.ronces_layer = this.map.getObjectLayer('ronces_layer');
         this.ronces_layer.objects.forEach(ronces_layer => {
@@ -105,14 +153,11 @@ class sceneZone2 extends Phaser.Scene {
         });
 
         // PNJ
-        this.npc = this.physics.add.staticSprite(400, 1750, 'npc');
+        this.npc = this.physics.add.staticSprite(1216, 1248, 'npc').setVisible(false);
 
         //Création Attaques CaC et Distance
         this.attaque_sword = this.physics.add.staticGroup();
         this.attaque_shoot = this.physics.add.group();
-
-        // CALQUE DE TUILE "OBSTACLES" (placé dans le code après le joueur, pour qu'il puisse se déplacer derrière)
-        this.obstacles = this.map.createLayer('obstacle_layer', this.tileset);
 
         // CALQUES OBJETS
 
@@ -124,7 +169,9 @@ class sceneZone2 extends Phaser.Scene {
         this.mobADown_layer = this.map.getObjectLayer('mobADown_layer');
         this.mobADown_layer.objects.forEach(mobADown_layer => {
             this.mobADown_create = this.physics.add.sprite(mobADown_layer.x + 16, mobADown_layer.y + 16, 'mobA');
-            this.mobADown_create.anims.play('down_mob');
+            this.mobADown_create.setSize(32, 32);
+            this.mobADown_create.setOffset(0, 0);
+            this.mobADown_create.anims.play('mobAanim');
             this.mobADown.add(this.mobADown_create);
         });
         this.mobADown.setVelocityY(100);
@@ -136,7 +183,9 @@ class sceneZone2 extends Phaser.Scene {
         this.mobAUp_layer = this.map.getObjectLayer('mobAUp_layer');
         this.mobAUp_layer.objects.forEach(mobAUp_layer => {
             this.mobAUp_create = this.physics.add.sprite(mobAUp_layer.x + 16, mobAUp_layer.y + 16, 'mobA');
-            this.mobAUp_create.anims.play('up_mob');
+            this.mobAUp_create.setSize(32, 32);
+            this.mobAUp_create.setOffset(0, 0);
+            this.mobAUp_create.anims.play('mobAanim');
             this.mobAUp.add(this.mobAUp_create);
         });
         this.mobAUp.setVelocityY(-100);
@@ -150,6 +199,7 @@ class sceneZone2 extends Phaser.Scene {
         this.mobBDown_layer = this.map.getObjectLayer('mobBDown_layer');
         this.mobBDown_layer.objects.forEach(mobBDown_layer => {
             this.mobBDown_create = this.physics.add.staticSprite(mobBDown_layer.x + 16, mobBDown_layer.y + 16, 'mobB');
+            this.mobBDown_create.anims.play('mobBDownanim');
             this.mobBDown.add(this.mobBDown_create);
         });
 
@@ -161,6 +211,7 @@ class sceneZone2 extends Phaser.Scene {
         this.mobBRight_layer = this.map.getObjectLayer('mobBRight_layer');
         this.mobBRight_layer.objects.forEach(mobBRight_layer => {
             this.mobBRight_create = this.physics.add.staticSprite(mobBRight_layer.x + 16, mobBRight_layer.y + 16, 'mobB');
+            this.mobBRight_create.anims.play('mobBRightanim');
             this.mobBRight.add(this.mobBRight_create);
         });
 
@@ -171,6 +222,7 @@ class sceneZone2 extends Phaser.Scene {
         this.mobBLeft_layer = this.map.getObjectLayer('mobBLeft_layer');
         this.mobBLeft_layer.objects.forEach(mobBLeft_layer => {
             this.mobBLeft_create = this.physics.add.staticSprite(mobBLeft_layer.x + 16, mobBLeft_layer.y + 16, 'mobB');
+            this.mobBLeft_create.anims.play('mobBLeftanim');
             this.mobBLeft.add(this.mobBLeft_create);
         });
 
@@ -184,6 +236,7 @@ class sceneZone2 extends Phaser.Scene {
         this.mobC_layer = this.map.getObjectLayer('mobC_layer');
         this.mobC_layer.objects.forEach(mobC_layer => {
             this.mobC_create = this.physics.add.sprite(mobC_layer.x + 16, mobC_layer.y + 16, 'mobC');
+            this.mobC_create.setSize(20, 32);
             this.mobC_create.anims.play('mobC_anims');
             this.mobC.add(this.mobC_create);
         });
@@ -223,10 +276,22 @@ class sceneZone2 extends Phaser.Scene {
         this.player.setSize(25, 30);
         this.player.setOffset(19, 23);
 
+        // CALQUE DE TUILE "OBSTACLES" (placé dans le code après le joueur, pour qu'il puisse se déplacer derrière)
+        this.obstacles = this.map.createLayer('obstacle_layer', this.tileset);
+        this.obstacles2 = this.map.createLayer('obstacle2_layer', this.tileset);
+        this.obstacles3 = this.map.createLayer('obstacle3_layer', this.tileset);
+
+        // Passage scene HUB
+        this.sceneSuivante = this.physics.add.staticGroup();
+        this.sceneSuivante.create(16, 3040, "passage1x4");
+
+        this.sceneSecrete = this.physics.add.staticGroup();
+        this.sceneSecrete.create(16, 752, "passage1x3");
+
         // CAMERA et LIMITES DU MONDE
-        //this.physics.world.setBounds(0, 0, 2496, 2496);
-        //this.cameras.main.setBounds(0, 32, 2496, 2496);
-        //this.cameras.main.setSize(683, 384)  ; //format 16/9
+        this.physics.world.setBounds(0, 0, 3072, 4096);
+        this.cameras.main.setBounds(32, 0, 3040, 4096);
+        this.cameras.main.setSize(683, 384)  ; //format 16/9
         this.cameras.main.startFollow(this.player);
         //player.setCollideWorldBounds(true); (bloque le joueur, NE PAS ACTIVER)
 
@@ -257,6 +322,8 @@ class sceneZone2 extends Phaser.Scene {
         this.murs.setCollisionByProperty({ estSolide: true });
         this.eau.setCollisionByProperty({ estLiquide: true });
         this.obstacles.setCollisionByProperty({ estSolide: true });
+        this.obstacles2.setCollisionByProperty({ estSolide: true });
+        this.obstacles3.setCollisionByProperty({ estSolide: true });
 
         // Pattern déplacement mob A
         this.switchRight_Layer.setCollisionByProperty({ estSolide: true });
@@ -268,11 +335,14 @@ class sceneZone2 extends Phaser.Scene {
 
         // Passage scène hub
         this.physics.add.overlap(this.player, this.sceneSuivante, this.passageScene, null, this);
+        this.physics.add.overlap(this.player, this.sceneSecrete, this.passageSceneSecrete, null, this);
 
         // Joueur - Environnement
         this.collisionMur = this.physics.add.collider(this.player, this.murs);
         this.collisionEau = this.physics.add.collider(this.player, this.eau);
         this.collisionObstacles = this.physics.add.collider(this.player, this.obstacles);
+        this.physics.add.collider(this.player, this.obstacles2);
+        this.physics.add.collider(this.player, this.obstacles3);
         this.physics.add.overlap(this.player, this.grainesHaricot, this.grabGraine, null, this);
 
         this.physics.add.overlap(this.player, this.passageVol, this.sautVide, null, this);
@@ -283,6 +353,8 @@ class sceneZone2 extends Phaser.Scene {
         // Joueur - Ennemi (perte de vie)
         this.physics.add.overlap(this.player, this.mobC, this.perteVieMobC, null, this);
         this.physics.add.collider(this.player, this.mobBDown);
+        this.physics.add.collider(this.player, this.mobBRight);
+        this.physics.add.collider(this.player, this.mobBLeft);
         this.physics.add.overlap(this.player, this.mobADown, this.perteVieMobA, null, this);
         this.physics.add.overlap(this.player, this.mobAUp, this.perteVieMobA, null, this);
         this.physics.add.collider(this.player, this.ronces);
@@ -299,12 +371,14 @@ class sceneZone2 extends Phaser.Scene {
 
         this.physics.add.overlap(this.player, this.money, this.collectLoot, null, this);
         this.physics.add.overlap(this.player, this.heal, this.collectHeal, null, this);
+        this.physics.add.overlap(this.player, this.loot_courge, this.collectCourge, null, this);
 
         // Joueur attaques - CaC et distance
         this.physics.add.overlap(this.attaque_sword, this.murs, this.clean_sword, this.if_clean_sword, this);
         this.physics.add.collider(this.attaque_shoot, this.murs, this.delock_shoot, null, this);
         this.physics.add.collider(this.attaque_shoot, this.obstacles, this.delock_shoot, null, this);
         this.physics.add.collider(this.attaque_shoot, this.mobBDown, this.delock_shoot, null, this);
+        this.physics.add.collider(this.attaque_shoot, this.eau, this.delock_shoot, null, this);
 
         this.physics.add.collider(this.ronces, this.attaque_sword, this.destroyRonces, null, this);
         this.physics.add.collider(this.mobADown, this.attaque_sword, this.kill_mob, null, this);
@@ -332,7 +406,11 @@ class sceneZone2 extends Phaser.Scene {
         
         //Trou à graine courge
         this.physics.add.collider(this.player, this.murBridge1);
-        this.physics.add.collider(this.holeSeed1, this.attaque_shoot, this.createBridge, null, this);
+        this.physics.add.collider(this.player, this.murBridge2);
+        this.physics.add.collider(this.player, this.murBridge3);
+        this.physics.add.collider(this.bridge1, this.attaque_shoot, this.createBridge1, null, this);
+        this.physics.add.collider(this.bridge2, this.attaque_shoot, this.createBridge2, null, this);
+        this.physics.add.collider(this.bridge3, this.attaque_shoot, this.createBridge3, null, this);
 
         // Trou à graine haricot
         this.physics.add.collider(this.player, this.murHaricot1);
@@ -349,13 +427,12 @@ class sceneZone2 extends Phaser.Scene {
         this.dialogueText = this.add.text(270, 310, '', { font: '12px Arial', fill: '#ffffff', align: 'justify' }).setScrollFactor(0); // place + style du texte
         this.dialogueText.setWordWrapWidth(600);
 
-        this.dialogue1 = ["Pirlouit ! Te voilà enfin !", "J'ai de tristes nouvelles !"];
-        this.dialogue2 = ["Pendant ton absence, le", "Royaume Potager a été corrompu !"];
-        this.dialogue3 = ["Des habitants sont transformés", "en monstres aggressifs."];
-        this.dialogue4 = ["La corruption semble provenir", "de la Grande Laitue."];
-        this.dialogue5 = ["Pars, noble Gardien du Potager.", "Sauve le Royaume !"];
+        this.dialogue1 = ["Bravo ! Tu viens de", "récupérer la graine de courge !"];
+        this.dialogue2 = ["Appuie sur SHIFT pour", "projeter ta graine."];
+        this.dialogue3 = ["N'oublie pas : les graines", "sont faîtes pour germer."];
+        this.dialogue4 = ["Nul doute que la tienne", "fera pousser des merveilles !"];
         
-        this.dialogues = [this.dialogue1, this.dialogue2, this.dialogue3, this.dialogue4, this.dialogue5]
+        this.texteLoot = [this.dialogue1, this.dialogue2, this.dialogue3, this.dialogue4];
     }
 
     update() {
@@ -369,131 +446,207 @@ class sceneZone2 extends Phaser.Scene {
 
             if(this.cursors.up.isDown && this.cursors.right.isDown && this.cursors.left.isDown){ // HAUT && DROITE && GAUCHE
                 this.player.setVelocityY(-this.speed);
-                this.player.anims.play('walk_up', true);
+
+                if(this.carryGraine){
+                    this.player.anims.play('walk_up_carry', true);
+                }
+                else{this.player.anims.play('walk_up', true);}
+
                 this.player_facing = "up";
             }
 
             else if(this.cursors.down.isDown && this.cursors.right.isDown && this.cursors.left.isDown){ // BAS && DROITE && GAUCHE
                 this.player.setVelocityY(this.speed);
-                this.player.anims.play('walk_down', true);
-                this.player_facing = "up";
+                
+                if(this.carryGraine){
+                    this.player.anims.play('walk_down_carry', true);
+                }
+                else{this.player.anims.play('walk_down', true);}
+
+                this.player_facing = "down";
             }
 
             else if (this.cursors.up.isDown && this.cursors.right.isDown) { // HAUT && DROITE
                 this.player.setVelocityY(-this.speed);
                 this.player.setVelocityX(this.speed);
-                this.player.anims.play('walk_up', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_up_carry', true);
+                }
+                else{this.player.anims.play('walk_up', true);}
                 this.player_facing = "up";
             }
 
             else if (this.cursors.down.isDown && this.cursors.right.isDown) { // BAS && DROITE
                 this.player.setVelocityY(this.speed);
                 this.player.setVelocityX(this.speed);
-                this.player.anims.play('walk_down', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_down_carry', true);
+                }
+                else{this.player.anims.play('walk_down', true);}
                 this.player_facing = "down";
             }
 
             else if (this.cursors.up.isDown && this.cursors.left.isDown) { // HAUT && GAUCHE
                 this.player.setVelocityY(-this.speed);
                 this.player.setVelocityX(-this.speed);
-                this.player.anims.play('walk_up', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_up_carry', true);
+                }
+                else{this.player.anims.play('walk_up', true);}
                 this.player_facing = "up";
             }
 
             else if (this.cursors.down.isDown && this.cursors.left.isDown) { // BAS && DROITE
                 this.player.setVelocityY(this.speed);
                 this.player.setVelocityX(-this.speed);
-                this.player.anims.play('walk_down', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_down_carry', true);
+                }
+                else{this.player.anims.play('walk_down', true);}
                 this.player_facing = "down";
             }
 
             else if (this.cursors.right.isDown) { // DROITE
                 this.player.setVelocityX(this.speed);
-                this.player.anims.play('walk_right', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_right_carry', true);
+                }
+                else{this.player.anims.play('walk_right', true);}
                 this.player_facing = "right";
             }
 
             else if (this.cursors.left.isDown) { // GAUCHE
                 this.player.setVelocityX(-this.speed);
-                this.player.anims.play('walk_left', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_left_carry', true);
+                }
+                else{this.player.anims.play('walk_left', true);}
                 this.player_facing = "left";
             }
 
             else if (this.cursors.up.isDown) { // HAUT
                 this.player.setVelocityY(-this.speed);
-                this.player.anims.play('walk_up', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_up_carry', true);
+                }
+                else{this.player.anims.play('walk_up', true);}
                 this.player_facing = "up";
             }
 
             else if (this.cursors.down.isDown) { // BAS
                 this.player.setVelocityY(this.speed);
-                this.player.anims.play('walk_down', true);
+                if(this.carryGraine){
+                    this.player.anims.play('walk_down_carry', true);
+                }
+                else{this.player.anims.play('walk_down', true);}
                 this.player_facing = "down";
             }
 
             else{
                 if(this.player_facing == "left"){
-                    this.player.anims.play('left', true);
+                    if(this.carryGraine){
+                        this.player.anims.play('left_carry', true);
+                    }
+                    else{this.player.anims.play('left', true);}
+
                 }
         
                 if(this.player_facing == "right"){
-                    this.player.anims.play('right', true);
+                    if(this.carryGraine){
+                        this.player.anims.play('right_carry', true);
+                    }
+                    else{this.player.anims.play('right', true);}
                 }
         
                 if(this.player_facing == "up"){
-                    this.player.anims.play('up', true);
+                    if(this.carryGraine){
+                        this.player.anims.play('up_carry', true);
+                    }
+                    else{this.player.anims.play('up', true);}
                 }
         
                 if(this.player_facing == "down"){
-                    this.player.anims.play('down', true);
+                    if(this.carryGraine){
+                        this.player.anims.play('down_carry', true);
+                    }
+                    else{this.player.anims.play('down', true);}
                 }
             }   
 
             //Attaque
-            if (this.cursors.space.isDown && this.attackCaCLoot == true) {
+            if (this.cursors.space.isDown && this.attackCaCLoot == true && !this.carryGraine) {
                 if (this.player_facing == "up") {
-                    this.attaque_sword.create(this.player.x, this.player.y - 32, "sword_y");
+                    this.player.anims.play('attack_up', true);
+                    this.attaque_sword.create(this.player.x, this.player.y - 32, "sword_y").setVisible(false);
                 }
                 else if (this.player_facing == "down") {
-                    this.attaque_sword.create(this.player.x, this.player.y + 32, "sword_y");
+                    this.player.anims.play('attack_down', true);
+                    this.attaque_sword.create(this.player.x, this.player.y + 32, "sword_y").setVisible(false);
                 }
                 else if (this.player_facing == "right") {
-                    this.attaque_sword.create(this.player.x + 32, this.player.y, "sword_x");
+                    this.player.anims.play('attack_right', true);
+                    this.attaque_sword.create(this.player.x + 32, this.player.y, "sword_x").setVisible(false);
                 }
                 else if (this.player_facing == "left") {
-                    this.attaque_sword.create(this.player.x - 32, this.player.y, "sword_x");
+                    this.player.anims.play('attack_left', true);
+                    this.attaque_sword.create(this.player.x - 32, this.player.y, "sword_x").setVisible(false);
                 }
                 this.player_block = true;
                 this.player.setVelocityX(0);
                 this.player.setVelocityY(0);
-                this.time.delayedCall(250, this.delock_attaque, [], this);
+                this.time.delayedCall(500, this.delock_attaque, [], this);
             }
 
             //tir
 
-            if (this.shiftKey.isDown && this.shoot_lock == false && this.attackDistanceLoot == true) {
+            if (this.shiftKey.isDown && this.shoot_lock == false && this.attackDistanceLoot == true && !this.carryGraine) {
                 if (this.player_facing == "up") {
-                    this.attaque_shoot.create(this.player.x, this.player.y - 32, "proj");
-                    this.attaque_shoot.setVelocityY(-500);
+                    this.player.anims.play('shoot_up');
+                    this.time.delayedCall(300, function () {
+                        this.attaque_shoot.create(this.player.x, this.player.y - 32, "proj");
+                        this.attaque_shoot.setVelocityY(-500);             
+                    }, [], this);
                 }
                 else if (this.player_facing == "down") {
-                    this.attaque_shoot.create(this.player.x, this.player.y + 32, "proj");
-                    this.attaque_shoot.setVelocityY(500);
+                    this.player.anims.play('shoot_down');
+                    this.time.delayedCall(300, function () {
+                        this.attaque_shoot.create(this.player.x, this.player.y + 32, "proj");  
+                        this.attaque_shoot.setVelocityY(500);                
+                    }, [], this);
                 }
                 else if (this.player_facing == "right") {
-                    this.attaque_shoot.create(this.player.x + 32, this.player.y, "proj");
-                    this.attaque_shoot.setVelocityX(500);
+                    this.player.anims.play('shoot_right');
+
+                    this.time.delayedCall(300, function () {
+                        this.attaque_shoot.create(this.player.x + 32, this.player.y, "proj");
+                        this.attaque_shoot.setVelocityX(500);              
+                    }, [], this);
+
                 }
                 else if (this.player_facing == "left") {
-                    this.attaque_shoot.create(this.player.x - 32, this.player.y, "proj");
-                    this.attaque_shoot.setVelocityX(-500);
+
+                    this.player.anims.play('shoot_left');
+
+                    this.time.delayedCall(300, function () {
+                        this.attaque_shoot.create(this.player.x - 32, this.player.y, "proj");
+                        this.attaque_shoot.setVelocityX(-500);     
+                    }, [], this);
+
+
                 }
                 this.bridge1Done = false;
+                this.bridge2Done = false;
+                this.bridge3Done = false;
+                
+                this.bridge1_changeLook = true;
+                this.bridge2_changeLook = true;
+                this.bridge3_changeLook = true;
+
                 this.player_block = true;
                 this.shoot_lock = true;
                 this.player.setVelocityX(0);
                 this.player.setVelocityY(0);
-                this.time.delayedCall(250, this.delock_joueur, [], this);
+                this.time.delayedCall(500, this.delock_joueur, [], this);
             }
         }
 
@@ -505,7 +658,7 @@ class sceneZone2 extends Phaser.Scene {
         this.gestionUI();
         this.checkLoot();
         
-        this.checkSpeak();
+        this.textLootCourge();
     }
 
     // FONCTIONS COMPORTEMENTS MOBS
@@ -514,25 +667,25 @@ class sceneZone2 extends Phaser.Scene {
         mob_switch_right(mobA) {
             mobA.setVelocityX(150);
             mobA.setVelocityY(0);
-            mobA.anims.play('right_mob')
+            //mobA.anims.play('right_mob')
         }
     
         mob_switch_left(mobA) {
             mobA.setVelocityX(-150);
             mobA.setVelocityY(0);
-            mobA.anims.play('left_mob')
+            //mobA.anims.play('left_mob')
         }
     
         mob_switch_up(mobA) {
             mobA.setVelocityX(0);
             mobA.setVelocityY(-150);
-            mobA.anims.play('up_mob')
+            //mobA.anims.play('up_mob')
         }
     
         mob_switch_down(mobA) {
             mobA.setVelocityX(0);
             mobA.setVelocityY(150);
-            mobA.anims.play('down_mob')
+            //mobA.anims.play('down_mob')
         }
 
         // Gestion crachat des mobs B
@@ -550,6 +703,7 @@ class sceneZone2 extends Phaser.Scene {
             }
     
             if (this.ableSpitMobBLeft) {
+                console.log("FEU !")
                 this.mobBLeft.children.each(mobBLeft => {
                     this.attaquemobBLeft_create = this.physics.add.sprite(mobBLeft.x - 16, mobBLeft.y, 'projmobB');
                     this.attaquemobBRight.add(this.attaquemobBLeft_create);
@@ -760,10 +914,29 @@ class sceneZone2 extends Phaser.Scene {
         this.loot = Math.floor(Math.random() * (4 - 1)) + 1;
         console.log(this.loot);
         if (this.loot == 1) {
-            this.heal.create(mob.x, mob.y, "heal");
+            this.healCreate = this.physics.add.sprite(mob.x, mob.y, 'heal');
+            this.tweens.add({
+                targets: this.healCreate,
+                y: this.healCreate.y + 5,
+                duration: 500,
+                yoyo: true,
+                delay: 50,
+                repeat : -1
+            });     
+            this.heal.add(this.healCreate);
         }
         else if (this.loot == 2) {
-            this.money.create(mob.x, mob.y, "grainesScore");
+
+            this.moneyCreate = this.physics.add.sprite(mob.x, mob.y, 'grainesScore');
+            this.tweens.add({
+                targets: this.moneyCreate,
+                y: this.moneyCreate.y + 5,
+                duration: 500,
+                yoyo: true,
+                delay: 50,
+                repeat : -1
+            });     
+            this.money.add(this.moneyCreate);
         }
     }
 
@@ -897,6 +1070,35 @@ class sceneZone2 extends Phaser.Scene {
         this.health ++;}
     }
 
+    collectCourge(player, courge){
+        courge.destroy(courge.x, courge.y);
+        this.attackDistanceLoot = true;
+        this.textLootCourge();
+    }
+
+    textLootCourge(){
+
+        const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc.x, this.npc.y);
+        if (distance < 50) { // la distance de déclenchement du dialogue
+            console.log("CHECK réponse pnj")
+            if (!this.dialogueBox.visible && this.attackDistanceLoot) { // affiche le dialogue si la boîte de dialogue n'est pas déjà visible
+                this.dialogueBox.visible = true;
+                this.dialogueText.setText(this.texteLoot[0]);
+                let temps = 3000;
+                
+                for (let step = 1; step < 5; step++){                
+                    this.time.delayedCall(temps, function () {
+                        this.dialogueText.setText(this.texteLoot[step]);                    
+                }, [], this);
+                    temps += 5000
+                }
+            }
+        } else {
+            this.dialogueBox.visible = false;
+            this.dialogueText.setText('');
+        }
+    }
+
     // récupération du loot
     collectLoot(player, loot){
         loot.destroy(loot.x, loot.y); // détruit l'esprit collecté
@@ -926,25 +1128,117 @@ class sceneZone2 extends Phaser.Scene {
     // PONTS COURGES
 
     // valide la création du pont si graine de courge détecté
-    createBridge(trou, graine) {
+    createBridge1(trou, graine) {
         console.log("création pont");
         graine.disableBody(true, true);
+
         this.shoot_lock = false;
+
+        this.bridge1_changeLook = true;
+        this.bridge2_changeLook = true;
+        this.bridge3_changeLook = true;
+
         this.bridge1Done = true;
+
+        this.bridge1Active = true;
+    }
+
+    createBridge2(trou, graine) {
+        console.log("création pont");
+        graine.disableBody(true, true);
+
+        this.shoot_lock = false;
+
+        this.bridge1_changeLook = true;
+        this.bridge2_changeLook = true;
+        this.bridge3_changeLook = true;
+
+        this.bridge2Done = true;
+
+        this.bridge2Active = true;
+    }
+
+    createBridge3(trou, graine) {
+        console.log("création pont");
+        graine.disableBody(true, true);
+
+        this.shoot_lock = false;
+
+        this.bridge1_changeLook = true;
+        this.bridge2_changeLook = true;
+        this.bridge3_changeLook = true;
+
+        this.bridge3Done = true;
+
+        this.bridge3Active = true;
     }
 
     // affiche un pont si graine de courge plantée, et enlève le mur invisible qui bloque
     stateBridge() {
+
+        // BRIDGE 1
+        //changement d'apparence
+        if (this.bridge1_changeLook == true){
+            if(this.bridge1Done == true){
+                this.bridge1.anims.play('trueBridgeDown');
+            }
+            if (this.bridge1Done == false && this.bridge1Active == true){
+                this.bridge1.anims.play('falseBridgeDown');
+                this.bridge1Active = false;
+            }
+            this.bridge1_changeLook = false;
+        
+            // retrait ou ajout du mur invisible
+
         if (this.bridge1Done == true) {
-            this.bridge1.anims.play('trueBridge');
             this.murBridge1.disableBody(true, true);
         }
         if (this.bridge1Done == false) {
-            this.bridge1.anims.play('falseBridge');
             this.murBridge1.enableBody();
         }
-    }
+        }
 
+        // BRIDGE 2
+        
+        if (this.bridge2_changeLook == true){
+            if(this.bridge2Done == true){
+                this.bridge2.anims.play('trueBridgeDown');
+            }
+            if (this.bridge2Done == false && this.bridge2Active == true){
+                this.bridge2.anims.play('falseBridgeDown');
+                this.bridge2Active = false;
+            }
+            this.bridge2_changeLook = false;
+
+            if (this.bridge2Done == true) {
+                this.murBridge2.disableBody(true, true);
+            }
+            if (this.bridge2Done == false) {
+                this.murBridge2.enableBody();
+            }
+        }
+
+        // BRIDGE 3
+
+        if (this.bridge3_changeLook == true){
+            if(this.bridge3Done == true){
+                this.bridge3.anims.play('trueBridgeLeft');
+            }
+            if (this.bridge3Done == false && this.bridge3Active == true){
+                console.log("CHECK PONT ENLEVE TOI")
+                this.bridge3.anims.play('falseBridgeLeft');
+                this.bridge3Active = false;
+            }
+            this.bridge3_changeLook = false;
+
+            if (this.bridge3Done == true) {
+                this.murBridge3.disableBody(true, true);
+            }
+            if (this.bridge3Done == false) {
+                this.murBridge3.enableBody();
+            }
+        }
+    }
     // ECHELLES HARICOTS
 
     // affiche une échelle si graine de haricot plantée, et enlève le mur invisible qui bloque
@@ -967,7 +1261,7 @@ class sceneZone2 extends Phaser.Scene {
 
     putGraine(){
         if(Phaser.Input.Keyboard.JustDown(this.FKey) && this.carryGraine == true){
-            this.graines_create = this.physics.add.staticSprite(this.player.x, this.player.y, 'box');
+            this.graines_create = this.physics.add.staticSprite(this.player.x, this.player.y+16, 'box');
             this.grainesHaricot.add(this.graines_create);
             this.carryGraine = false;
             this.speed = 175;
@@ -997,26 +1291,38 @@ class sceneZone2 extends Phaser.Scene {
         }
     }
 
-    // DIALOGUES
+    //Passage scène suivante
+    passageScene() {
+        this.scene.start('sceneHub', {
+            graineScore : this.graineScore,
 
-    checkSpeak() {
-        const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc.x, this.npc.y);
-        if (distance < 50) { // la distance de déclenchement du dialogue
-            if (!this.dialogueBox.visible) { // affiche le dialogue si la boîte de dialogue n'est pas déjà visible
-                this.dialogueBox.visible = true;
-                this.dialogueText.setText(this.dialogues[0]);
-                let temps = 3000;
-                
-                for (let step = 1; step < 5; step++){                
-                    this.time.delayedCall(temps, function () {
-                        this.dialogueText.setText(this.dialogues[step]);                    
-                }, [], this);
-                    temps += 5000
-                }
-            }
-        } else {
-            this.dialogueBox.visible = false;
-            this.dialogueText.setText('');
-        }
+            // Variables pour débloquer les mécaniques
+            attackCaCLoot : this.attackCaCLoot,
+            attackDistanceLoot : this.attackDistanceLoot,
+            volerLoot : this.volerLoot,
+
+            speed : this.speed,
+            health : this.health,
+            spawnX : 1136,
+            spawnY : 1088
+        })
     }
+
+    //Passage scène suivante
+    passageSceneSecrete() {
+        this.scene.start('sceneSecrete', {
+            graineScore : this.graineScore,
+
+            // Variables pour débloquer les mécaniques
+            attackCaCLoot : this.attackCaCLoot,
+            attackDistanceLoot : this.attackDistanceLoot,
+            volerLoot : this.volerLoot,
+
+            speed : this.speed,
+            health : this.health,
+            spawnX : 1104,
+            spawnY : 432
+        })
+    }
+    
 }

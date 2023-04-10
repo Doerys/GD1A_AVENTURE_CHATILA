@@ -12,6 +12,7 @@ class mainScreen extends Phaser.Scene {
 
         // PNJ
         this.load.image('npc', 'assets/pnj.png');
+        this.load.image('npc2', 'assets/pnj2.png');
 
         // Mob A (32 x 32)
         this.load.spritesheet('mobA', 'assets/mobA.png',
@@ -27,12 +28,27 @@ class mainScreen extends Phaser.Scene {
         this.load.spritesheet('mobC', 'assets/mobC.png',
             { frameWidth: 32, frameHeight: 32});
 
+        this.load.spritesheet('mobC2', 'assets/mobC2.png',
+        { frameWidth: 32, frameHeight: 32});
+
+
         // Echelle haricot (32 x 96)
         this.load.spritesheet('echelle', 'assets/haricot.png',
             { frameWidth: 32, frameHeight: 64 });
 
+        // Ponts courges
+
         this.load.spritesheet('bridge', 'assets/pont.png',
             { frameWidth: 32, frameHeight: 128 });
+
+        this.load.spritesheet('bridgeDown', 'assets/pont_down.png',
+            { frameWidth: 32, frameHeight: 128 });
+
+        this.load.spritesheet('bridgeLeft', 'assets/pont_left.png',
+            { frameWidth: 128, frameHeight: 32 });    
+
+        this.load.spritesheet('bridgeRight', 'assets/pont_right.png',
+            { frameWidth: 128, frameHeight: 32 });    
 
         // TILED 
 
@@ -42,6 +58,8 @@ class mainScreen extends Phaser.Scene {
         this.load.tilemapTiledJSON('map_hub', 'assets/Tiled/map_hub.json')
         this.load.tilemapTiledJSON('map_zone1', 'assets/Tiled/map_part1.json')
         this.load.tilemapTiledJSON('map_zone2', 'assets/Tiled/map_part2.json')
+        this.load.tilemapTiledJSON('map_secrete', 'assets/Tiled/map_secret.json')
+        this.load.tilemapTiledJSON('map_donjon', 'assets/Tiled/map_donjon.json')
 
         // IMAGES
         this.load.image('mainScreen', 'assets/Ecran_accueil.png');
@@ -52,12 +70,17 @@ class mainScreen extends Phaser.Scene {
 
         this.load.image('panneauG', 'assets/panel_left.png');
         this.load.image('panneauD', 'assets/panel_right.png');
+        this.load.image('statue', 'assets/statue.png');
 
         this.load.image('buff', 'assets/buff.png');
 
         // LOOT
         this.load.image("grainesScore", "assets/loot.png");
         this.load.image("heal", "assets/heal.png");
+
+        this.load.image("courge_loot", "assets/graine_courge_loot.png");
+        this.load.image("serpe_loot", "assets/serpe_loot.png");
+        this.load.image("salade_loot", "assets/salade_loot.png");
 
         //Attaque serpe
         this.load.image("sword_y", "assets/attaque_joueur_y.png");
@@ -257,6 +280,27 @@ class mainScreen extends Phaser.Scene {
             repeat : -1
         });
 
+        this.anims.create({
+            key: 'fly_down',
+            frames: this.anims.generateFrameNumbers('player', {start:96,end:99}),
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: 'fly_up',
+            frames: this.anims.generateFrameNumbers('player', {start:100,end:103}),
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: 'fly_right',
+            frames: this.anims.generateFrameNumbers('player', {start:104,end:107}),
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: 'fly_left',
+            frames: this.anims.generateFrameNumbers('player', {start:108,end:111}),
+            frameRate: 10,
+        });
+
         // animation pont
 
         this.anims.create({
@@ -268,6 +312,42 @@ class mainScreen extends Phaser.Scene {
             key: 'falseBridge',
             //frames: [{ key: 'bridge', frame: 0 }],
             frames: this.anims.generateFrameNumbers('bridge', {start:5,end:10}),
+            frameRate: 5,
+        });
+
+        this.anims.create({
+            key: 'trueBridgeDown',
+            frames: this.anims.generateFrameNumbers('bridgeDown', {start:1,end:5}),
+            frameRate: 5,
+        });
+        this.anims.create({
+            key: 'falseBridgeDown',
+            //frames: [{ key: 'bridge', frame: 0 }],
+            frames: this.anims.generateFrameNumbers('bridgeDown', {start:5,end:10}),
+            frameRate: 5,
+        });
+
+        this.anims.create({
+            key: 'trueBridgeRight',
+            frames: this.anims.generateFrameNumbers('bridgeRight', {start:1,end:5}),
+            frameRate: 5,
+        });
+        this.anims.create({
+            key: 'falseBridgeRight',
+            //frames: [{ key: 'bridge', frame: 0 }],
+            frames: this.anims.generateFrameNumbers('bridgeRight', {start:5,end:10}),
+            frameRate: 5,
+        });
+
+        this.anims.create({
+            key: 'trueBridgeLeft',
+            frames: this.anims.generateFrameNumbers('bridgeLeft', {start:1,end:5}),
+            frameRate: 5,
+        });
+        this.anims.create({
+            key: 'falseBridgeLeft',
+            //frames: [{ key: 'bridge', frame: 0 }],
+            frames: this.anims.generateFrameNumbers('bridgeLeft', {start:5,end:10}),
             frameRate: 5,
         });
 
@@ -303,6 +383,14 @@ class mainScreen extends Phaser.Scene {
             frameRate: 4,
             repeat : -1
         });
+
+        this.anims.create({
+            key: 'mobBDownanim',
+            frames: this.anims.generateFrameNumbers('mobB', {start:8,end:11}),
+            frameRate: 4,
+            repeat : -1
+        });
+
         /*this.anims.create({
             key: 'up_mob',
             frames: [{ key: 'mobA', frame: 0 }],
@@ -328,6 +416,13 @@ class mainScreen extends Phaser.Scene {
             repeat: -1
         });
 
+        this.anims.create({
+            key: 'mobC2_anims',
+            frames: this.anims.generateFrameNumbers('mobC2', {start:0,end:19}),
+            frameRate: 5,
+            repeat: -1
+        });
+
     }
 
     update() {
@@ -348,22 +443,31 @@ class mainScreen extends Phaser.Scene {
 
     launchGame(){
         this.scene.start('sceneTuto', {
-            graineScore : 5,
+            graineScore : 0,
 
             // Variables pour débloquer les mécaniques
-            attackCaCLoot : true,
-            attackDistanceLoot : true,
-            volerLoot : true,
+            attackCaCLoot : false,
+            attackDistanceLoot : false,
+            volerLoot : false,
 
             speed : 175,
             //speed : 800,
             health : 5,
             
+            // SPAWN TUTO
+
             spawnX : 400,
             spawnY : 1808
 
+            // SPAWN HUB
+
             //spawnX : 528,
             //spawnY : 1445
+
+            // SPAWN DONJON
+
+            //spawnX : 1776,
+            //spawnY : 768
         });
     }
 }

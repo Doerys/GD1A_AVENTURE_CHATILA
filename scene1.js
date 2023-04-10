@@ -95,7 +95,7 @@ class sceneTuto extends Phaser.Scene {
                 });     
             });
 
-            this.heal.add(this.moneyCreate);
+            this.money.add(this.moneyCreate);
 
         // Trous Graine Haricot
 
@@ -115,7 +115,7 @@ class sceneTuto extends Phaser.Scene {
 
         // RONCES 
 
-        this.ronces = this.physics.add.staticGroup();
+        this.ronces = this.physics.add.staticGroup()
 
         this.ronces_layer = this.map.getObjectLayer('ronces_layer');
         this.ronces_layer.objects.forEach(ronces_layer => {
@@ -125,6 +125,7 @@ class sceneTuto extends Phaser.Scene {
 
         // PNJ
         this.npc = this.physics.add.staticSprite(400, 1750, 'npc');
+        this.npc2 = this.physics.add.staticSprite(2048, 464, 'npc2');
 
         //Création Attaques CaC et Distance
         this.attaque_sword = this.physics.add.staticGroup();
@@ -173,6 +174,7 @@ class sceneTuto extends Phaser.Scene {
         this.mobBDown_layer = this.map.getObjectLayer('mobBDown_layer');
         this.mobBDown_layer.objects.forEach(mobBDown_layer => {
             this.mobBDown_create = this.physics.add.staticSprite(mobBDown_layer.x + 16, mobBDown_layer.y + 16, 'mobB');
+            this.mobBDown_create.anims.play('mobBDownanim');
             this.mobBDown.add(this.mobBDown_create);
         });
 
@@ -208,7 +210,8 @@ class sceneTuto extends Phaser.Scene {
         this.mobC = this.physics.add.group();
         this.mobC_layer = this.map.getObjectLayer('mobC_layer');
         this.mobC_layer.objects.forEach(mobC_layer => {
-            this.mobC_create = this.physics.add.sprite(mobC_layer.x, mobC_layer.y, 'mobC');
+            this.mobC_create = this.physics.add.sprite(mobC_layer.x + 16, mobC_layer.y + 16, 'mobC');
+            this.mobC_create.setSize(20, 32);
             this.mobC_create.anims.play('mobC_anims');
             this.mobC.add(this.mobC_create);
         });
@@ -303,6 +306,11 @@ class sceneTuto extends Phaser.Scene {
         this.collisionMur = this.physics.add.collider(this.player, this.murs);
         this.collisionEau = this.physics.add.collider(this.player, this.eau);
         this.collisionObstacles = this.physics.add.collider(this.player, this.obstacles);
+
+        this.physics.add.collider(this.player, this.npc);
+        this.physics.add.collider(this.player, this.npc2);
+
+
         this.physics.add.overlap(this.player, this.grainesHaricot, this.grabGraine, null, this);
 
         this.physics.add.overlap(this.player, this.passageVol, this.sautVide, null, this);
@@ -337,6 +345,7 @@ class sceneTuto extends Phaser.Scene {
         this.physics.add.collider(this.attaque_shoot, this.murs, this.delock_shoot, null, this);
         this.physics.add.collider(this.attaque_shoot, this.obstacles, this.delock_shoot, null, this);
         this.physics.add.collider(this.attaque_shoot, this.mobBDown, this.delock_shoot, null, this);
+        this.physics.add.collider(this.attaque_shoot, this.eau, this.delock_shoot, null, this);
 
         this.physics.add.collider(this.ronces, this.attaque_sword, this.destroyRonces, null, this);
         this.physics.add.collider(this.mobADown, this.attaque_sword, this.kill_mob, null, this);
@@ -388,6 +397,15 @@ class sceneTuto extends Phaser.Scene {
         this.dialogue5 = ["Pars, noble Gardien du Potager.", "Sauve le Royaume !"];
         
         this.dialogues = [this.dialogue1, this.dialogue2, this.dialogue3, this.dialogue4, this.dialogue5]
+
+        this.dialogue21 = ["Pirlouit ! Notre sauveur !", "Quel plaisir de te voir !"];
+        this.dialogue22 = ["Tu es sacrément costaud !", "Tu vas nous sortir de là, hein ?"];
+        this.dialogue23 = ["N'oublie pas ! En pressant F,", "tu peux porter certaines choses"];
+        this.dialogue24 = ["et les déplacer où tu veux.", "N'oublie pas, hein !"];
+        this.dialogue25 = ["Allez, bon courage !", "Tu es notre Gardien !"];
+
+
+        this.dialogues2 = [this.dialogue21, this.dialogue22, this.dialogue23, this.dialogue24, this.dialogue25]
     }
 
     update() {
@@ -1008,8 +1026,6 @@ class sceneTuto extends Phaser.Scene {
         else{this.saladeUI.setVisible(false);}
     }
 
-    // GESTION DES COLLECTIBLES
-
     // récupération du heal (si on n'a pas toute sa vie)
     collectHeal(player, heal){
 
@@ -1121,8 +1137,9 @@ class sceneTuto extends Phaser.Scene {
     // DIALOGUES
 
     checkSpeak() {
-        const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc.x, this.npc.y);
-        if (distance < 50) { // la distance de déclenchement du dialogue
+        const distance1 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc.x, this.npc.y);
+        const distance2 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc2.x, this.npc2.y);
+        if (distance1 < 50) { // la distance de déclenchement du dialogue
             if (!this.dialogueBox.visible) { // affiche le dialogue si la boîte de dialogue n'est pas déjà visible
                 this.dialogueBox.visible = true;
                 this.dialogueText.setText(this.dialogues[0]);
@@ -1135,7 +1152,22 @@ class sceneTuto extends Phaser.Scene {
                     temps += 5000
                 }
             }
-        } else {
+        }
+        else if(distance2 < 50) { // la distance de déclenchement du dialogue
+            if (!this.dialogueBox.visible) { // affiche le dialogue si la boîte de dialogue n'est pas déjà visible
+                this.dialogueBox.visible = true;
+                this.dialogueText.setText(this.dialogues2[0]);
+                let temps = 3000;
+                
+                for (let step = 1; step < 5; step++){                
+                    this.time.delayedCall(temps, function () {
+                        this.dialogueText.setText(this.dialogues2[step]);                    
+                }, [], this);
+                    temps += 5000
+                }
+            }
+        }
+        else {
             this.dialogueBox.visible = false;
             this.dialogueText.setText('');
         }
