@@ -1675,6 +1675,75 @@ class SceneTemplate extends Phaser.Scene {
 
     killPlayer() {
 
+        this.player_block = true;
+
+        this.player.disableBody(true);
+
+        this.tweens.add({
+            targets: this.player,
+            alpha: 0,
+            duration: 750,  // Durée de l'animation en millisecondes
+            ease: 'Linear', // Fonction d'interpolation pour l'animation
+        });
+
+        this.time.delayedCall(750, function () {
+            this.cameras.main.fadeOut(750, 0, 0, 0);
+        }, [], this);
+        
+        this.time.delayedCall(1500, function () {
+
+            if (this.graineScore >= 10) {
+
+                this.scene.start('sceneHub', {
+
+                    mapName: "map_hub", // nom de la map
+                    mapTileset: "tileset", // nom du tileset sur TILED
+                    mapTilesetImage: "tileset_image", // nom du fichier image du tileset
+
+                    graineScore: this.graineScore - 10,
+
+                    player_facing: "down",
+
+                    // Variables pour débloquer les mécaniques
+                    attackCaCLoot: this.attackCaCLoot,
+                    attackDistanceLoot: this.attackDistanceLoot,
+                    volerLoot: this.volerLoot,
+
+                    speed: this.speed,
+                    health: 5,
+
+                    spawnX: 448,
+                    spawnY: 1145
+                });
+            }
+
+            else {
+                this.scene.start('sceneTuto', {
+
+                    mapName: "map_tuto", // nom de la map
+                    mapTileset: "tileset", // nom du tileset sur TILED
+                    mapTilesetImage: "tileset_image", // nom du fichier image du tileset
+
+                    graineScore: 0,
+
+                    player_facing: "down",
+
+                    // Variables pour débloquer les mécaniques
+                    attackCaCLoot: false,
+                    attackDistanceLoot: false,
+                    volerLoot: false,
+
+                    speed: 175,
+                    //speed : 800,
+                    health: 5,
+
+                    // SPAWN TUTO
+                    spawnX: 400,
+                    spawnY: 1808
+
+                });
+            }
+        }, [], this);
     }
 
     respawn() {
@@ -1688,282 +1757,126 @@ class SceneTemplate extends Phaser.Scene {
 
         this.cameras.main.fadeOut(750, 0, 0, 0);
 
+        let id_map = null;
+        let currentMapName = null;
+
+        let currentSpawnX = null;
+        let currentSpawnY = null;
+
+        if (this.mapName == "map_tuto") {
+
+            id_map = 'sceneHub'
+            currentMapName = 'map_hub'
+            currentSpawnX = 528
+            currentSpawnY = 1445
+
+        }
+
+        else if (this.mapName == "map_hub") {
+
+            if (this.nextScene == "zone1") {
+                id_map = 'sceneZone1'
+                currentMapName = 'map_zone1'
+                currentSpawnX = 3296
+                currentSpawnY = 4032
+            }
+
+            else if (this.nextScene == "zone2") {
+                id_map = 'sceneZone2'
+                currentMapName = 'map_zone2'
+                currentSpawnX = 48
+                currentSpawnY = 3040
+            }
+
+            else if (this.nextScene == "zoneDonjon") {
+                id_map = 'sceneDonjon'
+                currentMapName = 'map_donjon'
+                currentSpawnX = 1136
+                currentSpawnY = 2720
+            }
+        }
+
+        else if (this.mapName == "map_zone1") {
+
+            if (this.nextScene == "hub") {
+                id_map = 'sceneHub'
+                currentMapName = 'map_hub'
+                currentSpawnX = 48
+                currentSpawnY = 976
+            }
+
+            else if (this.nextScene == "secret") {
+                id_map = 'sceneSecrete'
+                currentMapName = 'map_secrete'
+                currentSpawnX = 48
+                currentSpawnY = 416
+            }
+        }
+
+        else if (this.mapName == "map_zone2") {
+
+            if (this.nextScene == "hub") {
+                id_map = 'sceneHub'
+                currentMapName = 'map_hub'
+                currentSpawnX = 1136
+                currentSpawnY = 1088
+            }
+
+            else if (this.nextScene == "secret") {
+                id_map = 'sceneSecrete'
+                currentMapName = 'map_secrete'
+                currentSpawnX = 1104
+                currentSpawnY = 432
+            }
+        }
+
+        else if (this.mapName == "map_donjon") {
+            id_map = 'sceneHub'
+            currentMapName = 'map_hub'
+            currentSpawnX = 592
+            currentSpawnY = 624
+        }
+
+        else if (this.mapName == "map_secrete") {
+
+            if (this.nextScene == "zone1") {
+                id_map = 'sceneZone1'
+                currentMapName = 'map_zone1'
+                currentSpawnX = 3312
+                currentSpawnY = 704
+            }
+
+            if (this.nextScene == "zone2") {
+                id_map = 'sceneZone2'
+                currentMapName = 'map_zone2'
+                currentSpawnX = 48
+                currentSpawnY = 752
+            }
+        }
+
         this.time.delayedCall(1000, function () {
-            if (this.mapName == "map_tuto") {
 
-                this.scene.start('sceneHub', {
+            this.scene.start(id_map, {
 
-                    mapName: "map_hub", // nom de la map
-                    mapTileset: "tileset", // nom du tileset sur TILED
-                    mapTilesetImage: "tileset_image", // nom du fichier image du tileset
+                mapName: currentMapName, // nom de la map
+                mapTileset: "tileset", // nom du tileset sur TILED
+                mapTilesetImage: "tileset_image", // nom du fichier image du tileset
 
-                    graineScore: this.graineScore,
+                graineScore: this.graineScore,
 
-                    player_facing: this.player_facing,
+                player_facing: this.player_facing,
 
-                    // Variables pour débloquer les mécaniques
-                    attackCaCLoot: this.attackCaCLoot,
-                    attackDistanceLoot: this.attackDistanceLoot,
-                    volerLoot: this.volerLoot,
+                // Variables pour débloquer les mécaniques
+                attackCaCLoot: this.attackCaCLoot,
+                attackDistanceLoot: this.attackDistanceLoot,
+                volerLoot: this.volerLoot,
 
-                    speed: this.speed,
-                    health: this.health,
-                    spawnX: 528,
-                    spawnY: 1445
-                });
-            }
-
-            else if (this.mapName == "map_hub") {
-
-                if (this.nextScene == "zone1") {
-                    this.scene.start('sceneZone1', {
-
-                        mapName: "map_zone1", // nom de la map
-                        mapTileset: "tileset", // nom du tileset sur TILED
-                        mapTilesetImage: "tileset_image", // nom du fichier image du tileset
-
-                        graineScore: this.graineScore,
-
-                        player_facing: this.player_facing,
-
-                        // Variables pour débloquer les mécaniques
-                        attackCaCLoot: this.attackCaCLoot,
-                        attackDistanceLoot: this.attackDistanceLoot,
-                        volerLoot: this.volerLoot,
-
-                        speed: this.speed,
-                        health: this.health,
-                        spawnX: 3296,
-                        spawnY: 4032
-                    });
-                }
-
-                else if (this.nextScene == "zone2") {
-                    this.scene.start('sceneZone2', {
-
-                        mapName: "map_zone2", // nom de la map
-                        mapTileset: "tileset", // nom du tileset sur TILED
-                        mapTilesetImage: "tileset_image", // nom du fichier image du tileset
-
-                        graineScore: this.graineScore,
-
-                        player_facing: this.player_facing,
-
-                        // Variables pour débloquer les mécaniques
-                        attackCaCLoot: this.attackCaCLoot,
-                        attackDistanceLoot: this.attackDistanceLoot,
-                        volerLoot: this.volerLoot,
-
-                        speed: this.speed,
-                        health: this.health,
-                        spawnX: 48,
-                        spawnY: 3040
-                    });
-                }
-
-                else if (this.nextScene == "zoneDonjon") {
-                    this.scene.start('sceneDonjon', {
-
-                        mapName: "map_donjon", // nom de la map
-                        mapTileset: "tileset", // nom du tileset sur TILED
-                        mapTilesetImage: "tileset_image", // nom du fichier image du tileset
-
-                        graineScore: this.graineScore,
-
-                        player_facing: this.player_facing,
-
-                        // Variables pour débloquer les mécaniques
-                        attackCaCLoot: this.attackCaCLoot,
-                        attackDistanceLoot: this.attackDistanceLoot,
-                        volerLoot: this.volerLoot,
-
-                        speed: this.speed,
-                        health: this.health,
-                        spawnX: 1136,
-                        spawnY: 2720
-                    });
-                }
-            }
-
-            else if (this.mapName == "map_zone1") {
-
-                if (this.nextScene == "hub") {
-
-                    this.scene.start('sceneHub', {
-
-                        mapName: "map_hub", // nom de la map
-                        mapTileset: "tileset", // nom du tileset sur TILED
-                        mapTilesetImage: "tileset_image", // nom du fichier image du tileset
-
-                        graineScore: this.graineScore,
-
-                        player_facing: this.player_facing,
-
-                        // Variables pour débloquer les mécaniques
-                        attackCaCLoot: this.attackCaCLoot,
-                        attackDistanceLoot: this.attackDistanceLoot,
-                        volerLoot: this.volerLoot,
-
-                        speed: this.speed,
-                        health: this.health,
-                        spawnX: 48,
-                        spawnY: 976
-                    });
-
-                }
-
-                else if (this.nextScene == "secret") {
-
-                    this.scene.start('sceneSecrete', {
-
-                        mapName: "map_secrete", // nom de la map
-                        mapTileset: "tileset", // nom du tileset sur TILED
-                        mapTilesetImage: "tileset_image", // nom du fichier image du tileset
-
-                        graineScore: this.graineScore,
-
-                        player_facing: this.player_facing,
-
-                        // Variables pour débloquer les mécaniques
-                        attackCaCLoot: this.attackCaCLoot,
-                        attackDistanceLoot: this.attackDistanceLoot,
-                        volerLoot: this.volerLoot,
-
-                        speed: this.speed,
-                        health: this.health,
-                        spawnX: 48,
-                        spawnY: 416
-                    });
-                }
-            }
-
-            else if (this.mapName == "map_zone2") {
-
-                if (this.nextScene == "hub") {
-
-                    this.scene.start('sceneHub', {
-
-                        mapName: "map_hub", // nom de la map
-                        mapTileset: "tileset", // nom du tileset sur TILED
-                        mapTilesetImage: "tileset_image", // nom du fichier image du tileset
-
-                        graineScore: this.graineScore,
-
-                        player_facing: this.player_facing,
-
-                        // Variables pour débloquer les mécaniques
-                        attackCaCLoot: this.attackCaCLoot,
-                        attackDistanceLoot: this.attackDistanceLoot,
-                        volerLoot: this.volerLoot,
-
-                        speed: this.speed,
-                        health: this.health,
-                        spawnX: 1136,
-                        spawnY: 1088
-                    });
-
-                }
-
-                else if (this.nextScene == "secret") {
-
-                    this.scene.start('sceneSecrete', {
-
-                        mapName: "map_secrete", // nom de la map
-                        mapTileset: "tileset", // nom du tileset sur TILED
-                        mapTilesetImage: "tileset_image", // nom du fichier image du tileset
-
-                        graineScore: this.graineScore,
-
-                        player_facing: this.player_facing,
-
-                        // Variables pour débloquer les mécaniques
-                        attackCaCLoot: this.attackCaCLoot,
-                        attackDistanceLoot: this.attackDistanceLoot,
-                        volerLoot: this.volerLoot,
-
-                        speed: this.speed,
-                        health: this.health,
-                        spawnX: 1104,
-                        spawnY: 432
-                    });
-                }
-            }
-
-            else if (this.mapName == "map_donjon") {
-
-                this.scene.start('sceneHub', {
-                    mapName: "map_hub", // nom de la map
-                    mapTileset: "tileset", // nom du tileset sur TILED
-                    mapTilesetImage: "tileset_image", // nom du fichier image du tileset
-
-                    graineScore: this.graineScore,
-
-                    player_facing: this.player_facing,
-
-                    // Variables pour débloquer les mécaniques
-                    attackCaCLoot: this.attackCaCLoot,
-                    attackDistanceLoot: this.attackDistanceLoot,
-                    volerLoot: this.volerLoot,
-
-                    speed: this.speed,
-                    health: this.health,
-                    spawnX: 592,
-                    spawnY: 624
-                })
-
-            }
-
-            else if (this.mapName == "map_secrete") {
-
-                if (this.nextScene == "zone1") {
-
-                    this.scene.start('sceneZone1', {
-                        mapName: "map_zone1", // nom de la map
-                        mapTileset: "tileset", // nom du tileset sur TILED
-                        mapTilesetImage: "tileset_image", // nom du fichier image du tileset
-
-                        graineScore: this.graineScore,
-
-                        player_facing: this.player_facing,
-
-                        // Variables pour débloquer les mécaniques
-                        attackCaCLoot: this.attackCaCLoot,
-                        attackDistanceLoot: this.attackDistanceLoot,
-                        volerLoot: this.volerLoot,
-
-                        speed: this.speed,
-                        health: this.health,
-                        spawnX: 3312,
-                        spawnY: 704
-                    })
-                }
-
-                if (this.nextScene == "zone2") {
-
-                    this.scene.start('sceneZone2', {
-                        mapName: "map_zone2", // nom de la map
-                        mapTileset: "tileset", // nom du tileset sur TILED
-                        mapTilesetImage: "tileset_image", // nom du fichier image du tileset
-
-                        graineScore: this.graineScore,
-
-                        player_facing: this.player_facing,
-
-                        // Variables pour débloquer les mécaniques
-                        attackCaCLoot: this.attackCaCLoot,
-                        attackDistanceLoot: this.attackDistanceLoot,
-                        volerLoot: this.volerLoot,
-
-                        speed: this.speed,
-                        health: this.health,
-                        spawnX: 48,
-                        spawnY: 752
-                    })
-                }
-            }
+                speed: this.speed,
+                health: this.health,
+                spawnX: currentSpawnX,
+                spawnY: currentSpawnY
+            });
         }, [], this);
-
-
     }
 }
 
