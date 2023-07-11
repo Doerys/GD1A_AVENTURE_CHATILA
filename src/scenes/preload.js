@@ -1,6 +1,7 @@
-class mainScreen extends Phaser.Scene {
+class Preload extends Phaser.Scene {
+
     constructor() {
-        super("mainScreen");
+        super("PreloadScene");
     }
 
     preload() {
@@ -26,10 +27,10 @@ class mainScreen extends Phaser.Scene {
         // Mob C (32 x 32)
 
         this.load.spritesheet('mobC', 'assets/mobC.png',
-            { frameWidth: 32, frameHeight: 32});
+            { frameWidth: 32, frameHeight: 32 });
 
         this.load.spritesheet('mobC2', 'assets/mobC2.png',
-        { frameWidth: 32, frameHeight: 32});
+            { frameWidth: 32, frameHeight: 32 });
 
 
         // Echelle haricot (32 x 96)
@@ -45,14 +46,14 @@ class mainScreen extends Phaser.Scene {
             { frameWidth: 32, frameHeight: 128 });
 
         this.load.spritesheet('bridgeLeft', 'assets/pont_left.png',
-            { frameWidth: 128, frameHeight: 32 });    
+            { frameWidth: 128, frameHeight: 32 });
 
         this.load.spritesheet('bridgeRight', 'assets/pont_right.png',
-            { frameWidth: 128, frameHeight: 32 });    
+            { frameWidth: 128, frameHeight: 32 });
 
         // TILED 
 
-        this.load.image('tiles', 'assets/Tiled/tileset.png'); //Tileset 
+        this.load.image('tileset_image', 'assets/Tiled/tileset.png'); //Tileset 
         this.load.image('grande_laitue', 'assets/grande_laitue.png'); //Tileset 
         this.load.tilemapTiledJSON('map_tuto', 'assets/Tiled/map_tuto.json'); //fichier JSON
         this.load.tilemapTiledJSON('map_hub', 'assets/Tiled/map_hub.json')
@@ -101,11 +102,12 @@ class mainScreen extends Phaser.Scene {
         this.load.image("life4", "assets/life_step4.png");
         this.load.image("life5", "assets/life_step5.png");
         this.load.image("lifeEmpty", "assets/life_stepEmpty.png");
-        
+
         this.load.image("interface", "assets/interface.png");
+        this.load.image("dialogue", "assets/dialog_box.png")
 
         //////
-        
+
         //Bouton de lancement
         this.load.spritesheet("Button_Game", "assets/Bouton_play.png",
             { frameWidth: 180, frameHeight: 73 });
@@ -126,178 +128,170 @@ class mainScreen extends Phaser.Scene {
             frames: [{ key: 'Button_Game', frame: 1 }],
         });
 
-
-
-        this.add.image(341, 192, 'mainScreen');
-        this.gameButton = this.add.sprite(225, 270, "Button_Game").setInteractive({ cursor: 'pointer' });
-        this.gameButton.setFrame(1)
-
-        this.gameButton.on("pointerdown", this.launchGame, this);
-
         // ANIMATIONS 
 
         // Animation joueur
 
         this.anims.create({
             key: 'down',
-            frames: this.anims.generateFrameNumbers('player', {start:0,end:3}),
+            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 3 }),
             frameRate: 4,
-            repeat : -1
+            repeat: -1
         });
         this.anims.create({
             key: 'up',
-            frames: this.anims.generateFrameNumbers('player', {start:4,end:7}),
+            frames: this.anims.generateFrameNumbers('player', { start: 4, end: 7 }),
             frameRate: 4,
-            repeat : -1
+            repeat: -1
         });
         this.anims.create({
             key: 'right',
-            frames: this.anims.generateFrameNumbers('player', {start:8,end:11}),
+            frames: this.anims.generateFrameNumbers('player', { start: 8, end: 11 }),
             frameRate: 4,
-            repeat : -1
+            repeat: -1
         });
         this.anims.create({
             key: 'left',
-            frames: this.anims.generateFrameNumbers('player', {start:12,end:15}),
+            frames: this.anims.generateFrameNumbers('player', { start: 12, end: 15 }),
             frameRate: 4,
-            repeat : -1
+            repeat: -1
         });
 
         this.anims.create({
             key: 'walk_down',
-            frames: this.anims.generateFrameNumbers('player', {start:16,end:19}),
+            frames: this.anims.generateFrameNumbers('player', { start: 16, end: 19 }),
             frameRate: 5,
-            repeat : -1
+            repeat: -1
         });
         this.anims.create({
             key: 'walk_up',
-            frames: this.anims.generateFrameNumbers('player', {start:20,end:23}),
+            frames: this.anims.generateFrameNumbers('player', { start: 20, end: 23 }),
             frameRate: 5,
-            repeat : -1
+            repeat: -1
         });
         this.anims.create({
             key: 'walk_right',
-            frames: this.anims.generateFrameNumbers('player', {start:24,end:27}),
+            frames: this.anims.generateFrameNumbers('player', { start: 24, end: 27 }),
             frameRate: 5,
-            repeat : -1
+            repeat: -1
         });
         this.anims.create({
             key: 'walk_left',
-            frames: this.anims.generateFrameNumbers('player', {start:28,end:31}),
+            frames: this.anims.generateFrameNumbers('player', { start: 28, end: 31 }),
             frameRate: 5,
-            repeat : -1
+            repeat: -1
         });
 
         this.anims.create({
             key: 'attack_down',
-            frames: this.anims.generateFrameNumbers('player', {start:32,end:35}),
+            frames: this.anims.generateFrameNumbers('player', { start: 32, end: 35 }),
             frameRate: 10,
         });
         this.anims.create({
             key: 'attack_up',
-            frames: this.anims.generateFrameNumbers('player', {start:36,end:39}),
+            frames: this.anims.generateFrameNumbers('player', { start: 36, end: 39 }),
             frameRate: 10,
         });
         this.anims.create({
             key: 'attack_right',
-            frames: this.anims.generateFrameNumbers('player', {start:40,end:43}),
+            frames: this.anims.generateFrameNumbers('player', { start: 40, end: 43 }),
             frameRate: 10,
         });
         this.anims.create({
             key: 'attack_left',
-            frames: this.anims.generateFrameNumbers('player', {start:44,end:47}),
+            frames: this.anims.generateFrameNumbers('player', { start: 44, end: 47 }),
             frameRate: 10,
         });
 
         this.anims.create({
             key: 'shoot_down',
-            frames: this.anims.generateFrameNumbers('player', {start:48,end:51}),
+            frames: this.anims.generateFrameNumbers('player', { start: 48, end: 51 }),
             frameRate: 10,
         });
         this.anims.create({
             key: 'shoot_up',
-            frames: this.anims.generateFrameNumbers('player', {start:52,end:55}),
+            frames: this.anims.generateFrameNumbers('player', { start: 52, end: 55 }),
             frameRate: 10,
         });
         this.anims.create({
             key: 'shoot_right',
-            frames: this.anims.generateFrameNumbers('player', {start:56,end:59}),
+            frames: this.anims.generateFrameNumbers('player', { start: 56, end: 59 }),
             frameRate: 10,
         });
         this.anims.create({
             key: 'shoot_left',
-            frames: this.anims.generateFrameNumbers('player', {start:60,end:63}),
+            frames: this.anims.generateFrameNumbers('player', { start: 60, end: 63 }),
             frameRate: 10,
         });
 
         this.anims.create({
             key: 'down_carry',
-            frames: this.anims.generateFrameNumbers('player', {start:64,end:67}),
+            frames: this.anims.generateFrameNumbers('player', { start: 64, end: 67 }),
             frameRate: 4,
-            repeat : -1
+            repeat: -1
         });
         this.anims.create({
             key: 'up_carry',
-            frames: this.anims.generateFrameNumbers('player', {start:68,end:71}),
+            frames: this.anims.generateFrameNumbers('player', { start: 68, end: 71 }),
             frameRate: 4,
-            repeat : -1
+            repeat: -1
         });
         this.anims.create({
             key: 'right_carry',
-            frames: this.anims.generateFrameNumbers('player', {start:72,end:75}),
+            frames: this.anims.generateFrameNumbers('player', { start: 72, end: 75 }),
             frameRate: 4,
-            repeat : -1
+            repeat: -1
         });
         this.anims.create({
             key: 'left_carry',
-            frames: this.anims.generateFrameNumbers('player', {start:76,end:79}),
+            frames: this.anims.generateFrameNumbers('player', { start: 76, end: 79 }),
             frameRate: 4,
-            repeat : -1
+            repeat: -1
         });
 
         this.anims.create({
             key: 'walk_down_carry',
-            frames: this.anims.generateFrameNumbers('player', {start:80,end:83}),
+            frames: this.anims.generateFrameNumbers('player', { start: 80, end: 83 }),
             frameRate: 4,
-            repeat : -1
+            repeat: -1
         });
         this.anims.create({
             key: 'walk_up_carry',
-            frames: this.anims.generateFrameNumbers('player', {start:84,end:87}),
+            frames: this.anims.generateFrameNumbers('player', { start: 84, end: 87 }),
             frameRate: 4,
-            repeat : -1
+            repeat: -1
         });
         this.anims.create({
             key: 'walk_right_carry',
-            frames: this.anims.generateFrameNumbers('player', {start:88,end:91}),
+            frames: this.anims.generateFrameNumbers('player', { start: 88, end: 91 }),
             frameRate: 4,
-            repeat : -1
+            repeat: -1
         });
         this.anims.create({
             key: 'walk_left_carry',
-            frames: this.anims.generateFrameNumbers('player', {start:92,end:95}),
+            frames: this.anims.generateFrameNumbers('player', { start: 92, end: 95 }),
             frameRate: 4,
-            repeat : -1
+            repeat: -1
         });
 
         this.anims.create({
             key: 'fly_down',
-            frames: this.anims.generateFrameNumbers('player', {start:96,end:99}),
+            frames: this.anims.generateFrameNumbers('player', { start: 96, end: 99 }),
             frameRate: 10,
         });
         this.anims.create({
             key: 'fly_up',
-            frames: this.anims.generateFrameNumbers('player', {start:100,end:103}),
+            frames: this.anims.generateFrameNumbers('player', { start: 100, end: 103 }),
             frameRate: 10,
         });
         this.anims.create({
             key: 'fly_right',
-            frames: this.anims.generateFrameNumbers('player', {start:104,end:107}),
+            frames: this.anims.generateFrameNumbers('player', { start: 104, end: 107 }),
             frameRate: 10,
         });
         this.anims.create({
             key: 'fly_left',
-            frames: this.anims.generateFrameNumbers('player', {start:108,end:111}),
+            frames: this.anims.generateFrameNumbers('player', { start: 108, end: 111 }),
             frameRate: 10,
         });
 
@@ -305,55 +299,55 @@ class mainScreen extends Phaser.Scene {
 
         this.anims.create({
             key: 'trueBridge',
-            frames: this.anims.generateFrameNumbers('bridge', {start:1,end:5}),
+            frames: this.anims.generateFrameNumbers('bridge', { start: 1, end: 5 }),
             frameRate: 5,
         });
         this.anims.create({
             key: 'falseBridge',
             //frames: [{ key: 'bridge', frame: 0 }],
-            frames: this.anims.generateFrameNumbers('bridge', {start:5,end:10}),
+            frames: this.anims.generateFrameNumbers('bridge', { start: 5, end: 10 }),
             frameRate: 5,
         });
 
         this.anims.create({
             key: 'trueBridgeDown',
-            frames: this.anims.generateFrameNumbers('bridgeDown', {start:1,end:5}),
+            frames: this.anims.generateFrameNumbers('bridgeDown', { start: 1, end: 5 }),
             frameRate: 5,
         });
         this.anims.create({
             key: 'falseBridgeDown',
             //frames: [{ key: 'bridge', frame: 0 }],
-            frames: this.anims.generateFrameNumbers('bridgeDown', {start:5,end:10}),
+            frames: this.anims.generateFrameNumbers('bridgeDown', { start: 5, end: 10 }),
             frameRate: 5,
         });
 
         this.anims.create({
             key: 'trueBridgeRight',
-            frames: this.anims.generateFrameNumbers('bridgeRight', {start:1,end:5}),
+            frames: this.anims.generateFrameNumbers('bridgeRight', { start: 1, end: 5 }),
             frameRate: 5,
         });
         this.anims.create({
             key: 'falseBridgeRight',
             //frames: [{ key: 'bridge', frame: 0 }],
-            frames: this.anims.generateFrameNumbers('bridgeRight', {start:5,end:10}),
+            frames: this.anims.generateFrameNumbers('bridgeRight', { start: 5, end: 10 }),
             frameRate: 5,
         });
 
         this.anims.create({
             key: 'trueBridgeLeft',
-            frames: this.anims.generateFrameNumbers('bridgeLeft', {start:1,end:5}),
+            frames: this.anims.generateFrameNumbers('bridgeLeft', { start: 1, end: 5 }),
             frameRate: 5,
         });
         this.anims.create({
             key: 'falseBridgeLeft',
             //frames: [{ key: 'bridge', frame: 0 }],
-            frames: this.anims.generateFrameNumbers('bridgeLeft', {start:5,end:10}),
+            frames: this.anims.generateFrameNumbers('bridgeLeft', { start: 5, end: 10 }),
             frameRate: 5,
         });
 
         this.anims.create({
             key: 'trueEchelle',
-            frames: this.anims.generateFrameNumbers('echelle', {start:1,end:3}),
+            frames: this.anims.generateFrameNumbers('echelle', { start: 1, end: 3 }),
             frameRate: 2,
         });
         this.anims.create({
@@ -365,30 +359,30 @@ class mainScreen extends Phaser.Scene {
 
         this.anims.create({
             key: 'mobAanim',
-            frames: this.anims.generateFrameNumbers('mobA', {start:0,end:3}),
+            frames: this.anims.generateFrameNumbers('mobA', { start: 0, end: 3 }),
             frameRate: 5,
-            repeat : -1
+            repeat: -1
         });
 
         this.anims.create({
             key: 'mobBLeftanim',
-            frames: this.anims.generateFrameNumbers('mobB', {start:0,end:3}),
+            frames: this.anims.generateFrameNumbers('mobB', { start: 0, end: 3 }),
             frameRate: 4,
-            repeat : -1
+            repeat: -1
         });
 
         this.anims.create({
             key: 'mobBRightanim',
-            frames: this.anims.generateFrameNumbers('mobB', {start:4,end:7}),
+            frames: this.anims.generateFrameNumbers('mobB', { start: 4, end: 7 }),
             frameRate: 4,
-            repeat : -1
+            repeat: -1
         });
 
         this.anims.create({
             key: 'mobBDownanim',
-            frames: this.anims.generateFrameNumbers('mobB', {start:8,end:11}),
+            frames: this.anims.generateFrameNumbers('mobB', { start: 8, end: 11 }),
             frameRate: 4,
-            repeat : -1
+            repeat: -1
         });
 
         /*this.anims.create({
@@ -411,63 +405,21 @@ class mainScreen extends Phaser.Scene {
 
         this.anims.create({
             key: 'mobC_anims',
-            frames: this.anims.generateFrameNumbers('mobC', {start:0,end:19}),
+            frames: this.anims.generateFrameNumbers('mobC', { start: 0, end: 19 }),
             frameRate: 5,
             repeat: -1
         });
 
         this.anims.create({
             key: 'mobC2_anims',
-            frames: this.anims.generateFrameNumbers('mobC2', {start:0,end:19}),
-            frameRate: 5,
+            frames: this.anims.generateFrameNumbers('mobC2', { start: 0, end: 19 }),
+            frameRate: 6,
             repeat: -1
         });
 
+        this.scene.start("MainScreen");
     }
 
-    update() {
-
-        this.gameButton.on('pointerover', this.changeOver, this); 
-
-        this.gameButton.on('pointerout', this.changeOut, this);
-
-    }
-
-    changeOver(){
-        this.gameButton.setFrame(0);
-    }
-
-    changeOut(){
-        this.gameButton.setFrame(1);
-    }
-
-    launchGame(){
-        this.scene.start('sceneTuto', {
-            graineScore : 0,
-
-            // Variables pour débloquer les mécaniques
-            attackCaCLoot : false,
-            attackDistanceLoot : false,
-            volerLoot : false,
-
-            speed : 175,
-            //speed : 800,
-            health : 5,
-            
-            // SPAWN TUTO
-
-            spawnX : 400,
-            spawnY : 1808
-
-            // SPAWN HUB
-
-            //spawnX : 528,
-            //spawnY : 1445
-
-            // SPAWN DONJON
-
-            //spawnX : 1776,
-            //spawnY : 768
-        });
-    }
 }
+
+export default Preload
