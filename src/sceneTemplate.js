@@ -1642,16 +1642,6 @@ class SceneTemplate extends Phaser.Scene {
 
     checkInteractCollision() {
         this.interactButton.setPosition(this.player.x, this.player.y - 32);
-
-        if (this.checkNpcCollision) {
-            console.log("visible")
-            this.interactButton.setVisible(true);
-        }
-        else {
-            //console.log("pas visible")
-            this.interactButton.setVisible(false);
-        }
-
     }
 
     // DIALOGUES
@@ -1668,9 +1658,11 @@ class SceneTemplate extends Phaser.Scene {
 
                     this.interactButton.setVisible(true);
                     this.canInteract = true;
-
-                    this.savedDetectZone = detectZone;
                 }
+            }
+
+            if (this.canInteract) {
+                this.savedDetectZone = detectZone;
             }
         });
 
@@ -1691,6 +1683,7 @@ class SceneTemplate extends Phaser.Scene {
 
             if (Phaser.Input.Keyboard.JustDown(this.EKey)) {
                 this.inInteraction = true;
+                this.player_block = true;
             }
 
         }
@@ -1700,6 +1693,8 @@ class SceneTemplate extends Phaser.Scene {
             this.dialogueBox.visible = true;
 
             let list = null;
+            let dialogLenght = list.lenght;
+            let stepList = 0;
 
             if (this.mapName == "map_hub") {
                 const distance1 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.panneau1.x, this.panneau1.y);
@@ -1721,16 +1716,8 @@ class SceneTemplate extends Phaser.Scene {
                 }
                 else if (distance4 < 50) {
                     list = this.statueDialogue;
-
                 }
             }
-        }
-
-
-
-
-
-        else {
 
         }
 
