@@ -18,8 +18,18 @@ class sceneDonjon extends SceneTemplate {
         // chargement des calques
         this.loadMap(levelMap);
 
+        this.loot_salade = this.physics.add.sprite(384, 848, "salade_loot");
+        this.tweens.add({
+            targets: this.loot_salade,
+            y: this.loot_salade.y + 5,
+            duration: 500,
+            yoyo: true,
+            delay: 50,
+            repeat: -1
+        });
+
         // PNJ
-        this.npc = this.physics.add.staticSprite(400, 1750, 'npc');
+        this.npc = this.physics.add.staticSprite(384, 848, 'npc').setVisible(false);
 
         this.dialogue1 = ["Voilà la dernière feuille pure", "de la Grande Laitue."];
         this.dialogue2 = ["Avec ce don, appuie sur E,", "pour déployer la feuille."];

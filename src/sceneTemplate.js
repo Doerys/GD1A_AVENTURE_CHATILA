@@ -9,7 +9,7 @@ class SceneTemplate extends Phaser.Scene {
             physics: {
                 default: 'arcade',
                 arcade: {
-                    debug: false,
+                    debug: true,
                 }
             },
             input: { gamepad: true },
@@ -54,6 +54,9 @@ class SceneTemplate extends Phaser.Scene {
         this.carryGraine = false;
         this.flyingMod = false;
 
+        this.canInteract = false;
+        this.inInteraction = false;
+
         this.controller = false;
 
         this.nextScene = ""
@@ -78,9 +81,9 @@ class SceneTemplate extends Phaser.Scene {
         this.map = this.add.tilemap(this.mapName);
         this.tileset = this.map.addTilesetImage(this.mapTileset, this.mapTilesetImage)
 
-        if (this.mapName != "map_tuto" || this.mapName != "map_donjon") {
+        if (this.mapName != "map_tuto" && this.mapName != "map_donjon" && this.mapName != "map_secrete") {
             this.tileset_laitue = this.map.addTilesetImage('grande_laitue', 'grande_laitue')
-            this.laitue = this.map.createLayer('laitue_layer', this.tileset_laitue);
+            this.laitue = this.map.createLayer('laitue_layer', this.tileset_laitue).setDepth(5);
 
             this.physics.add.collider(this.player, this.laitue);
         }
@@ -127,7 +130,9 @@ class SceneTemplate extends Phaser.Scene {
 
         //Barre de vie
         this.interface = this.add.sprite(341, 44, 'interface').setScrollFactor(0).setDepth(10);
-        this.textScore = this.add.text(636, 44, `${this.graineScore}`, { font: '14px Mabook', fill: '#963d17', align: 'center' }).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(10);
+        this.textScore = this.add.text(635.5, 45, `${this.graineScore}`, { font: '14px Mabook', fill: '#963d17', align: 'center' }).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(10);
+
+        this.interactButton = this.add.text(this.player.x, this.player.y - 32, `E`, { font: '14px Mabook', fill: '#963d17', align: 'center' }).setOrigin(0.5, 0.5).setDepth(10).setVisible(false);
 
         this.lifeUI = this.add.sprite(341, 44, 'life1').setScrollFactor(0).setDepth(10);
         this.serpeUI = this.add.sprite(341, 44, 'serpe_ui').setScrollFactor(0).setDepth(10);
@@ -137,7 +142,7 @@ class SceneTemplate extends Phaser.Scene {
         // boite de dialogue
 
         // Create dialogue box and text
-        this.dialogueBox = this.add.sprite(341.5, 300, "dialogue").setScrollFactor(0).setOrigin(0.5, 0).setDepth(10);
+        this.dialogueBox = this.add.sprite(341.5, 300, "dialogue").setScrollFactor(0).setOrigin(0.5, 0).setDepth(10).setVisible(false);
 
         this.dialogueText = this.add.text(341.5, 330, '', { font: '11px Mabook', fill: '#ffffff', align: 'center' })
             .setOrigin(0.5, 0.5)
@@ -180,7 +185,7 @@ class SceneTemplate extends Phaser.Scene {
 
         this.graines_layer = this.map.getObjectLayer('graines_layer');
         this.graines_layer.objects.forEach(graines_layer => {
-            this.graines_create = this.physics.add.sprite(graines_layer.x + 16, graines_layer.y + 16, 'box');
+            this.graines_create = this.physics.add.sprite(graines_layer.x + 16, graines_layer.y + 16, 'box').setSize(64, 64);
             this.grainesHaricot.add(this.graines_create);
         });
 
@@ -548,7 +553,7 @@ class SceneTemplate extends Phaser.Scene {
             this.versTuto.create(528, 1488, "passage3x1");
 
             this.versZone1 = this.physics.add.staticGroup();
-            this.versZone1.create(16, 996, "passage1x3");
+            this.versZone1.create(16, 980, "passage1x3");
 
             this.versZone2 = this.physics.add.staticGroup();
             this.versZone2.create(1168, 1088, "passage1x4");
@@ -873,14 +878,14 @@ class SceneTemplate extends Phaser.Scene {
                 if (this.player_facing == "up") {
                     this.player.anims.play('shoot_up');
                     this.time.delayedCall(300, function () {
-                        this.attaque_shoot.create(this.player.x, this.player.y - 32, "proj").setSize(16, 16);
+                        this.attaque_shoot.create(this.player.x, this.player.y - 32, "proj")
                         this.attaque_shoot.setVelocityY(-500);
                     }, [], this);
                 }
                 else if (this.player_facing == "down") {
                     this.player.anims.play('shoot_down');
                     this.time.delayedCall(300, function () {
-                        this.attaque_shoot.create(this.player.x, this.player.y + 32, "proj").setSize(16, 16);
+                        this.attaque_shoot.create(this.player.x, this.player.y + 32, "proj")
                         this.attaque_shoot.setVelocityY(500);
                     }, [], this);
                 }
@@ -888,7 +893,7 @@ class SceneTemplate extends Phaser.Scene {
                     this.player.anims.play('shoot_right');
 
                     this.time.delayedCall(300, function () {
-                        this.attaque_shoot.create(this.player.x + 32, this.player.y, "proj").setSize(16, 16);
+                        this.attaque_shoot.create(this.player.x + 32, this.player.y, "proj")
                         this.attaque_shoot.setVelocityX(500);
                     }, [], this);
 
@@ -898,7 +903,7 @@ class SceneTemplate extends Phaser.Scene {
                     this.player.anims.play('shoot_left');
 
                     this.time.delayedCall(300, function () {
-                        this.attaque_shoot.create(this.player.x - 32, this.player.y, "proj").setSize(16, 16);
+                        this.attaque_shoot.create(this.player.x - 32, this.player.y, "proj")
                         this.attaque_shoot.setVelocityX(-500);
                     }, [], this);
                 }
@@ -951,6 +956,8 @@ class SceneTemplate extends Phaser.Scene {
 
         this.putGraine();
         this.gestionUI();
+        this.checkSpeak();
+        this.checkInteractCollision();
     }
 
     // FONCTIONS COMPORTEMENTS MOBS
@@ -1566,7 +1573,7 @@ class SceneTemplate extends Phaser.Scene {
 
     putGraine() {
         if ((Phaser.Input.Keyboard.JustDown(this.FKey) || this.controller.L1) && this.carryGraine == true) {
-            this.graines_create = this.physics.add.sprite(this.player.x, this.player.y + 16, 'box');
+            this.graines_create = this.physics.add.sprite(this.player.x, this.player.y + 16, 'box').setSize(64, 64);
             this.grainesHaricot.add(this.graines_create);
             this.carryGraine = false;
             this.speed = 175;
@@ -1633,15 +1640,137 @@ class SceneTemplate extends Phaser.Scene {
         }
     }
 
+    checkInteractCollision() {
+        this.interactButton.setPosition(this.player.x, this.player.y - 32);
+
+        if (this.checkNpcCollision) {
+            console.log("visible")
+            this.interactButton.setVisible(true);
+        }
+        else {
+            //console.log("pas visible")
+            this.interactButton.setVisible(false);
+        }
+
+    }
+
     // DIALOGUES
 
     checkSpeak() {
-        const distance1 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc.x, this.npc.y);
-        const distance2 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc2.x, this.npc2.y);
-        if (distance1 < 50) { // la distance de déclenchement du dialogue
+
+        this.npcs.children.each(npc => {
+
+            const detectZone = Phaser.Math.Distance.Between(this.player.x, this.player.y, npc.x, npc.y);
+
+            if (!this.inInteraction) {
+
+                if (detectZone < 50) {
+
+                    this.interactButton.setVisible(true);
+                    this.canInteract = true;
+
+                    this.savedDetectZone = detectZone;
+                }
+            }
+        });
+
+        if (this.canInteract) {
+
+            console.log(this.savedDetectZone)
+
+            if (this.savedDetectZone > 50) {
+
+                this.interactButton.setVisible(false);
+                this.dialogueBox.visible = false;
+                this.canInteract = false;
+
+            }
+        }
+
+        if (this.canInteract && !this.inInteraction) {
+
+            if (Phaser.Input.Keyboard.JustDown(this.EKey)) {
+                this.inInteraction = true;
+            }
+
+        }
+
+        else if (this.canInteract && this.inInteraction) {
+            this.interactButton.setVisible(false);
+            this.dialogueBox.visible = true;
+
+            let list = null;
+
+            if (this.mapName == "map_hub") {
+                const distance1 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.panneau1.x, this.panneau1.y);
+                const distance2 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.panneau2.x, this.panneau2.y);
+                const distance3 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.panneau3.x, this.panneau3.y);
+                const distance4 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.buffHole.x, this.buffHole.y);
+
+                if (distance1 < 50) { // la distance de déclenchement du dialogue
+                    list = this.contenuPanneau1;
+
+                }
+                else if (distance2 < 50) { // la distance de déclenchement du dialogue
+                    list = this.contenuPanneau2;
+
+                }
+                else if (distance3 < 50) {
+                    list = this.contenuPanneau3;
+
+                }
+                else if (distance4 < 50) {
+                    list = this.statueDialogue;
+
+                }
+            }
+        }
+
+
+
+
+
+        else {
+
+        }
+
+        //console.log(list);
+
+        /*const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc.x, this.npc.y);
+        //const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc2.x, this.npc2.y);
+
+        if (distance < 50) { // la distance de déclenchement du dialogue
+
             if (!this.dialogueBox.visible) { // affiche le dialogue si la boîte de dialogue n'est pas déjà visible
+
                 this.dialogueBox.visible = true;
-                this.dialogueText.setText(this.dialogues[0]);
+            }
+
+            if (this.dialogueBox.visible) {
+
+                if (this.newDialog) {
+                    this.newDialog
+
+                    let dialogLenght = list.lenght;
+                    let stepList = -1;
+                }
+
+
+                if (Phaser.Input.Keyboard.JustDown(this.EKey) && stepList != dialogLenght) {
+                    console.log("COUCOU")
+
+                    this.dialogueText.setText(list[stepList]);
+
+                    stepList += 1;
+                }
+
+                else if (stepList == dialogLenght) {
+                    console.log("COUCOU 2")
+
+                    this.dialogueText.setText('');
+                }
+
+                /*
                 let temps = 3000;
 
                 for (let step = 1; step < 5; step++) {
@@ -1652,25 +1781,9 @@ class SceneTemplate extends Phaser.Scene {
                 }
             }
         }
-
-        else if (distance2 < 50) { // la distance de déclenchement du dialogue
-            if (!this.dialogueBox.visible) { // affiche le dialogue si la boîte de dialogue n'est pas déjà visible
-                this.dialogueBox.visible = true;
-                this.dialogueText.setText(this.dialogues2[0]);
-                let temps = 3000;
-
-                for (let step = 1; step < 5; step++) {
-                    this.time.delayedCall(temps, function () {
-                        this.dialogueText.setText(this.dialogues2[step]);
-                    }, [], this);
-                    temps += 5000
-                }
-            }
-        }
         else {
             this.dialogueBox.visible = false;
-            this.dialogueText.setText('');
-        }
+        }*/
     }
 
     killPlayer() {
@@ -1689,7 +1802,7 @@ class SceneTemplate extends Phaser.Scene {
         this.time.delayedCall(750, function () {
             this.cameras.main.fadeOut(750, 0, 0, 0);
         }, [], this);
-        
+
         this.time.delayedCall(1500, function () {
 
             if (this.graineScore >= 10) {

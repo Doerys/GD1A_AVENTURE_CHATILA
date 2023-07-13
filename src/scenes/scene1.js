@@ -49,7 +49,6 @@ class sceneTuto extends SceneTemplate {
 
         this.updateManager();
 
-        this.checkSpeak();
     }
 
 }
