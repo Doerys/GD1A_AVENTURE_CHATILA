@@ -1,5 +1,6 @@
 import BeanLader from "./beanLader.js";
 import Bridge from "./bridge.js";
+import DialogEntity from "./dialogEntity.js";
 
 class SceneTemplate extends Phaser.Scene {
 
@@ -56,6 +57,7 @@ class SceneTemplate extends Phaser.Scene {
 
         this.canInteract = false;
         this.inInteraction = false;
+        this.inInteractionLoot = false;
 
         this.controller = false;
 
@@ -348,6 +350,65 @@ class SceneTemplate extends Phaser.Scene {
 
             this.money.add(this.moneyCreate);
 
+        }
+
+        //ITEMS
+
+        this.items = this.physics.add.group();
+
+        // loot - Serpe
+        if (this.mapName == "map_zone1" && !this.attackCaCLoot) {
+            this.loot_serpe = new DialogEntity(this, 2800, 1392, "serpe_loot");
+
+            this.loot_serpe.name = "serpe";
+
+            this.tweens.add({
+                targets: this.loot_serpe,
+                y: this.loot_serpe.y + 5,
+                duration: 500,
+                yoyo: true,
+                delay: 50,
+                repeat: -1
+            });
+
+            this.items.add(this.loot_serpe);
+        }
+
+        //loot - courge
+
+        else if (this.mapName == "map_zone2" && !this.attackDistanceLoot) {
+            this.loot_courge = new DialogEntity(this, 1216, 1248, "courge_loot");
+
+            this.loot_courge.name = "courge";
+
+            this.tweens.add({
+                targets: this.loot_courge,
+                y: this.loot_courge.y + 5,
+                duration: 500,
+                yoyo: true,
+                delay: 50,
+                repeat: -1
+            });
+
+            this.items.add(this.loot_courge);
+        }
+
+        //loot - salad
+        else if (this.mapName == "map_donjon" && !this.volerLoot) {
+            this.loot_salade = new DialogEntity(this, 384, 848, "salade_loot");
+
+            this.loot_salade.name = "salad";
+
+            this.tweens.add({
+                targets: this.loot_salade,
+                y: this.loot_salade.y + 5,
+                duration: 500,
+                yoyo: true,
+                delay: 50,
+                repeat: -1
+            });
+
+            this.items.add(this.loot_salade);
         }
 
         // RONCES 
@@ -702,6 +763,10 @@ class SceneTemplate extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.money, this.collectLoot, null, this);
         this.physics.add.overlap(this.player, this.heal, this.collectHeal, null, this);
 
+        this.items.children.each(item => {
+            this.physics.add.overlap(this.player, item, this.collectItem, null, this);
+        });
+
         // Joueur attaques - CaC et distance
         this.physics.add.overlap(this.attaque_sword, this.murs, this.clean_sword, this.if_clean_sword, this);
         this.physics.add.collider(this.attaque_shoot, this.murs, this.delock_shoot, null, this);
@@ -957,7 +1022,9 @@ class SceneTemplate extends Phaser.Scene {
         this.putGraine();
         this.gestionUI();
         this.checkSpeak();
-        this.checkInteractCollision();
+        this.checkLootDialog();
+        //this.interactButton.setPosition(this.player.x, this.player.y - 32);
+
     }
 
     // FONCTIONS COMPORTEMENTS MOBS
@@ -1640,137 +1707,104 @@ class SceneTemplate extends Phaser.Scene {
         }
     }
 
-    checkInteractCollision() {
-        this.interactButton.setPosition(this.player.x, this.player.y - 32);
+    checkInteractCollision(player, npc) {
+
+        if (!this.canInteract) {
+            this.interactButton.setVisible(true);
+            this.canInteract = true;
+            this.savedNpc = npc;
+            this.interactButton.setPosition(this.savedNpc.x, this.savedNpc.y - 32);
+            this.savedListDialog = npc.listDialog;
+        }
+
     }
 
     // DIALOGUES
 
     checkSpeak() {
 
-        this.npcs.children.each(npc => {
-
-            const detectZone = Phaser.Math.Distance.Between(this.player.x, this.player.y, npc.x, npc.y);
+        if (this.canInteract) {
+            const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.savedNpc.x, this.savedNpc.y);
 
             if (!this.inInteraction) {
+                if (Phaser.Input.Keyboard.JustDown(this.EKey)) {
+                    this.interactButton.setVisible(false);
+                    this.dialogueBox.visible = true;
+                    this.player_block = true;
+                    this.player.setVelocity(0, 0)
+                    this.inInteraction = true;
 
-                if (detectZone < 50) {
+                    this.dialogLength = this.savedListDialog.length;
+                    this.dialogueText.setText(this.savedListDialog[0]);
+                    this.stepList = 1;
+                }
+            }
 
+            else if (this.inInteraction) {
+
+                if (Phaser.Input.Keyboard.JustDown(this.EKey) && this.stepList != this.dialogLength + 1) {
+
+                    this.dialogueText.setText(this.savedListDialog[this.stepList]);
+                    this.stepList += 1;
+                }
+                else if (this.stepList == this.dialogLength + 1) {
+                    this.inInteraction = false;
+                    this.player_block = false;
+                    this.stepList = 0;
                     this.interactButton.setVisible(true);
-                    this.canInteract = true;
+                    this.dialogueBox.visible = false;
                 }
             }
 
-            if (this.canInteract) {
-                this.savedDetectZone = detectZone;
-            }
-        });
-
-        if (this.canInteract) {
-
-            console.log(this.savedDetectZone)
-
-            if (this.savedDetectZone > 50) {
-
+            if (distance > 50) {
                 this.interactButton.setVisible(false);
-                this.dialogueBox.visible = false;
                 this.canInteract = false;
-
             }
         }
+    }
 
-        if (this.canInteract && !this.inInteraction) {
+    checkLootDialog() {
 
-            if (Phaser.Input.Keyboard.JustDown(this.EKey)) {
-                this.inInteraction = true;
-                this.player_block = true;
+        if (this.inInteractionLoot) {
+
+            if (Phaser.Input.Keyboard.JustDown(this.EKey) && this.stepList != this.dialogLength + 1) {
+
+                this.dialogueText.setText(this.savedListDialog[this.stepList]);
+                this.stepList += 1;
             }
-
-        }
-
-        else if (this.canInteract && this.inInteraction) {
-            this.interactButton.setVisible(false);
-            this.dialogueBox.visible = true;
-
-            let list = null;
-            let dialogLenght = list.lenght;
-            let stepList = 0;
-
-            if (this.mapName == "map_hub") {
-                const distance1 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.panneau1.x, this.panneau1.y);
-                const distance2 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.panneau2.x, this.panneau2.y);
-                const distance3 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.panneau3.x, this.panneau3.y);
-                const distance4 = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.buffHole.x, this.buffHole.y);
-
-                if (distance1 < 50) { // la distance de déclenchement du dialogue
-                    list = this.contenuPanneau1;
-
-                }
-                else if (distance2 < 50) { // la distance de déclenchement du dialogue
-                    list = this.contenuPanneau2;
-
-                }
-                else if (distance3 < 50) {
-                    list = this.contenuPanneau3;
-
-                }
-                else if (distance4 < 50) {
-                    list = this.statueDialogue;
-                }
-            }
-
-        }
-
-        //console.log(list);
-
-        /*const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc.x, this.npc.y);
-        //const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.npc2.x, this.npc2.y);
-
-        if (distance < 50) { // la distance de déclenchement du dialogue
-
-            if (!this.dialogueBox.visible) { // affiche le dialogue si la boîte de dialogue n'est pas déjà visible
-
-                this.dialogueBox.visible = true;
-            }
-
-            if (this.dialogueBox.visible) {
-
-                if (this.newDialog) {
-                    this.newDialog
-
-                    let dialogLenght = list.lenght;
-                    let stepList = -1;
-                }
-
-
-                if (Phaser.Input.Keyboard.JustDown(this.EKey) && stepList != dialogLenght) {
-                    console.log("COUCOU")
-
-                    this.dialogueText.setText(list[stepList]);
-
-                    stepList += 1;
-                }
-
-                else if (stepList == dialogLenght) {
-                    console.log("COUCOU 2")
-
-                    this.dialogueText.setText('');
-                }
-
-                /*
-                let temps = 3000;
-
-                for (let step = 1; step < 5; step++) {
-                    this.time.delayedCall(temps, function () {
-                        this.dialogueText.setText(this.dialogues[step]);
-                    }, [], this);
-                    temps += 5000
-                }
+            else if (this.stepList == this.dialogLength + 1) {
+                this.inInteractionLoot = false;
+                this.player_block = false;
+                this.stepList = 0;
+                this.dialogueBox.visible = false;
             }
         }
-        else {
-            this.dialogueBox.visible = false;
-        }*/
+    }
+
+    collectItem(player, item) {
+
+        if (item.name == "serpe") {
+            this.attackCaCLoot = true;
+        }
+        else if (item.name == "courge") {
+            this.attackDistanceLoot = true;
+        }
+        else if (item.name == "salad") {
+            this.volerLoot = true;
+        }
+
+        this.dialogueBox.visible = true;
+        this.player_block = true;
+        this.player.setVelocity(0, 0)
+        this.inInteractionLoot = true;
+
+        this.savedListDialog = item.listDialog;
+
+        this.dialogLength = this.savedListDialog.length;
+        this.dialogueText.setText(this.savedListDialog[0]);
+        this.stepList = 1;
+
+        item.destroy(item.x, item.y);
     }
 
     killPlayer() {
@@ -1844,10 +1878,6 @@ class SceneTemplate extends Phaser.Scene {
                 });
             }
         }, [], this);
-    }
-
-    respawn() {
-
     }
 
     //Passage scène suivante
