@@ -38,13 +38,15 @@ class sceneHub extends SceneTemplate {
 
             this.carotteNPC = new DialogEntity(this, 512, 1128, 'npc3');
 
-            this.dialogueCarotteNPC1 = [];
-            this.dialogueCarotteNPC2 = [];
-            this.dialogueCarotteNPC3 = [];
-            this.dialogueCarotteNPC4 = [];
-            this.dialogueCarotteNPC5 = [];
+            this.dialogueCarotteNPC1 = ["I remember a time when dozens of Garden's", "Keepers watched over the Garden Kingdom."];
+            this.dialogueCarotteNPC2 = ["We lived in peace, for they warded off", "any threat that came too close to us."];
+            this.dialogueCarotteNPC3 = ["Time passed, and the Keepers", "disappeared one after the other."];
+            this.dialogueCarotteNPC4 = ["The day this statue was built,", "it was meant to glorify our defenders."];
+            this.dialogueCarotteNPC5 = ["Today, it is merely a reminder", "of those former heroes."];
+            this.dialogueCarotteNPC6 = ["Today, all the Keepers are gone and the", "shadows have spread over our beloved land."];
+            this.dialogueCarotteNPC7 = ["... I miss the good old days."]
 
-            this.carotteNPC.listDialog = [this.dialogueCarotteNPC1, this.dialogueCarotteNPC2, this.dialogueCarotteNPC3, this.dialogueCarotteNPC4, this.dialogueCarotteNPC5]
+            this.carotteNPC.listDialog = [this.dialogueCarotteNPC1, this.dialogueCarotteNPC2, this.dialogueCarotteNPC3, this.dialogueCarotteNPC4, this.dialogueCarotteNPC5, this.dialogueCarotteNPC6, this.dialogueCarotteNPC7]
 
             this.npcs.add(this.carotteNPC);
 
@@ -102,7 +104,17 @@ class sceneHub extends SceneTemplate {
 
         this.statue = new DialogEntity(this, 448, 1110, 'statue').setOrigin(0.5, 0.5);
 
-        this.physics.add.collider(this.player, this.statue)
+        this.statueDialog1 = ["A sign is placed", "below the statue:"];
+        this.statueDialog2 = ["''The Garden Kingdom has always", "been protected by the Keepers"];
+        this.statueDialog3 = ["And it will always be.''"]
+        this.statueDialog4 = ["Next to the panel is a bowl", "filled with seeds."];
+        this.statueDialog5 = ["It appears to be an offering."];
+
+        this.statue.listDialog = [this.statueDialog1, this.statueDialog2, this.statueDialog3, this.statueDialog4, this.statueDialog5]
+
+        this.npcs.add(this.statue);
+
+        //this.physics.add.collider(this.player, this.statue)
 
         this.npcs.add(this.panneau1);
         this.npcs.add(this.panneau2);
@@ -114,11 +126,11 @@ class sceneHub extends SceneTemplate {
         this.panneau2.listDialog = ["Towards Watered Lands"];
         this.panneau3.listDialog = ["Towards the Great Lettuce"];
 
-        this.dialogue1 = ["A sign is placed", "below the statue:"];
-        this.dialogue2 = ["The Garden Kingdom has always", "been protected by the Keepers."];
-        this.dialogue3 = ["Leur rapidité légendaire fut transmise", "de génération en génération."];
-        this.dialogue4 = ["Selon la tradition, on offre,", "5 graines pour nous porter chance."];
-        this.dialogue5 = ["Pressez E pour déposer 5 graines", "devant la statue."];
+        this.statueDialog1 = ["A sign is placed", "below the statue:"];
+        this.statueDialog2 = ["The Garden Kingdom has always", "been protected by the Keepers."];
+        this.statueDialog3 = ["Leur rapidité légendaire fut transmise", "de génération en génération."];
+        this.statueDialog4 = ["Selon la tradition, on offre,", "5 graines pour nous porter chance."];
+        this.statueDialog5 = ["Pressez E pour déposer 5 graines", "devant la statue."];
 
         this.npcs.children.each(npc => {
             this.physics.add.collider(this.player, npc, this.checkInteractCollision, null, this)

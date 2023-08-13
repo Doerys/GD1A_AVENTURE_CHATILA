@@ -593,6 +593,8 @@ class SceneTemplate extends Phaser.Scene {
 
             this.mobD = this.physics.add.group();
 
+            this.time.delayedCall(500, this.delock_attaque, [], this);
+
             this.mobD_layer = this.map.getObjectLayer('mobD_layer');
             this.mobD_layer.objects.forEach(mobD_layer => {
                 const mobD_create = new MobD(this, mobD_layer.x + 16, mobD_layer.y + 16, 'mobD')
@@ -2311,6 +2313,11 @@ class SceneTemplate extends Phaser.Scene {
                 currentSpawnX = 1104
                 currentSpawnY = 432
             }
+
+            this.mobD.children.each(obj => {
+                obj.isAlive = false;
+                obj.destroy()
+            });
         }
 
         else if (this.mapName == "map_donjon") {
@@ -2318,6 +2325,12 @@ class SceneTemplate extends Phaser.Scene {
             currentMapName = 'map_hub'
             currentSpawnX = 592
             currentSpawnY = 624
+            
+            this.mobD.children.each(obj => {
+
+                obj.isAlive = false;
+                obj.destroy()
+            });
         }
 
         else if (this.mapName == "map_secrete") {

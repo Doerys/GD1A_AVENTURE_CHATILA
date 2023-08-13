@@ -29,9 +29,9 @@ class mainScreen extends Phaser.Scene {
     }
 
     launchGame() {
-        this.scene.start('sceneTuto', {
+        this.scene.start('sceneHub', {
 
-            mapName: "map_tuto", // nom de la map
+            mapName: "map_hub", // nom de la map
             mapTileset: "tileset", // nom du tileset sur TILED
             mapTilesetImage: "tileset_image", // nom du fichier image du tileset
 
@@ -51,12 +51,12 @@ class mainScreen extends Phaser.Scene {
             health: 5,
 
             // SPAWN TUTO
-            spawnX : 48,
-            spawnY : 1808
+            //spawnX : 48,
+            //spawnY : 1808
 
             //SPAWN HUB
-            //spawnX: 528,
-            //spawnY: 1445
+            spawnX: 528,
+            spawnY: 1445
 
             //SPAWN ZONE 1
 
