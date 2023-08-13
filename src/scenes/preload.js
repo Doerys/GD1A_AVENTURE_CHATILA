@@ -14,6 +14,10 @@ class Preload extends Phaser.Scene {
         // PNJ
         this.load.image('npc', 'assets/pnj.png');
         this.load.image('npc2', 'assets/pnj2.png');
+        this.load.image('npc3', 'assets/pnj3.png');
+        this.load.image('npc4', 'assets/pnj4.png');
+        this.load.image('npc5', 'assets/pnj5.png');
+        this.load.image('npc6', 'assets/pnj6.png');
 
         // Mob A (32 x 32)
         this.load.spritesheet('mobA', 'assets/mobA.png',
@@ -24,6 +28,9 @@ class Preload extends Phaser.Scene {
 
         this.load.image("projmobB", "assets/projMobB.png");
 
+        this.load.spritesheet('projBoss', 'assets/projBoss.png',
+            { frameWidth: 16, frameHeight: 16 });
+
         // Mob C (32 x 32)
 
         this.load.spritesheet('mobC', 'assets/mobC.png',
@@ -32,6 +39,14 @@ class Preload extends Phaser.Scene {
         this.load.spritesheet('mobC2', 'assets/mobC2.png',
             { frameWidth: 32, frameHeight: 32 });
 
+        this.load.spritesheet('mobD', 'assets/mobD.png',
+            { frameWidth: 32, frameHeight: 40 });
+
+        this.load.spritesheet('boss', 'assets/boss.png',
+            { frameWidth: 80, frameHeight: 80 });
+
+        this.load.spritesheet('tileAttack', 'assets/tileBoss.png',
+            { frameWidth: 32, frameHeight: 32 });
 
         // Echelle haricot (32 x 96)
         this.load.spritesheet('echelle', 'assets/haricot.png',
@@ -72,9 +87,6 @@ class Preload extends Phaser.Scene {
         this.load.image('panneauG', 'assets/panel_left.png');
         this.load.image('panneauD', 'assets/panel_right.png');
         this.load.image('statue', 'assets/statue.png');
-
-        this.load.image('buff', 'assets/buff.png');
-
         // LOOT
         this.load.image("grainesScore", "assets/loot.png");
         this.load.image("heal", "assets/heal.png");
@@ -82,6 +94,7 @@ class Preload extends Phaser.Scene {
         this.load.image("courge_loot", "assets/graine_courge_loot.png");
         this.load.image("serpe_loot", "assets/serpe_loot.png");
         this.load.image("salade_loot", "assets/salade_loot.png");
+        this.load.image('final_loot', 'assets/final_loot.png');
 
         //Attaque serpe
         this.load.image("sword_y", "assets/attaque_joueur_y.png");
@@ -105,6 +118,20 @@ class Preload extends Phaser.Scene {
 
         this.load.image("interface", "assets/interface.png");
         this.load.image("dialogue", "assets/dialog_box.png")
+        this.load.image("dialogueButton", "assets/dialogButton.png")
+        this.load.image("dialogPassButton", "assets/passDialogButton.png")
+
+        this.load.image("carryGraineButton", "assets/carryButton.png")
+
+        // ATTAQUE BOSS
+        this.load.spritesheet('bossAttack1', 'assets/attackBossPhase1.png',
+            { frameWidth: 128, frameHeight: 128 });
+
+        this.load.spritesheet('bossAttack2', 'assets/attackBossPhase2.png',
+            { frameWidth: 192, frameHeight: 192 });
+
+        this.load.spritesheet('bossAttack3', 'assets/attackBossPhase3.png',
+            { frameWidth: 256, frameHeight: 256 });
 
         //////
 
@@ -294,6 +321,16 @@ class Preload extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('player', { start: 108, end: 111 }),
             frameRate: 10,
         });
+        this.anims.create({
+            key: 'loot',
+            frames: this.anims.generateFrameNumbers('player', { start: 112, end: 115 }),
+            frameRate: 10
+        });
+        this.anims.create({
+            key: 'lootOut',
+            frames: this.anims.generateFrameNumbers('player', { start: 115, end: 112 }),
+            frameRate: 10
+        });
 
         // animation pont
 
@@ -415,6 +452,99 @@ class Preload extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('mobC2', { start: 0, end: 19 }),
             frameRate: 6,
             repeat: -1
+        });
+
+        this.anims.create({
+            key: 'mobD_animOut',
+            frames: this.anims.generateFrameNumbers('mobD', { start: 0, end: 3 }),
+            frameRate: 8
+        });
+
+        this.anims.create({
+            key: 'mobD_animIn',
+            frames: this.anims.generateFrameNumbers('mobD', { start: 3, end: 0 }),
+            frameRate: 8
+        });
+
+        this.anims.create({
+            key: 'mobD_anims',
+            frames: this.anims.generateFrameNumbers('mobD', { start: 4, end: 7 }),
+            frameRate: 8,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'bossWalk_anims',
+            frames: this.anims.generateFrameNumbers('boss', { start: 0, end: 3 }),
+            frameRate: 4,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'bossHit_anims',
+            frames: this.anims.generateFrameNumbers('boss', { start: 4, end: 12 }),
+            frameRate: 5
+        });
+
+        this.anims.create({
+            key: 'bossBigHit_anims',
+            frames: this.anims.generateFrameNumbers('boss', { start: 16, end: 23 }),
+            frameRate: 8
+        });
+
+        this.anims.create({
+            key: 'bossHitDist_anims',
+            frames: this.anims.generateFrameNumbers('boss', { start: 24, end: 25 }),
+            frameRate: 4
+        });
+
+        this.anims.create({
+            key: 'bossCastIn_anims',
+            frames: this.anims.generateFrameNumbers('boss', { start: 28, end: 31 }),
+            frameRate: 4
+        });
+
+        this.anims.create({
+            key: 'bossCastOut_anims',
+            frames: this.anims.generateFrameNumbers('boss', { start: 31, end: 28 }),
+            frameRate: 4
+        });
+
+        this.anims.create({
+            key: 'projBoss',
+            frames: this.anims.generateFrameNumbers('projBoss', { start: 0, end: 1 }),
+            frameRate: 4,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'attackBoss1_anims',
+            frames: this.anims.generateFrameNumbers('bossAttack1', { start: 0, end: 6 }),
+            frameRate: 4
+        });
+
+        this.anims.create({
+            key: 'attackBoss2_anims',
+            frames: this.anims.generateFrameNumbers('bossAttack2', { start: 0, end: 6 }),
+            frameRate: 4
+        });
+
+        this.anims.create({
+            key: 'attackBoss3_anims',
+            frames: this.anims.generateFrameNumbers('bossAttack3', { start: 0, end: 6 }),
+            frameRate: 4
+        });
+
+        this.anims.create({
+            key: 'tileAttack_anims',
+            frames: this.anims.generateFrameNumbers('tileAttack', { start: 0, end: 19 }),
+            frameRate: 5    
+        });
+
+        this.anims.create({
+            key: 'tileAttackIn_anims',
+            frames: this.anims.generateFrameNumbers('tileAttack', { start: 19, end: 14 }),
+            frameRate: 8 
         });
 
         this.scene.start("MainScreen");

@@ -1,6 +1,8 @@
 import BeanLader from "./beanLader.js";
+import Boss from "./boss.js";
 import Bridge from "./bridge.js";
 import DialogEntity from "./dialogEntity.js";
+import MobD from "./mobD.js";
 
 class SceneTemplate extends Phaser.Scene {
 
@@ -10,7 +12,7 @@ class SceneTemplate extends Phaser.Scene {
             physics: {
                 default: 'arcade',
                 arcade: {
-                    debug: true,
+                    debug: false,
                 }
             },
             input: { gamepad: true },
@@ -31,15 +33,17 @@ class SceneTemplate extends Phaser.Scene {
         this.attackDistanceLoot = data.attackDistanceLoot;
         this.volerLoot = data.volerLoot;
 
-        this.graineScore = data.graineScore,
+        this.graineScore = data.graineScore;
 
-            this.player_facing = data.player_facing,
+        this.player_facing = data.player_facing;
 
-            this.speed = data.speed;
+        this.speed = data.speed;
         this.health = data.health;
 
         this.spawnX = data.spawnX;
         this.spawnY = data.spawnY;
+
+        this.bossDefeated = data.bossDefeated;
     }
 
     loadMap(levelMap) {
@@ -47,17 +51,30 @@ class SceneTemplate extends Phaser.Scene {
         this.player_beHit = false; // subir des dégâts
         this.shoot_lock = false; // bloque l'option de tir
         this.clignotement = 0; // frames d'invulnérabilité
+
         this.ableSpitMobB = true;
         this.ableSpitMobBLeft = true;
         this.ableSpitMobBRight = true;
+
         this.ableMobC = true;
         this.mobCDanger = true;
+        this.ableMobC1 = true;
+        this.mobCDanger1 = true;
+        this.ableMobC2 = true;
+        this.mobCDanger2 = true;
+
+        this.bossIsDangerous = false;
+        this.cinematicOpening = false;
+        this.cinematicEnding = false;
+
+        this.canCarry = false;
         this.carryGraine = false;
         this.flyingMod = false;
 
         this.canInteract = false;
         this.inInteraction = false;
         this.inInteractionLoot = false;
+        this.animLoot = false;
 
         this.controller = false;
 
@@ -72,6 +89,8 @@ class SceneTemplate extends Phaser.Scene {
             .setSize(15, 15)
             .setOffset(24, 42)
             .setDepth(3);
+
+        //this.player.setCollideWorldBounds(true);
 
         //Création Attaques CaC et Distance
         this.attaque_sword = this.physics.add.staticGroup();
@@ -114,7 +133,7 @@ class SceneTemplate extends Phaser.Scene {
 
         else if (this.mapName == "map_donjon") {
             this.physics.world.setBounds(0, 0, 2240, 2784);
-            this.cameras.main.setBounds(0, -32, 2240, 2784);
+            this.cameras.main.setBounds(0, 32, 2240, 2752);
         }
 
         else if (this.mapName == "map_secrete") {
@@ -134,7 +153,10 @@ class SceneTemplate extends Phaser.Scene {
         this.interface = this.add.sprite(341, 44, 'interface').setScrollFactor(0).setDepth(10);
         this.textScore = this.add.text(635.5, 45, `${this.graineScore}`, { font: '14px Mabook', fill: '#963d17', align: 'center' }).setOrigin(0.5, 0.5).setScrollFactor(0).setDepth(10);
 
-        this.interactButton = this.add.text(this.player.x, this.player.y - 32, `E`, { font: '14px Mabook', fill: '#963d17', align: 'center' }).setOrigin(0.5, 0.5).setDepth(10).setVisible(false);
+        this.interactButton = this.add.sprite(this.player.x, this.player.y - 48, 'dialogueButton').setOrigin(0.5, 0.5).setDepth(10).setVisible(false);
+        this.passDialogButton = this.add.sprite(475, 350, 'dialogPassButton').setScrollFactor(0).setOrigin(0.5, 0.5).setDepth(11).setVisible(false);
+
+        this.grabButton = this.add.sprite(this.player.x, this.player.y - 48, 'carryGraineButton').setOrigin(0.5, 0.5).setDepth(10).setVisible(false);
 
         this.lifeUI = this.add.sprite(341, 44, 'life1').setScrollFactor(0).setDepth(10);
         this.serpeUI = this.add.sprite(341, 44, 'serpe_ui').setScrollFactor(0).setDepth(10);
@@ -356,6 +378,8 @@ class SceneTemplate extends Phaser.Scene {
 
         this.items = this.physics.add.group();
 
+        this.itemsLook = this.physics.add.group();
+
         // loot - Serpe
         if (this.mapName == "map_zone1" && !this.attackCaCLoot) {
             this.loot_serpe = new DialogEntity(this, 2800, 1392, "serpe_loot");
@@ -528,34 +552,103 @@ class SceneTemplate extends Phaser.Scene {
         }
 
         else {
-            // MOB C
+            // MOB C1 and C2
 
             this.mobC1 = this.physics.add.group();
+
             this.mobC1_layer = this.map.getObjectLayer('mobC1_layer');
             this.mobC1_layer.objects.forEach(mobC1_layer => {
                 this.mobC1_create = this.physics.add.sprite(mobC1_layer.x + 16, mobC1_layer.y + 16, 'mobC');
-                this.mobC1_create.setSize(20, 32);
+                this.mobC1_create.setSize(16, 16).setOffset(8, 16)
                 this.mobC1_create.anims.play('mobC_anims');
                 this.mobC1.add(this.mobC1_create);
             });
 
             this.mobC2 = this.physics.add.group();
+
             this.mobC2_layer = this.map.getObjectLayer('mobC2_layer');
             this.mobC2_layer.objects.forEach(mobC2_layer => {
-                this.mobC2_create = this.physics.add.sprite(mobC2_layer.x + 16, mobC2_layer.y + 16, 'mobC2');
-                this.mobC2_create.setSize(20, 32);
-                this.mobC2_create.anims.play('mobC2_anims');
-                this.mobC2.add(this.mobC2_create);
+                const mobC2_create = this.physics.add.sprite(mobC2_layer.x + 16, mobC2_layer.y + 16, 'mobC2');
+                mobC2_create.setSize(16, 16).setOffset(8, 16)
+
+                this.time.delayedCall(2000, () => {
+                    mobC2_create.anims.play('mobC_anims');
+                }, [], this);
+
+                this.mobC2.add(mobC2_create);
             });
 
             this.physics.add.overlap(this.player, this.mobC1, this.perteVieMobC1, null, this);
             this.physics.add.overlap(this.player, this.mobC2, this.perteVieMobC2, null, this);
 
             this.stateMobC1();
-            this.enableMobC2();
+            this.time.delayedCall(2000, () => {
+                this.stateMobC2();
+            }, [], this);
         }
 
+        if (this.mapName == "map_donjon" || this.mapName == "map_zone2" || this.mapName == "map_tuto") {
+
+            // MOB D
+
+            this.mobD = this.physics.add.group();
+
+            this.mobD_layer = this.map.getObjectLayer('mobD_layer');
+            this.mobD_layer.objects.forEach(mobD_layer => {
+                const mobD_create = new MobD(this, mobD_layer.x + 16, mobD_layer.y + 16, 'mobD')
+                    .setOrigin(.5, .5)
+                    .setSize(16, 24)
+                    .setDepth(1);
+                this.mobD.add(mobD_create);
+            });
+
+            this.colliderMobD = this.physics.add.overlap(this.player, this.mobD, this.perteVieMobD, null, this)
+            this.physics.add.overlap(this.mobD, this.attaque_shoot, this.kill_mob_shootMobD, null, this);
+        }
+
+        // BOSS DE FIN
+
         if (this.mapName == "map_donjon") {
+
+            this.tileAttackGroup = this.physics.add.staticGroup();
+
+            this.attackZoneBoss_layer = this.map.getObjectLayer('attackZoneBoss_layer');
+            this.attackZoneBoss_layer.objects.forEach(obj => {
+                const tileAttack = this.physics.add.staticSprite(obj.x + 16, obj.y + 16, 'tileAttack')
+                    .setSize(32, 32)
+                    .setAlpha(0)
+                    .setDepth(-2);
+
+                tileAttack.disableBody(true, true);
+
+                this.tileAttackGroup.add(tileAttack);
+            });
+
+            this.tileMiddleGroup = this.physics.add.staticGroup();
+
+            this.middleZoneBoss_layer = this.map.getObjectLayer('middleZoneBoss_layer');
+            this.middleZoneBoss_layer.objects.forEach(obj => {
+                const tileAttack = this.physics.add.staticSprite(obj.x + 16, obj.y + 16, 'tileAttack')
+                    .setSize(32, 32)
+                    .setAlpha(1)
+                    .setDepth(-10);
+
+                this.tileMiddleGroup.add(tileAttack);
+            });
+
+            this.tileAroundGroup = this.physics.add.staticGroup();
+
+            this.aroundZoneBoss_layer = this.map.getObjectLayer('aroundZoneBoss_layer');
+            this.aroundZoneBoss_layer.objects.forEach(obj => {
+                const tileAttack = this.physics.add.staticSprite(obj.x + 16, obj.y + 16, 'tileAttack')
+                    .setSize(32, 32)
+                    .setAlpha(1)
+                    .setDepth(-10);
+
+                this.tileAroundGroup.add(tileAttack);
+            });
+
+            this.boss = new Boss(this, 1168, 336, "boss").setSize(64, 64).setOrigin(.5, .5).setPushable(false).setDepth(2);
 
             //Passages vol
 
@@ -599,6 +692,12 @@ class SceneTemplate extends Phaser.Scene {
         // PASSAGES DE SCENE
 
         if (this.mapName == "map_tuto") {
+
+            this.bloquage = this.physics.add.staticGroup();
+            this.bloquage.create(-16, 1792, "passage1x4").setOrigin(0, 0.5);
+            this.bloquage.create(-16, 1928, "passage1x4").setOrigin(0, 0.5);
+
+            this.physics.add.collider(this.player, this.bloquage);
 
             // Passage scene HUB
             this.versHub = this.physics.add.staticGroup();
@@ -714,7 +813,7 @@ class SceneTemplate extends Phaser.Scene {
 
         // Joueur - Environnement
         this.collisionMur = this.physics.add.collider(this.player, this.murs);
-        this.collisionEau = this.physics.add.collider(this.player, this.eau);
+        this.collisionEau = this.physics.add.collider(this.player, this.eau, this.checkFlying, null, this);
         this.collisionObstacles = this.physics.add.collider(this.player, this.obstacles);
 
         this.physics.add.overlap(this.player, this.grainesHaricot, this.grabGraine, null, this);
@@ -738,17 +837,12 @@ class SceneTemplate extends Phaser.Scene {
 
         // Joueur - Ennemi (perte de vie)
 
-        this.physics.add.collider(this.mobA, this.attaque_sword, this.kill_mob, null, this);
-        this.physics.add.collider(this.mobA, this.attaque_shoot, this.kill_mob_shoot, null, this);
-        this.physics.add.overlap(this.player, this.mobA, this.perteVieMobA, null, this);
+        this.physics.add.overlap(this.mobA, this.attaque_sword, this.kill_mob, null, this);
+        this.physics.add.overlap(this.mobA, this.attaque_shoot, this.kill_mob_shoot, null, this);
         this.physics.add.overlap(this.player, this.mobA, this.perteVieMobA, null, this);
 
         this.physics.add.collider(this.player, this.mobB);
-        this.physics.add.collider(this.player, this.mobB);
-        this.physics.add.collider(this.player, this.mobB);
-        this.physics.add.collider(this.mobB, this.attaque_sword, this.kill_mob, null, this);
-        this.physics.add.collider(this.mobB, this.attaque_sword, this.kill_mob, null, this);
-        this.physics.add.collider(this.mobB, this.attaque_sword, this.kill_mob, null, this);
+        this.physics.add.overlap(this.mobB, this.attaque_sword, this.kill_mob, null, this);
 
         this.physics.add.overlap(this.player, this.attaquemobB, this.perteVieMobB, null, this);
         this.physics.add.collider(this.attaquemobB, this.murs, this.clean_projMobB, null, this);
@@ -763,9 +857,7 @@ class SceneTemplate extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.money, this.collectLoot, null, this);
         this.physics.add.overlap(this.player, this.heal, this.collectHeal, null, this);
 
-        this.items.children.each(item => {
-            this.physics.add.overlap(this.player, item, this.collectItem, null, this);
-        });
+        this.physics.add.overlap(this.player, this.items, this.collectItem, null, this);
 
         // Joueur attaques - CaC et distance
         this.physics.add.overlap(this.attaque_sword, this.murs, this.clean_sword, this.if_clean_sword, this);
@@ -1023,6 +1115,7 @@ class SceneTemplate extends Phaser.Scene {
         this.gestionUI();
         this.checkSpeak();
         this.checkLootDialog();
+        this.checkGrabGraine();
         //this.interactButton.setPosition(this.player.x, this.player.y - 32);
 
     }
@@ -1104,7 +1197,7 @@ class SceneTemplate extends Phaser.Scene {
             this.mobCDanger = true;
 
             this.mobC.children.each(mobC => {
-                this.mobC.setAlpha(1);
+                mobC.setAlpha(1);
             });
 
         }, [], this);
@@ -1113,7 +1206,7 @@ class SceneTemplate extends Phaser.Scene {
             this.mobCDanger = false;
 
             this.mobC.children.each(mobC => {
-                this.mobC.setAlpha(0.8);
+                mobC.setAlpha(0.8);
             });
         }, [], this);
 
@@ -1124,40 +1217,45 @@ class SceneTemplate extends Phaser.Scene {
 
     stateMobC1() {
 
-        if (this.ableMobC1) {
+        if (this.ableMobC1 && !this.cinematicEnding) {
             this.ableMobC1 = false;
 
-            this.time.delayedCall(2000, this.enableMobC, [], this);
+            this.time.delayedCall(2000, this.enableMobC1, [], this);
         }
 
     }
 
     enableMobC1() {
 
-        this.time.delayedCall(225, () => {
+        if (!this.cinematicEnding) {
 
-            this.ableMobC1 = true;
-            this.mobC1Danger = true;
+            this.time.delayedCall(225, () => {
 
-            this.mobC1.children.each(mobC => {
-                this.mobC1.setAlpha(1);
-            });
+                this.ableMobC1 = true;
+                this.mobC1Danger = true;
 
-        }, [], this);
+                this.mobC1.children.each(mobC => {
+                    mobC.setAlpha(1);
+                });
 
-        this.time.delayedCall(1250, () => {
-            this.mobC1Danger = false;
+            }, [], this);
 
-            this.mobC1.children.each(mobC => {
-                this.mobC1.setAlpha(0.8);
-            });
-        }, [], this);
+            this.time.delayedCall(1250, () => {
+                this.mobC1Danger = false;
 
-        this.time.delayedCall(2000, this.stateMobC1, [], this);
+                this.mobC1.children.each(mobC => {
+                    mobC.setAlpha(0.8);
+                });
+            }, [], this);
+
+            this.time.delayedCall(2000, this.stateMobC1, [], this);
+
+        }
     }
 
     stateMobC2() {
-        if (this.ableMobC2) {
+
+        if (this.ableMobC2 && !this.cinematicEnding) {
 
             this.ableMobC2 = false;
             this.time.delayedCall(2000, this.enableMobC2, [], this);
@@ -1166,26 +1264,29 @@ class SceneTemplate extends Phaser.Scene {
 
     enableMobC2() {
 
-        this.time.delayedCall(225, () => {
+        if (!this.cinematicEnding) {
+            this.time.delayedCall(225, () => {
 
-            this.ableMobC2 = true;
-            this.mobC2Danger = true;
+                this.ableMobC2 = true;
+                this.mobC2Danger = true;
 
-            this.mobC2.children.each(mobC => {
-                this.mobC2.setAlpha(1);
-            });
+                this.mobC2.children.each(mobC => {
+                    mobC.setAlpha(1);
+                });
 
-        }, [], this);
+            }, [], this);
 
-        this.time.delayedCall(1250, () => {
-            this.mobC2Danger = false;
+            this.time.delayedCall(1250, () => {
+                this.mobC2Danger = false;
 
-            this.mobC2.children.each(mobC => {
-                this.mobC2.setAlpha(0.8);
-            });
-        }, [], this);
+                this.mobC2.children.each(mobC => {
+                    mobC.setAlpha(0.8);
+                });
+            }, [], this);
 
-        this.time.delayedCall(2000, this.stateMobC2, [], this);
+            this.time.delayedCall(2000, this.stateMobC2, [], this);
+        }
+
     }
 
 
@@ -1403,6 +1504,53 @@ class SceneTemplate extends Phaser.Scene {
         }
     }
 
+    //Perte de vie si touché par mob A
+    perteVieMobD(player, mobD) {
+
+        if (this.player_beHit == false) {
+
+            // On ne peut plus se déplacer
+            this.player_block = true;
+            // variable qui empêchera de se faire taper pendant la frame d'invul
+            this.player_beHit = true;
+
+            // repoussoir du personnage
+            if (mobD.body.touching.left) {
+                player.setVelocityX(-600);
+            }
+            else if (mobD.body.touching.right) {
+                player.setVelocityX(600);
+            }
+            else if (mobD.body.touching.up) {
+                player.setVelocityY(-600);
+            }
+            else if (mobD.body.touching.down) {
+                player.setVelocityY(600);
+            }
+
+            mobD.isAlive = false;
+
+            mobD.destroy();
+
+            // retrait des pv dans la variable
+            this.health -= 1;
+
+            // si la vie est en-dessous de 0, on meurt.
+            if (this.health == 0) {
+                this.killPlayer();
+            }
+
+            // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
+            else {
+                // Visuel de la frame d'invulnérabilité
+                this.pinvisible();
+
+                this.time.delayedCall(500, this.delock_joueur, [], this);
+                this.time.delayedCall(1500, this.able_hit, [], this);
+            }
+        }
+    }
+
     // FONCTIONS POUR TUER LES MOBS
 
     // Kill au CAC
@@ -1417,7 +1565,15 @@ class SceneTemplate extends Phaser.Scene {
         attaque_shoot.disableBody(true, true);
         this.shoot_lock = false;
 
+        mobA.isAlive = false;
+
         this.lootMob(mobA);
+    }
+
+    kill_mob_shootMobD(mobD, attaque_shoot) {
+        if (mobD.outHole || mobD.isOuting) {
+            this.kill_mob_shoot(mobD, attaque_shoot);
+        }
     }
 
     // Drop des mobs
@@ -1473,7 +1629,11 @@ class SceneTemplate extends Phaser.Scene {
 
     //Débloque l'attaque CaC
     delock_attaque() {
-        this.player_block = false;
+
+        if (!this.cinematicEnding) {
+            this.player_block = false;
+        }
+
         this.trigger_cleanSword = true;
     }
 
@@ -1524,7 +1684,7 @@ class SceneTemplate extends Phaser.Scene {
     }
 
     pvisible() {
-        if (this.clignotement < 3) {
+        if (this.clignotement < 5) {
             this.time.delayedCall(50, this.pinvisible, [], this);
             this.player.visible = true;
             this.clignotement += 1;
@@ -1631,10 +1791,33 @@ class SceneTemplate extends Phaser.Scene {
     }
 
     grabGraine(player, graine) {
+
+        if (!this.canCarry) {
+            this.grabButton.setVisible(true);
+            this.canCarry = true;
+            this.savedGraine = graine;
+            this.grabButton.setPosition(graine.x + 2, graine.y - 48);
+        }
+
         if ((Phaser.Input.Keyboard.JustDown(this.FKey) || this.controller.L1) && this.carryGraine == false) {
             graine.destroy();
             this.speed = 100;
             this.carryGraine = true;
+
+            this.grabButton.setVisible(false);
+            this.canCarry = false;
+        }
+    }
+
+    checkGrabGraine() {
+        if (this.canCarry) {
+
+            const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.savedGraine.x, this.savedGraine.y);
+
+            if (distance > 32) {
+                this.grabButton.setVisible(false);
+                this.canCarry = false;
+            }
         }
     }
 
@@ -1651,59 +1834,88 @@ class SceneTemplate extends Phaser.Scene {
 
     sautRight() {
         if ((Phaser.Input.Keyboard.JustDown(this.EKey) || this.controller.B) && this.volerLoot == true && this.carryGraine == false) {
-            console.log("CHECK");
-            this.player.anims.play("fly_right");
-            this.physics.world.removeCollider(this.collisionMur);
-            this.physics.world.removeCollider(this.collisionEau);
             this.player_block = true;
+            this.player_facing = "right"
+            this.player.anims.play("fly_right");
+            this.physics.world.removeCollider(this.collisionEau);
+            this.physics.world.removeCollider(this.collisionMur);
             this.player.setVelocityX(150);
+            this.player.setVelocityY(0);
             this.flyingMod = true;
         }
     }
 
     sautLeft() {
         if (Phaser.Input.Keyboard.JustDown(this.EKey) && this.volerLoot == true && this.carryGraine == false) {
-            console.log("CHECK");
-            this.player.anims.play("fly_left");
-            this.physics.world.removeCollider(this.collisionMur);
-            this.physics.world.removeCollider(this.collisionEau);
             this.player_block = true;
+            this.player_facing = "left"
+            this.player.anims.play("fly_left");
+            this.physics.world.removeCollider(this.collisionEau);
+            this.physics.world.removeCollider(this.collisionMur);
             this.player.setVelocityX(-150);
+            this.player.setVelocityY(0);
             this.flyingMod = true;
         }
     }
 
     sautDown() {
         if (Phaser.Input.Keyboard.JustDown(this.EKey) && this.volerLoot == true && this.carryGraine == false) {
-            console.log("CHECK");
-            this.player.anims.play("fly_down");
-            this.physics.world.removeCollider(this.collisionMur);
-            this.physics.world.removeCollider(this.collisionEau);
             this.player_block = true;
+            this.player_facing = "down"
+            this.player.anims.play("fly_down");
+            this.physics.world.removeCollider(this.collisionEau);
+            this.physics.world.removeCollider(this.collisionMur);
             this.player.setVelocityY(150);
+            this.player.setVelocityX(0);
             this.flyingMod = true;
         }
     }
 
     sautUp() {
         if (Phaser.Input.Keyboard.JustDown(this.EKey) && this.volerLoot == true && this.carryGraine == false) {
-            this.player.anims.play("fly_up");
-            console.log("CHECK");
-            this.physics.world.removeCollider(this.collisionMur);
-            this.physics.world.removeCollider(this.collisionEau);
             this.player_block = true;
+            this.player_facing = "up"
+            this.player.anims.play("fly_up");
+            this.physics.world.removeCollider(this.collisionEau);
+            this.physics.world.removeCollider(this.collisionMur);
             this.player.setVelocityY(-150);
+            this.player.setVelocityX(0);
             this.flyingMod = true;
         }
     }
 
     stopSaut() {
         if (this.flyingMod == true) {
-            console.log("CHECK 2");
             this.physics.world.colliders.add(this.collisionMur);
             this.physics.world.colliders.add(this.collisionEau);
             this.delock_joueur();
             this.flyingMod = false;
+        }
+    }
+
+    checkFlying() {
+        if (this.flyingMod == true) {
+            this.physics.world.removeCollider(this.collisionEau);
+
+            if (this.player_facing == "right") {
+                this.player.setVelocityX(150);
+                this.player.setVelocityY(0);
+            }
+
+            else if (this.player_facing == "left") {
+                this.player.setVelocityX(-150);
+                this.player.setVelocityY(0);
+            }
+
+            else if (this.player_facing == "down") {
+                this.player.setVelocityY(150);
+                this.player.setVelocityX(0);
+            }
+
+            else if (this.player_facing == "up") {
+                this.player.setVelocityY(-150);
+                this.player.setVelocityX(0);
+            }
         }
     }
 
@@ -1713,7 +1925,7 @@ class SceneTemplate extends Phaser.Scene {
             this.interactButton.setVisible(true);
             this.canInteract = true;
             this.savedNpc = npc;
-            this.interactButton.setPosition(this.savedNpc.x, this.savedNpc.y - 32);
+            this.interactButton.setPosition(this.savedNpc.x + 16, this.savedNpc.y - 48);
             this.savedListDialog = npc.listDialog;
         }
 
@@ -1728,7 +1940,25 @@ class SceneTemplate extends Phaser.Scene {
 
             if (!this.inInteraction) {
                 if (Phaser.Input.Keyboard.JustDown(this.EKey)) {
+
+                    if (this.player_facing == "up") {
+                        this.player.anims.play('up', true)
+                    }
+
+                    else if (this.player_facing == "down") {
+                        this.player.anims.play('down', true)
+                    }
+
+                    else if (this.player_facing == "right") {
+                        this.player.anims.play('right', true)
+                    }
+
+                    else if (this.player_facing == "left") {
+                        this.player.anims.play('left', true)
+                    }
+
                     this.interactButton.setVisible(false);
+                    this.passDialogButton.setVisible(true);
                     this.dialogueBox.visible = true;
                     this.player_block = true;
                     this.player.setVelocity(0, 0)
@@ -1748,6 +1978,8 @@ class SceneTemplate extends Phaser.Scene {
                     this.stepList += 1;
                 }
                 else if (this.stepList == this.dialogLength + 1) {
+                    this.passDialogButton.setVisible(false);
+
                     this.inInteraction = false;
                     this.player_block = false;
                     this.stepList = 0;
@@ -1767,16 +1999,82 @@ class SceneTemplate extends Phaser.Scene {
 
         if (this.inInteractionLoot) {
 
+            this.player_facing = "down";
+
+            if (!this.animLoot) {
+                this.animLoot = true;
+                this.player.anims.play("loot", true);
+            }
+
+            this.passDialogButton.setVisible(true);
+
             if (Phaser.Input.Keyboard.JustDown(this.EKey) && this.stepList != this.dialogLength + 1) {
 
                 this.dialogueText.setText(this.savedListDialog[this.stepList]);
                 this.stepList += 1;
+
             }
             else if (this.stepList == this.dialogLength + 1) {
+
+                this.passDialogButton.setVisible(false);
                 this.inInteractionLoot = false;
-                this.player_block = false;
                 this.stepList = 0;
                 this.dialogueBox.visible = false;
+                this.animLoot = false;
+                this.player.anims.play("lootOut", true);
+
+                this.time.delayedCall(750, function () {
+
+                    this.player_block = false;
+
+                }, [], this);
+
+                this.itemsLook.children.each(obj => {
+
+                    this.tweens.add({
+                        targets: obj,
+                        alpha: 0,
+                        duration: 750,  // Durée de l'animation en millisecondes
+                        ease: 'Linear', // Fonction d'interpolation pour l'animation
+                    });
+
+                });
+
+                if (this.bossDefeated) {
+
+                    this.player_block = true;
+
+                    this.cameras.main.fadeOut(750, 0, 0, 0);
+
+                    this.time.delayedCall(1000, function () {
+
+                        this.scene.start('sceneHub', {
+
+                            mapName: "map_hub", // nom de la map
+                            mapTileset: "tileset", // nom du tileset sur TILED
+                            mapTilesetImage: "tileset_image", // nom du fichier image du tileset
+
+                            graineScore: this.graineScore,
+
+                            player_facing: "down",
+
+                            // Variables pour débloquer les mécaniques
+                            attackCaCLoot: this.attackCaCLoot,
+                            attackDistanceLoot: this.attackDistanceLoot,
+                            volerLoot: this.volerLoot,
+
+                            speed: this.speed,
+                            health: 5,
+
+                            spawnX: 448,
+                            spawnY: 1145,
+
+                            bossDefeated: this.bossDefeated,
+                        });
+
+                    }, [], this);
+
+                }
             }
         }
     }
@@ -1785,12 +2083,67 @@ class SceneTemplate extends Phaser.Scene {
 
         if (item.name == "serpe") {
             this.attackCaCLoot = true;
+
+            this.loot_serpeBis = this.physics.add.sprite(this.player.x + 4, this.player.y - 32, "serpe_loot").setDepth(4);
+
+            this.tweens.add({
+                targets: this.loot_serpeBis,
+                y: this.loot_serpeBis.y + 10,
+                duration: 500,
+                yoyo: true,
+                delay: 50,
+                repeat: -1
+            });
+
+            this.itemsLook.add(this.loot_serpeBis);
         }
         else if (item.name == "courge") {
             this.attackDistanceLoot = true;
+
+            this.loot_courgeBis = this.physics.add.sprite(this.player.x, this.player.y - 32, "courge_loot").setDepth(4);
+
+            this.tweens.add({
+                targets: this.loot_courgeBis,
+                y: this.loot_courgeBis.y + 10,
+                duration: 500,
+                yoyo: true,
+                delay: 50,
+                repeat: -1
+            });
+
+            this.itemsLook.add(this.loot_courgeBis);
         }
         else if (item.name == "salad") {
             this.volerLoot = true;
+
+            this.loot_saladeBis = this.physics.add.sprite(this.player.x + 4, this.player.y - 32, "salade_loot").setDepth(4);
+
+            this.tweens.add({
+                targets: this.loot_saladeBis,
+                y: this.loot_saladeBis.y + 10,
+                duration: 500,
+                yoyo: true,
+                delay: 50,
+                repeat: -1
+            });
+
+            this.itemsLook.add(this.loot_saladeBis);
+        }
+
+        else if (item.name == "final") {
+
+            this.final_LootBis = this.physics.add.sprite(this.player.x, this.player.y - 32, "final_loot").setDepth(4);
+
+            this.tweens.add({
+                targets: this.final_LootBis,
+                y: this.final_LootBis.y + 10,
+                duration: 500,
+                yoyo: true,
+                delay: 50,
+                repeat: -1
+            });
+
+            this.itemsLook.add(this.final_LootBis);
         }
 
         this.dialogueBox.visible = true;
@@ -2004,7 +2357,9 @@ class SceneTemplate extends Phaser.Scene {
                 speed: this.speed,
                 health: this.health,
                 spawnX: currentSpawnX,
-                spawnY: currentSpawnY
+                spawnY: currentSpawnY,
+
+                bossDefeated: this.bossDefeated
             });
         }, [], this);
     }

@@ -1,3 +1,4 @@
+import DialogEntity from "../dialogEntity.js";
 import SceneTemplate from "../sceneTemplate.js";
 
 class sceneDonjon extends SceneTemplate {
@@ -18,17 +19,30 @@ class sceneDonjon extends SceneTemplate {
         // chargement des calques
         this.loadMap(levelMap);
 
-        // PNJ
-        //this.npc = this.physics.add.staticSprite(384, 848, 'npc').setVisible(false);
+        this.cornNPC = new DialogEntity (this, 1760, 704, 'npc2');
+
+        this.dialoguecornNPC1 = ["Pirlouit ! Notre sauveur !", "Quel plaisir de te voir !"];
+        this.dialoguecornNPC2 = ["Tu es sacrément costaud !", "Tu vas nous sortir de là, hein ?"];
+        this.dialoguecornNPC3 = ["N'oublie pas ! En pressant F,", "tu peux porter certaines choses"];
+        this.dialoguecornNPC4 = ["et les déplacer où tu veux.", "N'oublie pas, hein !"];
+        this.dialoguecornNPC5 = ["Allez, bon courage !", "Tu es notre Gardien !"];
+
+        this.cornNPC.listDialog = [this.dialoguecornNPC1, this.dialoguecornNPC2, this.dialoguecornNPC3, this.dialoguecornNPC4, this.dialoguecornNPC5]
+
+        this.npcs.add(this.cornNPC);     
+
+        this.npcs.children.each(npc => {
+            this.physics.add.collider(this.player, npc, this.checkInteractCollision, null, this)
+        });  
 
         this.dialogue1 = ["Voilà la dernière feuille pure", "de la Grande Laitue."];
         this.dialogue2 = ["Avec ce don, appuie sur E,", "pour déployer la feuille."];
         this.dialogue3 = ["Avec, franchis les derniers obstacles", "se dressant sur ta route."];
         this.dialogue4 = ["Sauve la Grande Laitue,", "Sauve le Royaume Potager !"];
 
-        this.loot_salade.listDialog = [this.dialogue1, this.dialogue2, this.dialogue3, this.dialogue4];
-
-        //this.physics.add.overlap(this.player, this.loot_salade, this.collectSalad, null, this);
+        if (!this.volerLoot) {
+            this.loot_salade.listDialog = [this.dialogue1, this.dialogue2, this.dialogue3, this.dialogue4];
+        }
     }
 
     update() {

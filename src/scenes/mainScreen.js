@@ -40,25 +40,32 @@ class mainScreen extends Phaser.Scene {
             player_facing: "down",
 
             // Variables pour débloquer les mécaniques
-            attackCaCLoot: false,
-            attackDistanceLoot: false,
-            volerLoot: false,
+            attackCaCLoot: true,
+            attackDistanceLoot: true,
+            volerLoot: true,
+
+            bossDefeated: false,
 
             speed: 175,
             //speed : 800,
             health: 5,
 
             // SPAWN TUTO
-            //spawnX : 400,
+            //spawnX : 48,
             //spawnY : 1808
 
             //SPAWN HUB
             spawnX: 528,
             spawnY: 1445
 
+            //SPAWN ZONE 1
+
+            //spawnX: 2608,
+            //spawnY: 1392
+
             // SPAWN DONJON
-            //spawnX : 1776,
-            //spawnY : 768
+            //spawnX : 1184,
+            //spawnY : 608
         });
     }
 }
