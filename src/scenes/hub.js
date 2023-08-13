@@ -52,13 +52,14 @@ class sceneHub extends SceneTemplate {
 
                 this.pimentNPC = new DialogEntity(this, 384, 912, 'npc5');
 
-                this.dialoguePimentNPC1 = [];
-                this.dialoguePimentNPC2 = [];
-                this.dialoguePimentNPC3 = [];
-                this.dialoguePimentNPC4 = [];
-                this.dialoguePimentNPC5 = [];
+                this.dialoguePimentNPC1 = ["Oh! You find Dad's Sickle!", "That's really good work!"];
+                this.dialoguePimentNPC2 = ["You know what? You can keep it.", "It suits better on you than me."];
+                this.dialoguePimentNPC3 = ["Before my father passed away,", "he wanted me to stop playing hero."] ;
+                this.dialoguePimentNPC4 = ["He said it was the Guardians' duty", "to keep the Kingdom safe."] ;
+                this.dialoguePimentNPC5 = ["I didn't want to wait to act.", "I couldn't remain passive."] ;
+                this.dialoguePimentNPC6 = ["But finally, Dad was right.", "Now, I know the Kingdom will be safe."] ;
 
-                this.pimentNPC.listDialog = [this.dialoguePimentNPC1, this.dialoguePimentNPC2, this.dialoguePimentNPC3, this.dialoguePimentNPC4, this.dialoguePimentNPC5]
+                this.pimentNPC.listDialog = [this.dialoguePimentNPC1, this.dialoguePimentNPC2, this.dialoguePimentNPC3, this.dialoguePimentNPC4, this.dialoguePimentNPC5, this.dialoguePimentNPC6]
 
                 this.npcs.add(this.pimentNPC);
 
@@ -68,13 +69,14 @@ class sceneHub extends SceneTemplate {
 
                 this.brocoliNPC = new DialogEntity(this, 880, 960, 'npc6');
 
-                this.dialogueBrocoliNPC1 = [];
-                this.dialogueBrocoliNPC2 = [];
-                this.dialogueBrocoliNPC3 = [];
-                this.dialogueBrocoliNPC4 = [];
-                this.dialogueBrocoliNPC5 = [];
+                this.dialogueBrocoliNPC1 = ["Oh my... The Squash Seed!", "Yes! You retrieved it!"];
+                this.dialogueBrocoliNPC2 = ["I'm very happy you got it back, Pirlouit.", "It means a lot to me."];
+                this.dialogueBrocoliNPC3 = ["Seeds are not only important", "to ensure the prosperity of our land."];
+                this.dialogueBrocoliNPC4 = ["They embody our hopes, our future.", "We must think beyond today."];
+                this.dialogueBrocoliNPC5 = ["When this whole disaster is over, they", "will allow us to create a new kingdom."];
+                this.dialogueBrocoliNPC6 = ["I can't wait to see it happen."];
 
-                this.brocoliNPC.listDialog = [this.dialogueBrocoliNPC1, this.dialogueBrocoliNPC2, this.dialogueBrocoliNPC3, this.dialogueBrocoliNPC4, this.dialogueBrocoliNPC5]
+                this.brocoliNPC.listDialog = [this.dialogueBrocoliNPC1, this.dialogueBrocoliNPC2, this.dialogueBrocoliNPC3, this.dialogueBrocoliNPC4, this.dialogueBrocoliNPC5, this.dialogueBrocoliNPC6]
 
                 this.npcs.add(this.brocoliNPC);
 

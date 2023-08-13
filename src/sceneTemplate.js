@@ -812,7 +812,7 @@ class SceneTemplate extends Phaser.Scene {
         // COLLIDERS ET OVERLAPS
 
         // Joueur - Environnement
-        this.collisionMur = this.physics.add.collider(this.player, this.murs);
+        //this.collisionMur = this.physics.add.collider(this.player, this.murs);
         this.collisionEau = this.physics.add.collider(this.player, this.eau, this.checkFlying, null, this);
         this.collisionObstacles = this.physics.add.collider(this.player, this.obstacles);
 

@@ -27,11 +27,11 @@ class sceneTuto extends SceneTemplate {
 
         this.dialogueOignonNPC1 = ["Pirlouit! At last you're here!", "I have sad news!"];
         this.dialogueOignonNPC2 = ["While you were away, the", "Garden Kingdom has been corrupted!"];
-        this.dialogueOignonNPC3 = ["Many people have been transformed", "into aggressive monsters."];
+        this.dialogueOignonNPC3 = ["Our land is now invaded by", "hordes of aggressive monsters."];
         this.dialogueOignonNPC4 = ["The corruption seems to come from", "the Great Lettuce."];
-        this.dialogueOignonNPC5 = ["Be gone, noble Garden's Keeper.", "Save the Kingdom!"];
+        this.dialogueOignonNPC5 = ["Only you is strong enough to fix this.", "Save the Kingdom!"];
 
-        this.npc.listDialog = [this.dialogueOignonNPC1, this.dialogueOignonNPC2, this.dialogueOignonNPC3, this.dialogueOignonNPC4, this.dialogueOignonNPC5]
+        this.onionNPC.listDialog = [this.dialogueOignonNPC1, this.dialogueOignonNPC2, this.dialogueOignonNPC3, this.dialogueOignonNPC4, this.dialogueOignonNPC5];
 
         this.npcs.add(this.onionNPC);
 
