@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="112" height="128" tilewidth="32" tileheight="32" infinite="0" nextlayerid="36" nextobjectid="98">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="112" height="128" tilewidth="32" tileheight="32" infinite="0" nextlayerid="37" nextobjectid="100">
  <editorsettings>
   <export target="map_part2.json" format="json"/>
  </editorsettings>
@@ -3460,6 +3460,9 @@
  <objectgroup id="18" name="graines_layer">
   <object id="10" x="800" y="2624" width="32" height="32"/>
  </objectgroup>
+ <objectgroup id="36" name="scroll_layer">
+  <object id="98" name="3" x="2064" y="688" width="32" height="32"/>
+ </objectgroup>
  <layer id="4" name="taille_ecran" width="112" height="128" visible="0" offsetx="884" offsety="-740">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -4160,19 +4163,20 @@
   </object>
  </objectgroup>
  <objectgroup id="24" name="heal_layer">
-  <object id="37" x="2336" y="1696" width="32" height="32"/>
+  <object id="37" x="2304" y="1696" width="32" height="32"/>
   <object id="66" x="720" y="2992" width="32" height="32"/>
   <object id="69" x="320" y="3168" width="32" height="32"/>
  </objectgroup>
  <objectgroup id="25" name="money_layer">
   <object id="33" x="1696" y="2944" width="32" height="32"/>
   <object id="34" x="1600" y="2976" width="32" height="32"/>
-  <object id="38" x="2032" y="624" width="32" height="32"/>
-  <object id="39" x="2096" y="688" width="32" height="32"/>
-  <object id="45" x="896" y="3456" width="32" height="32"/>
-  <object id="46" x="1024" y="3520" width="32" height="32"/>
+  <object id="38" x="2256" y="2192" width="32" height="32"/>
+  <object id="39" x="2304" y="2144" width="32" height="32"/>
+  <object id="45" x="912" y="3456" width="32" height="32"/>
+  <object id="46" x="976" y="3504" width="32" height="32"/>
   <object id="65" x="1200" y="2576" width="32" height="32"/>
   <object id="76" x="1280" y="2592" width="32" height="32"/>
+  <object id="99" x="1040" y="3456" width="32" height="32"/>
  </objectgroup>
  <layer id="7" name="repère_haricot_courge" width="112" height="128" visible="0">
   <data encoding="csv">

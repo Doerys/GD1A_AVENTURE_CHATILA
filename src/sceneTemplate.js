@@ -76,6 +76,8 @@ class SceneTemplate extends Phaser.Scene {
         this.inInteractionLoot = false;
         this.animLoot = false;
 
+        this.lootEquipement = false;
+
         this.controller = false;
 
         this.nextScene = ""
@@ -142,8 +144,14 @@ class SceneTemplate extends Phaser.Scene {
         }
 
         this.cameras.main.setSize(683, 384) //format 16/9
-            .fadeIn(750, 0, 0, 0)
             .startFollow(this.player, true)
+
+        if (!this.bossDefeated) {
+            this.cameras.main.fadeIn(750, 0, 0, 0);
+        }
+        else if (this.bossDefeated) {
+            this.cameras.main.fadeIn(1500, 0, 0, 0);
+        }
 
         //player.setCollideWorldBounds(true); (bloque le joueur, NE PAS ACTIVER)
 
@@ -330,49 +338,6 @@ class SceneTemplate extends Phaser.Scene {
             });
         }
 
-        // LOOTS
-
-        if (this.mapName != "map_hub") {
-
-            //Soin
-            this.heal = this.physics.add.group();
-            this.heal_layer = this.map.getObjectLayer('heal_layer');
-            this.heal_layer.objects.forEach(heal_layer => {
-                this.healCreate = this.heal.create(heal_layer.x + 16, heal_layer.y + 16, "heal")
-                    .setSize(16, 16)
-                    .setOrigin(0.5, 0.5)
-                this.tweens.add({
-                    targets: this.healCreate,
-                    y: this.healCreate.y + 5,
-                    duration: 500,
-                    yoyo: true,
-                    delay: 50,
-                    repeat: -1
-                });
-            });
-
-            this.heal.add(this.healCreate);
-
-            // Graines Scores
-            this.money = this.physics.add.group();
-            this.money_layer = this.map.getObjectLayer('money_layer');
-            this.money_layer.objects.forEach(money_layer => {
-                this.moneyCreate = this.money.create(money_layer.x + 16, money_layer.y + 16, "grainesScore")
-                    .setSize(16, 16)
-                    .setOrigin(0.5, 0.5)
-                this.tweens.add({
-                    targets: this.moneyCreate,
-                    y: this.moneyCreate.y + 5,
-                    duration: 500,
-                    yoyo: true,
-                    delay: 50,
-                    repeat: -1
-                });
-            });
-
-            this.money.add(this.moneyCreate);
-
-        }
 
         //ITEMS
 
@@ -435,14 +400,131 @@ class SceneTemplate extends Phaser.Scene {
             this.items.add(this.loot_salade);
         }
 
+
+        // LOOTS
+
+        if (this.mapName != "map_hub") {
+
+            //Soin
+            this.heal = this.physics.add.group();
+            this.heal_layer = this.map.getObjectLayer('heal_layer');
+            this.heal_layer.objects.forEach(heal_layer => {
+                this.healCreate = this.heal.create(heal_layer.x + 16, heal_layer.y + 16, "heal")
+                    .setSize(16, 16)
+                    .setOrigin(0.5, 0.5)
+                this.tweens.add({
+                    targets: this.healCreate,
+                    y: this.healCreate.y + 5,
+                    duration: 500,
+                    yoyo: true,
+                    delay: 50,
+                    repeat: -1
+                });
+            });
+
+            this.heal.add(this.healCreate);
+
+            // Graines Scores
+            this.money = this.physics.add.group();
+            this.money_layer = this.map.getObjectLayer('money_layer');
+            this.money_layer.objects.forEach(money_layer => {
+                this.moneyCreate = this.money.create(money_layer.x + 16, money_layer.y + 16, "grainesScore")
+                    .setSize(16, 16)
+                    .setOrigin(0.5, 0.5)
+                this.tweens.add({
+                    targets: this.moneyCreate,
+                    y: this.moneyCreate.y + 5,
+                    duration: 500,
+                    yoyo: true,
+                    delay: 50,
+                    repeat: -1
+                });
+            });
+
+            this.money.add(this.moneyCreate);
+
+            // Scrolls
+
+            this.scroll_layer = this.map.getObjectLayer('scroll_layer');
+            this.scroll_layer.objects.forEach(scroll_layer => {
+
+                this.dialogScientist1 = ["You find a piece of paper.", "You start to read it."];
+
+                const noteScientist = new DialogEntity(this, scroll_layer.x + 16, scroll_layer.y + 16, 'scroll').setOrigin(.5, .5);
+
+                if (scroll_layer.name == "1") {
+                    this.dialogScientist2 = ["Day 1: I think I've found something that", "could guarantee unprecedented progress."];
+                    this.dialogScientist3 = ["I still have some experimenting to do.", "It will take time, of course."];
+                    this.dialogScientist4 = ["But if the results are good,", "it could be the begining of a new era."];
+
+                    noteScientist.listDialog = [this.dialogScientist1, this.dialogScientist2, this.dialogScientist3, this.dialogScientist4];
+                }
+
+                else if (scroll_layer.name == "2") {
+
+                    this.dialogScientist5 = ["Day 8: I couldn't be more excited.", "This substance is amazing!"];
+                    this.dialogScientist6 = ["Thanks to this, the Antpire would no longer", "be a threat. Nothing would be a threat."];
+
+                    noteScientist.listDialog = [this.dialogScientist1, this.dialogScientist5, this.dialogScientist6];
+
+                }
+
+                else if (scroll_layer.name == "3") {
+
+                    this.dialogScientist7 = ["Day 14: The acceleration of plant growth", "is impressive. So much progress to come!"]
+                    this.dialogScientist8 = ["Houses could grow quickly, Fruitizens", "could be cured of so many illness...!"];
+
+                    noteScientist.listDialog = [this.dialogScientist1, this.dialogScientist7, this.dialogScientist8];
+                }
+
+                else if (scroll_layer.name == "4") {
+
+                    this.dialogScientist9 = ["Day 24: I need an energy source powerful", "enough to make it work."]
+                    this.dialogScientist10 = ["Maybe the Heart inside the Great Lettuce?"];
+                    this.dialogScientist11 = ["I know I'm not allowed to do that...", "But it could change everything."];
+
+                    noteScientist.listDialog = [this.dialogScientist1, this.dialogScientist9, this.dialogScientist10, this.dialogScientist11];
+                }
+
+                else if (scroll_layer.name == "5") {
+
+                    this.dialogScientist12 = ["Day 25: Something abnormal has happened.", "I probably made a mistake somewhere."];
+                    this.dialogScientist13 = ["I may have created something...", "... Have I gone too far?"];            
+
+                    noteScientist.listDialog = [this.dialogScientist1, this.dialogScientist12, this.dialogScientist13];
+                }
+
+                else if (scroll_layer.name == "6") {
+
+                    this.dialogScientist14 = ["Day 28: totally lost control..."];
+                    this.dialogScientist15 = ["... was a mistake."];
+                    this.dialogScientist16 = ["The Kingdom is doomed."];
+                    this.dialogScientist17 = ["... I'm truly sorry."];
+
+                    noteScientist.listDialog = [this.dialogScientist1, this.dialogScientist14, this.dialogScientist15, this.dialogScientist16, this.dialogScientist17];
+                }
+
+                this.tweens.add({
+                    targets: noteScientist,
+                    y: noteScientist.y + 5,
+                    duration: 500,
+                    yoyo: true,
+                    delay: 50,
+                    repeat: -1
+                });
+
+                this.items.add(noteScientist);
+            });
+        }
+
         // RONCES 
 
-        this.ronces = this.physics.add.staticGroup()
+        this.ronces = this.physics.add.group()
 
         this.ronces_layer = this.map.getObjectLayer('ronces_layer');
         this.ronces_layer.objects.forEach(ronces_layer => {
-            this.ronces_create = this.physics.add.staticSprite(ronces_layer.x + 16, ronces_layer.y + 16, 'ronces');
-            this.ronces.add(this.ronces_create);
+            const ronces_create = this.physics.add.sprite(ronces_layer.x + 16, ronces_layer.y + 16, 'ronces').setPushable(false);
+            this.ronces.add(ronces_create);
         });
 
         // PNJ
@@ -767,7 +849,7 @@ class SceneTemplate extends Phaser.Scene {
             this.scene1.create(1136, 2768, "passage3x1");
 
             // Passage scène hub
-            this.physics.add.overlap(this.player, this.scene1, this.passageHub, null, this);
+            this.physics.add.overlap(this.player, this.scene1, this.passageScene, null, this);
         }
 
         else if (this.mapName == "map_secrete") {
@@ -814,7 +896,7 @@ class SceneTemplate extends Phaser.Scene {
         // COLLIDERS ET OVERLAPS
 
         // Joueur - Environnement
-        //this.collisionMur = this.physics.add.collider(this.player, this.murs);
+        this.collisionMur = this.physics.add.collider(this.player, this.murs);
         this.collisionEau = this.physics.add.collider(this.player, this.eau, this.checkFlying, null, this);
         this.collisionObstacles = this.physics.add.collider(this.player, this.obstacles);
 
@@ -852,12 +934,15 @@ class SceneTemplate extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.mobC, this.perteVieMobC, null, this);
         this.physics.add.collider(this.player, this.ronces);
 
+        this.physics.add.overlap(this.ronces, this.attaque_sword, this.destroyRonces, null, this);
+
         this.physics.add.collider(this.player, this.npcs);
 
         // Loot
 
         this.physics.add.overlap(this.player, this.money, this.collectLoot, null, this);
         this.physics.add.overlap(this.player, this.heal, this.collectHeal, null, this);
+        this.physics.add.overlap(this.player, this.scrolls, this.collectScroll, null, this);
 
         this.physics.add.overlap(this.player, this.items, this.collectItem, null, this);
 
@@ -867,8 +952,6 @@ class SceneTemplate extends Phaser.Scene {
         this.physics.add.collider(this.attaque_shoot, this.obstacles, this.delock_shoot, null, this);
         this.physics.add.collider(this.attaque_shoot, this.mobB, this.delock_shoot, null, this);
         this.physics.add.collider(this.attaque_shoot, this.eau, this.delock_shoot, null, this);
-
-        this.physics.add.collider(this.ronces, this.attaque_sword, this.destroyRonces, null, this);
     }
 
     updateManager() {
@@ -1701,39 +1784,43 @@ class SceneTemplate extends Phaser.Scene {
     // GESTION DE L'interface
 
     gestionUI() {
-        if (this.health == 5) {
-            this.lifeUI.setTexture('life1')
-        }
-        if (this.health == 4) {
-            this.lifeUI.setTexture('life2');
-        }
-        if (this.health == 3) {
-            this.lifeUI.setTexture('life3');
-        }
-        if (this.health == 2) {
-            this.lifeUI.setTexture('life4');
-        }
-        if (this.health == 1) {
-            this.lifeUI.setTexture('life5');
-        }
-        if (this.health == 0) {
-            this.lifeUI.setTexture('lifeEmpty');
-        }
 
-        if (this.attackCaCLoot == true) {
-            this.serpeUI.setVisible(true);
-        }
-        else { this.serpeUI.setVisible(false); }
+        if (!this.bossDefeated) {
 
-        if (this.attackDistanceLoot == true) {
-            this.graineCourgeUI.setVisible(true);
-        }
-        else { this.graineCourgeUI.setVisible(false); }
+            if (this.health == 5) {
+                this.lifeUI.setTexture('life1')
+            }
+            if (this.health == 4) {
+                this.lifeUI.setTexture('life2');
+            }
+            if (this.health == 3) {
+                this.lifeUI.setTexture('life3');
+            }
+            if (this.health == 2) {
+                this.lifeUI.setTexture('life4');
+            }
+            if (this.health == 1) {
+                this.lifeUI.setTexture('life5');
+            }
+            if (this.health == 0) {
+                this.lifeUI.setTexture('lifeEmpty');
+            }
 
-        if (this.volerLoot == true) {
-            this.saladeUI.setVisible(true);
+            if (this.attackCaCLoot == true) {
+                this.serpeUI.setVisible(true);
+            }
+            else { this.serpeUI.setVisible(false); }
+
+            if (this.attackDistanceLoot == true) {
+                this.graineCourgeUI.setVisible(true);
+            }
+            else { this.graineCourgeUI.setVisible(false); }
+
+            if (this.volerLoot == true) {
+                this.saladeUI.setVisible(true);
+            }
+            else { this.saladeUI.setVisible(false); }
         }
-        else { this.saladeUI.setVisible(false); }
     }
 
     // récupération du heal (si on n'a pas toute sa vie)
@@ -1758,6 +1845,7 @@ class SceneTemplate extends Phaser.Scene {
 
     // destruction d'une ronce si frappé par la serpe
     destroyRonces(ronces) {
+        console.log("DESTROY")
         ronces.disableBody(true, true);
     }
 
@@ -1937,7 +2025,7 @@ class SceneTemplate extends Phaser.Scene {
 
     checkSpeak() {
 
-        if (this.canInteract) {
+        if (this.canInteract && !this.bossDefeated) {
             const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.savedNpc.x, this.savedNpc.y);
 
             if (!this.inInteraction) {
@@ -1995,17 +2083,151 @@ class SceneTemplate extends Phaser.Scene {
                 this.canInteract = false;
             }
         }
+
+        else if (this.canInteract && this.bossDefeated) {
+            if (!this.inInteraction) {
+
+                this.passDialogButton.setVisible(true);
+                this.dialogueBox.visible = true;
+                this.inInteraction = true;
+
+                this.dialogLength = this.savedListDialog.length;
+                this.dialogueText.setText(this.savedListDialog[0]);
+                this.stepList = 1;
+            }
+
+            else if (this.inInteraction) {
+
+                if (Phaser.Input.Keyboard.JustDown(this.EKey) && this.stepList != this.dialogLength + 1 && this.dialogueBox.visible) {
+
+                    this.dialogueText.setText(this.savedListDialog[this.stepList]);
+                    this.stepList += 1;
+                }
+                else if (this.stepList == this.dialogLength + 1) {
+                    this.passDialogButton.setVisible(false);
+                    this.stepList = 0;
+                    this.dialogueBox.visible = false;
+
+                    if (this.bigStep == 1) {
+                        this.player.anims.play('walk_up', true);
+
+                        this.tweens.add({
+                            targets: this.player,
+                            y: this.player.y - 48,
+                            duration: 1000,  // Durée de l'animation en millisecondes
+                            ease: 'Linear', // Fonction d'interpolation pour l'animation
+                        });
+
+                        this.time.delayedCall(1000, () => {
+
+                            this.player.anims.play('up', true);
+                            this.inInteraction = false;
+                            this.savedListDialog = this.cornNPC.listDialog2;
+                            this.bigStep += 1;
+
+                        }, [], this);
+                    }
+
+                    else if (this.bigStep == 2) {
+
+                        this.player.anims.play('down', true);
+
+                        this.time.delayedCall(1000, () => {
+
+                            this.final_LootBis = this.physics.add.sprite(this.player.x, this.player.y - 32, "final_loot").setAlpha(0).setDepth(4);
+
+                            this.tweens.add({
+                                targets: this.final_LootBis,
+                                alpha: 1,
+                                duration: 750,  // Durée de l'animation en millisecondes
+                                ease: 'Linear', // Fonction d'interpolation pour l'animation
+                            });
+
+                            this.tweens.add({
+                                targets: this.final_LootBis,
+                                y: this.final_LootBis.y + 10,
+                                duration: 500,
+                                yoyo: true,
+                                delay: 50,
+                                repeat: -1
+                            });
+
+                            if (!this.animLoot) {
+                                this.animLoot = true;
+                                this.player.anims.play("loot", true);
+                            }
+
+                        }, [], this);
+
+                        this.time.delayedCall(1750, () => {
+
+                            this.inInteraction = false;
+                            this.savedListDialog = this.cornNPC.listDialog3;
+                            this.bigStep += 1;
+
+                        }, [], this);
+                    }
+
+                    else if (this.bigStep == 3) {
+
+                        this.player.anims.play("lootOut", true);
+
+                        this.tweens.add({
+                            targets: this.final_LootBis,
+                            alpha: 0,
+                            duration: 750,  // Durée de l'animation en millisecondes
+                            ease: 'Linear', // Fonction d'interpolation pour l'animation
+                        });
+
+                        this.time.delayedCall(1000, () => {
+
+                            this.player.anims.play("up", true);
+
+                            this.inInteraction = false;
+                            this.savedListDialog = this.cornNPC.listDialog4;
+                            this.bigStep += 1;
+
+                        }, [], this);
+                    }
+
+                    else if (this.bigStep == 4) {
+                        this.cameras.main.fadeOut(3000, 0, 0, 0)
+                    }
+
+                }
+            }
+        }
     }
 
     checkLootDialog() {
 
         if (this.inInteractionLoot) {
 
-            this.player_facing = "down";
+            if (this.lootEquipement) {
+                this.player_facing = "down";
 
-            if (!this.animLoot) {
-                this.animLoot = true;
-                this.player.anims.play("loot", true);
+                if (!this.animLoot) {
+                    this.animLoot = true;
+                    this.player.anims.play("loot", true);
+                }
+            }
+            
+            else if (!this.lootEquipement) {
+                if (this.player_facing == "up") {
+                    this.player.anims.play('up', true)
+                }
+
+                else if (this.player_facing == "down") {
+                    this.player.anims.play('down', true)
+                }
+
+                else if (this.player_facing == "right") {
+                    this.player.anims.play('right', true)
+                }
+
+                else if (this.player_facing == "left") {
+                    this.player.anims.play('left', true)
+                }
             }
 
             this.passDialogButton.setVisible(true);
@@ -2016,6 +2238,7 @@ class SceneTemplate extends Phaser.Scene {
                 this.stepList += 1;
 
             }
+
             else if (this.stepList == this.dialogLength + 1) {
 
                 this.passDialogButton.setVisible(false);
@@ -2023,14 +2246,22 @@ class SceneTemplate extends Phaser.Scene {
                 this.stepList = 0;
                 this.dialogueBox.visible = false;
                 this.animLoot = false;
-                this.player.anims.play("lootOut", true);
 
-                this.time.delayedCall(750, function () {
+                if (this.lootEquipement) {
+                    this.player.anims.play("lootOut", true);
+                    this.lootEquipement = false;
 
+                    this.time.delayedCall(750, function () {
+
+                        this.player_block = false;
+    
+                    }, [], this);
+                }
+
+                else if(!this.lootEquipement) {
                     this.player_block = false;
-
-                }, [], this);
-
+                }
+                
                 this.itemsLook.children.each(obj => {
 
                     this.tweens.add({
@@ -2046,7 +2277,7 @@ class SceneTemplate extends Phaser.Scene {
 
                     this.player_block = true;
 
-                    this.cameras.main.fadeOut(750, 0, 0, 0);
+                    this.cameras.main.fadeOut(1500, 0, 0, 0);
 
                     this.time.delayedCall(1000, function () {
 
@@ -2058,7 +2289,7 @@ class SceneTemplate extends Phaser.Scene {
 
                             graineScore: this.graineScore,
 
-                            player_facing: "down",
+                            player_facing: "up",
 
                             // Variables pour débloquer les mécaniques
                             attackCaCLoot: this.attackCaCLoot,
@@ -2069,7 +2300,7 @@ class SceneTemplate extends Phaser.Scene {
                             health: 5,
 
                             spawnX: 448,
-                            spawnY: 1145,
+                            spawnY: 1257,
 
                             bossDefeated: this.bossDefeated,
                         });
@@ -2098,6 +2329,8 @@ class SceneTemplate extends Phaser.Scene {
             });
 
             this.itemsLook.add(this.loot_serpeBis);
+
+            this.lootEquipement = true;
         }
         else if (item.name == "courge") {
             this.attackDistanceLoot = true;
@@ -2114,6 +2347,8 @@ class SceneTemplate extends Phaser.Scene {
             });
 
             this.itemsLook.add(this.loot_courgeBis);
+
+            this.lootEquipement = true;
         }
         else if (item.name == "salad") {
             this.volerLoot = true;
@@ -2130,6 +2365,8 @@ class SceneTemplate extends Phaser.Scene {
             });
 
             this.itemsLook.add(this.loot_saladeBis);
+
+            this.lootEquipement = true;
         }
 
         else if (item.name == "final") {
@@ -2146,6 +2383,8 @@ class SceneTemplate extends Phaser.Scene {
             });
 
             this.itemsLook.add(this.final_LootBis);
+
+            this.lootEquipement = true;
         }
 
         this.dialogueBox.visible = true;
@@ -2325,9 +2564,8 @@ class SceneTemplate extends Phaser.Scene {
             currentMapName = 'map_hub'
             currentSpawnX = 592
             currentSpawnY = 624
-            
-            this.mobD.children.each(obj => {
 
+            this.mobD.children.each(obj => {
                 obj.isAlive = false;
                 obj.destroy()
             });

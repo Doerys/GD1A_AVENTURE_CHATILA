@@ -13,9 +13,12 @@ class Preload extends Phaser.Scene {
 
         // PNJ
         this.load.image('npc', 'assets/pnj.png');
+        this.load.image('npcHappy', 'assets/pnj_happy.png');
         this.load.image('npc2', 'assets/pnj2.png');
-        this.load.image('npc3', 'assets/pnj3.png');
+        this.load.image('npc2Happy', 'assets/pnj2_happy.png');
         this.load.image('npc4', 'assets/pnj4.png');
+        this.load.image('npc3', 'assets/pnj3.png');
+        this.load.image('npc4Happy', 'assets/pnj4_happy.png');
         this.load.image('npc5', 'assets/pnj5.png');
         this.load.image('npc6', 'assets/pnj6.png');
 
@@ -90,6 +93,7 @@ class Preload extends Phaser.Scene {
         // LOOT
         this.load.image("grainesScore", "assets/loot.png");
         this.load.image("heal", "assets/heal.png");
+        this.load.image("scroll", "assets/scroll.png");
 
         this.load.image("courge_loot", "assets/graine_courge_loot.png");
         this.load.image("serpe_loot", "assets/serpe_loot.png");

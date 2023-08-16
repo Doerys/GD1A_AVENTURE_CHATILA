@@ -1,4 +1,5 @@
 import SceneTemplate from "../sceneTemplate.js";
+import DialogEntity from "../dialogEntity.js";
 
 class sceneZoneSecrete extends SceneTemplate {
 

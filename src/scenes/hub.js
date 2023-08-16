@@ -29,7 +29,7 @@ class sceneHub extends SceneTemplate {
             this.dialoguePoireNPC1 = ["Our country used to be a splendid place.", "But today, everything is wild and distorted."];
             this.dialoguePoireNPC2 = ["And the Great Lettuce... My tears flow", "every time I think of the state it remains."];
             this.dialoguePoireNPC3 = ["Mysteriously, here seems to", "be the last place we are safe."];
-            this.dialoguePoireNPC4 = ["Perhaps the statue of the Garden's Keeper", "scare away nearby monsters?"];
+            this.dialoguePoireNPC4 = ["Perhaps the statue of the Garden's Keeper", "scare away nearby Vegeterrors?"];
             this.dialoguePoireNPC5 = ["You look a lot like this hero.", "You seem to share the same strength."];
 
             this.poireNPC.listDialog = [this.dialoguePoireNPC1, this.dialoguePoireNPC2, this.dialoguePoireNPC3, this.dialoguePoireNPC4, this.dialoguePoireNPC5]
@@ -83,16 +83,64 @@ class sceneHub extends SceneTemplate {
                 this.npcs.add(this.brocoliNPC);
 
             }
-
         }
 
         else if (this.bossDefeated) {
 
-            this.poireNPC = new DialogEntity(this, 336, 1088, 'npc4').setDepth(1);
+            this.poireNPC = new DialogEntity(this, 342, 1088, 'npc4Happy').setDepth(1);
+            this.cornNPC = new DialogEntity(this, 390, 1075, 'npc2Happy').setDepth(1);
             this.carotteNPC = new DialogEntity(this, 448, 1168, 'npc3').setDepth(1);
             this.pimentNPC = new DialogEntity(this, 384, 1128, 'npc5').setDepth(1);
             this.brocoliNPC = new DialogEntity(this, 512, 1128, 'npc6').setDepth(1);
-            this.onionNPC = new DialogEntity (this, 560, 1088, 'npc').setDepth(1);
+            this.onionNPC = new DialogEntity (this, 560, 1100, 'npcHappy').setDepth(1);
+
+            this.finalDialog0 = ["Fruitizens... We are gathered", "here to commemoration."]
+            this.finalDialog1 = ["The Garden Kingdom never suffered", "such distress and havocs before."];
+            this.finalDialog2 = ["The darkness had completely", "covered our peaceful land."];
+            this.finalDialog3 = ["The despair had won the heart", "of the poor fruitizens..."];
+            this.finalDialog4 = ["Until a light of hope", "comes out of the shadow,"];
+            this.finalDialog5 = ["A hero, brave enough to face the", "evil threat spreading in our country."];
+            this.finalDialog6 = ["Pirlouit. Come closer, my child."];
+            
+            this.finalDialog7 = ["Pirlouit came across all over", "the Kingdom to fight the Vegeterrors..."];
+            this.finalDialog8 = ["...sank deep into the Great Lettuce,", " to defeat the Abomination lurking there..."];
+            this.finalDialog9 = ["... and get what will allow the Garden", "Kingdom to regain its former splendor."];
+            this.finalDialog10 = ["Show us, Pirlouit. Show us", "the Hearth of the Garden Kingdom."];
+            
+            this.finalDialog11 = ["May this elder relic ", "mark the beginning of a new era."]; 
+            this.finalDialog12 = ["And its bearer, the true hero,", "who destroyed the origin of evil,"];
+            this.finalDialog13 = ["be thanked, in the name of all", "Fruitizens of our land."];
+            
+            this.finalDialog14 = ["By virtue of my title of Elder", "Wise, Consellor, and above all, Carott,"];
+            this.finalDialog15 = ["I appoint you, Pirlouit, as", "the new Garden's Keeper of our Kingdom."];
+
+            this.cornNPC.listDialog1 = [this.finalDialog0, this.finalDialog1, this.finalDialog2, this.finalDialog3, this.finalDialog4, this.finalDialog5, this.finalDialog6]
+            this.savedListDialog = this.cornNPC.listDialog1;
+
+            this.cornNPC.listDialog2 = [this.finalDialog7, this.finalDialog8, this.finalDialog9, this.finalDialog10];
+
+            this.cornNPC.listDialog3 = [this.finalDialog11, this.finalDialog12, this.finalDialog13];
+
+            this.cornNPC.listDialog4 = [this.finalDialog14, this.finalDialog15];
+
+            this.interface.setVisible(false);
+            this.textScore.setVisible(false);
+            this.lifeUI.setVisible(false);
+            this.serpeUI.setVisible(false);
+            this.graineCourgeUI.setVisible(false);
+            this.saladeUI.setVisible(false);
+
+            this.player.anims.play('up', true);
+
+            this.player_block = true;
+
+            this.time.delayedCall(1500, () => {
+
+                this.canInteract = true;
+                this.bigStep = 1;
+                this.savedNpc = this.cornNPC;
+
+            }, [], this);
         }
 
         // Joueur - Environnement

@@ -29,9 +29,9 @@ class mainScreen extends Phaser.Scene {
     }
 
     launchGame() {
-        this.scene.start('sceneHub', {
+        this.scene.start('sceneZone1', {
 
-            mapName: "map_hub", // nom de la map
+            mapName: "map_zone1", // nom de la map
             mapTileset: "tileset", // nom du tileset sur TILED
             mapTilesetImage: "tileset_image", // nom du fichier image du tileset
 
@@ -40,8 +40,8 @@ class mainScreen extends Phaser.Scene {
             player_facing: "down",
 
             // Variables pour débloquer les mécaniques
-            attackCaCLoot: false,
-            attackDistanceLoot: false,
+            attackCaCLoot: true,
+            attackDistanceLoot: true,
             volerLoot: false,
 
             bossDefeated: false,
@@ -55,17 +55,25 @@ class mainScreen extends Phaser.Scene {
             //spawnY : 1808
 
             //SPAWN HUB
-            spawnX: 528,
-            spawnY: 1445
+            //spawnX: 528,
+            //spawnY: 1445
+
+            //SPAWN HUB FIN DU JEU
+            //spawnX: 448,
+            //spawnY: 1257
 
             //SPAWN ZONE 1
 
-            //spawnX: 2608,
-            //spawnY: 1392
+            spawnX: 2608,
+            spawnY: 1392
 
             //SPAWN ZONE 2
             //spawnX: 1840,
             //spawnY: 1888,
+
+            //SPAWN ZONE SECRETE
+            //spawnX: 608,
+            //spawnY: 256
 
             // SPAWN DONJON
             //spawnX : 1184,

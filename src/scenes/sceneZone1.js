@@ -29,7 +29,7 @@ class sceneZone1 extends SceneTemplate {
             this.dialoguePimentNPC2 = ["I'm looking for something that", "might help us defend ourselves."];
             this.dialoguePimentNPC3 = ["It's a weapon Dad used to cut weeds.", "I'm pretty sure to find it here."];
             this.dialoguePimentNPC4 = ["I found myself caught in the crossfire", "of these horrible berry monsters!"];
-            this.dialoguePimentNPC5 = ["Don't get any ideas! I'm not afraid of them!", "I'm not afraid of anything!"];
+            this.dialoguePimentNPC5 = ["Don't get any idea! I'm not afraid of them!", "I'm not afraid of anything!"];
             this.dialoguePimentNPC6 = ["...okay, maybe I'm a bit overwhelmed.", "I'd better get out of the way..."]
             this.dialoguePimentNPC7 = ["If you want to keep going, the weapon", "is probably further in that direction."];
             this.dialoguePimentNPC8 = ["Good luck Pirlouit! Stay safe!"]

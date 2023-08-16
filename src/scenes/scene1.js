@@ -25,13 +25,14 @@ class sceneTuto extends SceneTemplate {
         // PNJ
         this.onionNPC = new DialogEntity (this, 400, 1750, 'npc');
 
-        this.dialogueOignonNPC1 = ["Pirlouit! At last you're here!", "I have sad news!"];
+        this.dialogueOignonNPC1 = ["Pirlouit! At last you're here!", "I have sad news..."];
         this.dialogueOignonNPC2 = ["While you were away, the", "Garden Kingdom has been corrupted!"];
         this.dialogueOignonNPC3 = ["Our land is now invaded by", "hordes of aggressive monsters."];
-        this.dialogueOignonNPC4 = ["The corruption seems to come from", "the Great Lettuce."];
-        this.dialogueOignonNPC5 = ["Only you is strong enough to fix this.", "Save the Kingdom!"];
+        this.dialogueOignonNPC4 = ["We call them Vegeterrors.", "They are very dangerous!"]
+        this.dialogueOignonNPC5 = ["The corruption seems to come from", "the Great Lettuce."];
+        this.dialogueOignonNPC6 = ["Maybe are you strong enough to fix this ?", "I hope so!"];
 
-        this.onionNPC.listDialog = [this.dialogueOignonNPC1, this.dialogueOignonNPC2, this.dialogueOignonNPC3, this.dialogueOignonNPC4, this.dialogueOignonNPC5];
+        this.onionNPC.listDialog = [this.dialogueOignonNPC1, this.dialogueOignonNPC2, this.dialogueOignonNPC3, this.dialogueOignonNPC4, this.dialogueOignonNPC5, this.dialogueOignonNPC6];
 
         this.npcs.add(this.onionNPC);
 

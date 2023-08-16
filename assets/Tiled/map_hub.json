@@ -414,59 +414,114 @@
          "name":"ronces_layer",
          "objects":[
                 {
-                 "class":"",
                  "height":32,
                  "id":6,
                  "name":"",
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":32,
                  "x":672,
                  "y":832
                 }, 
                 {
-                 "class":"",
                  "height":32,
                  "id":7,
                  "name":"",
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":32,
                  "x":672,
                  "y":864
                 }, 
                 {
-                 "class":"",
                  "height":32,
                  "id":8,
                  "name":"",
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":32,
                  "x":640,
                  "y":864
                 }, 
                 {
-                 "class":"",
                  "height":32,
                  "id":9,
                  "name":"",
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":32,
                  "x":640,
                  "y":928
                 }, 
                 {
-                 "class":"",
                  "height":32,
                  "id":10,
                  "name":"",
                  "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":576,
+                 "y":928
+                }, 
+                {
+                 "height":32,
+                 "id":70,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":608,
+                 "y":928
+                }, 
+                {
+                 "height":32,
+                 "id":71,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":32,
                  "x":640,
                  "y":896
+                }, 
+                {
+                 "height":32,
+                 "id":72,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":512,
+                 "y":864
+                }, 
+                {
+                 "height":32,
+                 "id":73,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":512,
+                 "y":896
+                }, 
+                {
+                 "height":32,
+                 "id":75,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":544,
+                 "y":928
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1003,11 +1058,11 @@
          "name":"bridge_layer",
          "objects":[
                 {
-                 "class":"",
                  "height":32,
                  "id":58,
                  "name":"up",
                  "rotation":0,
+                 "type":"",
                  "visible":true,
                  "width":32,
                  "x":576,
@@ -1020,10 +1075,10 @@
          "y":0
         }],
  "nextlayerid":33,
- "nextobjectid":70,
+ "nextobjectid":76,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.9.2",
+ "tiledversion":"1.10.1",
  "tileheight":32,
  "tilesets":[
         {
@@ -26944,6 +26999,6 @@
         }],
  "tilewidth":32,
  "type":"map",
- "version":"1.9",
+ "version":"1.10",
  "width":37
 }
