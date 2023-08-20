@@ -73,6 +73,7 @@ class Preload extends Phaser.Scene {
 
         this.load.image('tileset_image', 'assets/Tiled/tileset.png'); //Tileset 
         this.load.image('grande_laitue', 'assets/grande_laitue.png'); //Tileset 
+        this.load.image('grande_laitue_ombre', 'assets/grande_laitue_ombre.png'); //Tileset 
         this.load.tilemapTiledJSON('map_tuto', 'assets/Tiled/map_tuto.json'); //fichier JSON
         this.load.tilemapTiledJSON('map_hub', 'assets/Tiled/map_hub.json')
         this.load.tilemapTiledJSON('map_zone1', 'assets/Tiled/map_part1.json')

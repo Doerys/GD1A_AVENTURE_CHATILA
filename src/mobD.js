@@ -17,7 +17,13 @@ class MobD extends Phaser.Physics.Arcade.Sprite {
 
         this.speed = 100;
 
-        this.isAlive = true;
+        this.isAlive = false;
+
+        this.scene.time.delayedCall(500, () => {
+
+            this.isAlive = true;
+
+        }, null, this);
 
         this.isOuting = false;
         this.outHole = false;

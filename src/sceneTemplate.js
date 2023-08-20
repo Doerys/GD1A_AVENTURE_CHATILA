@@ -112,6 +112,11 @@ class SceneTemplate extends Phaser.Scene {
             this.physics.add.collider(this.player, this.laitue);
         }
 
+        if (this.mapName == "map_hub") {
+            this.tileset_laitue_ombre = this.map.addTilesetImage('grande_laitue_ombre', 'grande_laitue_ombre')
+            this.laitue_ombre = this.map.createLayer('laitue_ombre_layer', this.tileset_laitue_ombre).setDepth(0);
+        }
+
         // CAMERA et LIMITES DU MONDE
 
         if (this.mapName == "map_tuto") {
@@ -670,7 +675,7 @@ class SceneTemplate extends Phaser.Scene {
             }, [], this);
         }
 
-        if (this.mapName == "map_donjon" || this.mapName == "map_zone2" || this.mapName == "map_tuto") {
+        if (this.mapName == "map_donjon" || this.mapName == "map_zone2") {
 
             // MOB D
 
