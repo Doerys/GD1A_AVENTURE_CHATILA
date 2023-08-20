@@ -146,9 +146,50 @@ class Preload extends Phaser.Scene {
         this.load.image('passage3x1', "assets/3x1_cases.png");
         this.load.image('passage1x3', "assets/1x3_cases.png");
         this.load.image('passage1x4', 'assets/1x4_cases.png');
+
+
+        this.load.audio('damageSound', 'assets/sound/damage.mp3');
+        this.load.audio('deathSound', 'assets/sound/death.mp3');
+
+        this.load.audio('classicLootSound', 'assets/sound/classic_loot.mp3');
+        this.load.audio('scrollLootSound', 'assets/sound/scroll_loot.mp3');
+        this.load.audio('itemLootSound', 'assets/sound/item_loot.mp3');
+
+        this.load.audio('laderSound', 'assets/sound/lader_created.mp3');
+
+        this.load.audio('sickleSound', 'assets/sound/hitSickle.mp3');
+        this.load.audio('seedSound', 'assets/sound/throwSeed.mp3');
+        this.load.audio('saladSound', 'assets/sound/fly.mp3');
+
+        this.load.audio('monsterEntranceSound', 'assets/sound/monster_entrance.mp3');
+        this.load.audio('monsterAttackSound', 'assets/sound/monster_attack.mp3');
+        this.load.audio('monsterProjSound', 'assets/sound/monster_proj.mp3');
+        this.load.audio('monsterCastSound', 'assets/sound/monster_cast.mp3');
+        this.load.audio('monsterHitSound', 'assets/sound/monster_hit.mp3');
+        this.load.audio('monsterDeathSound', 'assets/sound/monster_death.mp3');
+        this.load.audio('monsterImpactSound', 'assets/sound/monster_impact.mp3');
+        this.load.audio('monsterBigImpactSound', 'assets/sound/monster_bigImpact.mp3');
+        this.load.audio('monsterGeyserSound', 'assets/sound/monster_geyser.mp3');
+
+        this.load.audio('musicMainScreen', 'assets/sound/music_mainScreen.mp3');
+        this.load.audio('musicTuto', 'assets/sound/music_1.mp3');
+        this.load.audio('musicZone1', 'assets/sound/music_zone1.mp3');
+        this.load.audio('musicZone2', 'assets/sound/music_zone2.mp3');
+        this.load.audio('musicDonjon', 'assets/sound/music_donjon.mp3');
+        this.load.audio('musicBoss', 'assets/sound/music_combat.mp3');
+        this.load.audio('musicEnd', 'assets/sound/music_end.mp3');
+
+        this.load.audio('victorySound', 'assets/sound/victory_sound.mp3');
     }
 
     create() {
+
+        this.music = this.sound.add('musicMainScreen');
+
+        this.music.setLoop(true)
+            .setVolume(0.4);
+
+        this.music.play();
 
         // Animation boutons
 
@@ -497,6 +538,18 @@ class Preload extends Phaser.Scene {
         });
 
         this.anims.create({
+            key: 'bossOpeningIn_anims',
+            frames: this.anims.generateFrameNumbers('boss', { start: 16, end: 20 }),
+            frameRate: 6
+        });
+
+        this.anims.create({
+            key: 'bossOpeningOut_anims',
+            frames: this.anims.generateFrameNumbers('boss', { start: 20, end: 16 }),
+            frameRate: 6
+        });
+
+        this.anims.create({
             key: 'bossHitDist_anims',
             frames: this.anims.generateFrameNumbers('boss', { start: 24, end: 25 }),
             frameRate: 4
@@ -542,16 +595,16 @@ class Preload extends Phaser.Scene {
         this.anims.create({
             key: 'tileAttack_anims',
             frames: this.anims.generateFrameNumbers('tileAttack', { start: 0, end: 19 }),
-            frameRate: 5    
+            frameRate: 5
         });
 
         this.anims.create({
             key: 'tileAttackIn_anims',
             frames: this.anims.generateFrameNumbers('tileAttack', { start: 19, end: 14 }),
-            frameRate: 8 
+            frameRate: 8
         });
 
-        this.scene.start("MainScreen");
+        this.scene.start("MainScreen", {music: this.music});
     }
 
 }

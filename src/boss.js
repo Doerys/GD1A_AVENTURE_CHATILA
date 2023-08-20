@@ -42,6 +42,18 @@ class Boss extends Phaser.Physics.Arcade.Sprite {
         this.playerInMiddle = true;
         this.playerAround = false;
 
+        this.monsterBigAttackSound = this.scene.sound.add('monsterEntranceSound');
+        this.monsterEntranceSound = this.scene.sound.add('monsterAttackSound');
+        this.monsterProjSound = this.scene.sound.add('monsterProjSound');
+        this.monsterCastSound = this.scene.sound.add('monsterCastSound');
+        this.monsterHitSound = this.scene.sound.add('monsterHitSound');
+        this.monsterDeathSound = this.scene.sound.add('monsterDeathSound');
+        this.monsterImpactSound = this.scene.sound.add('monsterImpactSound');
+        this.monsterBigImpactSound = this.scene.sound.add('monsterBigImpactSound');
+        this.monsterGeyserSound = this.scene.sound.add('monsterGeyserSound');
+
+        this.monsterImpactSound.setVolume(.5);
+
         this.scene.physics.add.collider(this, this.scene.player);
         this.scene.physics.add.collider(this, this.scene.eau);
 
@@ -57,11 +69,16 @@ class Boss extends Phaser.Physics.Arcade.Sprite {
                 this.scene.player_block = true;
                 this.scene.cinematicOpening = true;
 
-                this.scene.cameras.main.stopFollow()
-                    .pan(this.x, this.y, 3000, 'Linear');
+                this.scene.player.setVelocity(0, 0);
 
                 this.scene.player.anims.play('walk_up', true);
                 this.scene.player_facing = "up";
+
+                this.scene.tweens.add({
+                    targets: this.scene.music,
+                    volume: 0,
+                    duration: 500
+                });
 
                 this.scene.tweens.add({
                     targets: this.scene.player,
@@ -71,9 +88,38 @@ class Boss extends Phaser.Physics.Arcade.Sprite {
                     ease: 'Linear', // Fonction d'interpolation pour l'animation
                 });
 
+                this.scene.cameras.main.stopFollow()
+                    .pan(this.x, this.y, 3000, 'Linear');
+
+                this.scene.time.delayedCall(1500, () => {
+                    this.scene.player.anims.play('up', true);
+                }, null, this);
+
+                this.scene.time.delayedCall(3000, () => {
+
+                    this.scene.music.stop();
+
+                    this.scene.music = this.scene.sound.add('musicBoss');
+
+                    this.scene.music.setLoop(true)
+                        .setVolume(0.4);
+
+                    this.scene.music.play();
+
+                    this.anims.play('bossOpeningIn_anims', true);
+
+                    this.monsterEntranceSound.play();
+                }, null, this);
+
+                this.scene.time.delayedCall(3500, () => {
+                    this.anims.play('bossOpeningOut_anims', true);
+                }, null, this);
+
                 this.scene.time.delayedCall(5000, () => {
 
                     this.isActivated = true;
+
+                    this.scene.physics.add.collider(this.scene.player, this.scene.limitBossArea);
 
                     this.scene.cameras.main.pan(this.scene.player.x, this.scene.player.y, 500, 'Linear');
 
@@ -160,17 +206,17 @@ class Boss extends Phaser.Physics.Arcade.Sprite {
                         let attack = null;
 
                         if (this.phase == 1) {
-                            attack = this.scene.physics.add.sprite(this.x, this.y, 'bossAttack1').setSize(120, 120);
+                            attack = this.scene.physics.add.sprite(this.x, this.y, 'bossAttack1').setSize(120, 120).setDepth(0);
                             attack.anims.play("attackBoss1_anims", true);
                         }
 
                         else if (this.phase == 2) {
-                            attack = this.scene.physics.add.sprite(this.x, this.y, 'bossAttack2').setSize(186, 186);
+                            attack = this.scene.physics.add.sprite(this.x, this.y, 'bossAttack2').setSize(186, 186).setDepth(0);
                             attack.anims.play("attackBoss2_anims", true);
                         }
 
                         else if (this.phase == 3) {
-                            attack = this.scene.physics.add.sprite(this.x, this.y, 'bossAttack3').setSize(250, 250);
+                            attack = this.scene.physics.add.sprite(this.x, this.y, 'bossAttack3').setSize(250, 250).setDepth(0);
                             attack.anims.play("attackBoss3_anims", true);
                         }
 
@@ -178,6 +224,10 @@ class Boss extends Phaser.Physics.Arcade.Sprite {
                         this.attacks.add(attack);
 
                         this.scene.time.delayedCall(1500, () => {
+
+                            this.monsterImpactSound.play();
+
+                            this.scene.cameras.main.shake(1000, 0.005);
 
                             this.isDangerous = true;
                             attack.setAlpha(1);
@@ -228,7 +278,8 @@ class Boss extends Phaser.Physics.Arcade.Sprite {
                     }
                 }
 
-                if (this.health <= 10 && !this.isHittindg && !this.isCasting && !this.eventPhase2) {
+                if (this.health <= 10 && !this.isHitting && !this.isCasting && !this.eventPhase2) {
+
                     this.eventPhase2 = true;
                     this.phase = 2;
                     this.bigAttack();
@@ -241,6 +292,15 @@ class Boss extends Phaser.Physics.Arcade.Sprite {
                 }
 
                 if (this.health == 0) {
+
+                    this.monsterDeathSound.play();
+
+                    this.scene.tweens.add({
+                        targets: this.scene.music,
+                        volume: 0,
+                        duration: 500
+                    });
+
 
                     this.isAlive = false;
                     this.scene.cinematicEnding = true;
@@ -329,9 +389,9 @@ class Boss extends Phaser.Physics.Arcade.Sprite {
                         this.dialogue2 = ["Now that he's defeated, its corruption", "should cease to spread."];
                         this.dialogue3 = ["Among the rests of this horrible creature,", "you find a splendid treasure."];
                         this.dialogue4 = ["The Hearth of the Garden Kingdom.", "The Seed of the Great Lettuce."];
-                
+
                         this.final_Loot.listDialog = [this.dialogue1, this.dialogue2, this.dialogue3, this.dialogue4]
-            
+
                         this.scene.tweens.add({
                             targets: this.final_Loot,
                             alpha: 1,
@@ -347,7 +407,7 @@ class Boss extends Phaser.Physics.Arcade.Sprite {
                             delay: 50,
                             repeat: -1
                         });
-            
+
                         this.scene.items.add(this.final_Loot);
 
                     }, null, this);
@@ -361,10 +421,7 @@ class Boss extends Phaser.Physics.Arcade.Sprite {
 
                     }, null, this);
                 }
-
-                //console.log(this.health, this.isHitting, this.isCasting, this.eventPhase2)
             }
-
         }
     }
 
@@ -416,22 +473,7 @@ class Boss extends Phaser.Physics.Arcade.Sprite {
                 }
             }
 
-
-            // retrait des pv dans la variable
-            this.scene.health -= 1;
-
-            // si la vie est en-dessous de 0, on meurt.
-            if (this.scene.health < 0) {
-                this.scene.killPlayer();
-            }
-
-            // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
-            else {
-                this.scene.time.delayedCall(500, () => { this.scene.delock_joueur() }, null, this);
-
-                // Visuel de la frame d'invulnérabilité
-                this.scene.pinvisible();
-            }
+            this.scene.perteVieCommun(player);
         }
     }
 
@@ -445,23 +487,13 @@ class Boss extends Phaser.Physics.Arcade.Sprite {
             // variable qui empêchera de se faire taper pendant la frame d'invul
             this.scene.player_beHit = true;
 
-            // retrait des pv dans la variable
-            this.scene.health -= 1;
-
-            // si la vie est en-dessous de 0, on meurt.
-            if (this.scene.health < 0) {
-                this.scene.killPlayer();
-            }
-
-            // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
-            else {
-                // Visuel de la frame d'invulnérabilité
-                this.scene.pinvisible();
-            }
+            this.scene.perteVieCommun(player)
         }
     }
 
     bigAttack() {
+
+        this.monsterBigAttackSound.play();
 
         this.setVelocity(0, 0);
         this.isBigHitting = true;
@@ -471,6 +503,12 @@ class Boss extends Phaser.Physics.Arcade.Sprite {
         this.scene.tileAttackGroup.children.each(obj => {
 
             this.scene.time.delayedCall(1000, () => {
+
+                this.monsterBigImpactSound.play();
+
+                this.monsterGeyserSound.play();
+
+                this.scene.cameras.main.shake(3000, 0.005);
 
                 obj.setAlpha(1);
                 obj.enableBody(true, obj.x, obj.y, true, true);
@@ -512,12 +550,15 @@ class Boss extends Phaser.Physics.Arcade.Sprite {
     }
 
     shoutProj() {
+
         this.setVelocity(0, 0);
         this.isHitting = true;
 
         this.anims.play("bossHitDist_anims", true);
 
         this.scene.time.delayedCall(1000, () => {
+
+            this.monsterProjSound.play();
 
             if (this.phase == 1) {
                 const newProj = this.scene.physics.add.sprite(this.x, this.y, 'projmobB').setDepth(2);
@@ -583,6 +624,8 @@ class Boss extends Phaser.Physics.Arcade.Sprite {
     castMobs() {
 
         if (!this.isHitting && !this.isBigHitting && this.isChasing) {
+
+            this.monsterCastSound.play();
 
             this.setVelocity(0, 0);
 
@@ -711,6 +754,9 @@ class Boss extends Phaser.Physics.Arcade.Sprite {
 
     // Hit au CAC
     perteVieBoss(mobA, attaque) {
+
+        this.monsterHitSound.play();
+
         this.health -= 1;
         this.pinvisible();
         attaque.disableBody(true, true);

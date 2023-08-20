@@ -44,6 +44,7 @@ class SceneTemplate extends Phaser.Scene {
         this.spawnY = data.spawnY;
 
         this.bossDefeated = data.bossDefeated;
+        this.music = data.music;
     }
 
     loadMap(levelMap) {
@@ -207,7 +208,7 @@ class SceneTemplate extends Phaser.Scene {
         this.murs = this.map.createLayer('murs_layer', this.tileset).setDepth(-4); //calque mur
         this.decor = this.map.createLayer('decor_layer', this.tileset).setDepth(-3);
         this.obstacles = this.map.createLayer('obstacle_layer', this.tileset);
-        this.aboveDecor = this.map.createLayer('aboveDecor_layer', this.tileset).setDepth(5);;
+        this.aboveDecor = this.map.createLayer('aboveDecor_layer', this.tileset).setDepth(5);
 
         // Sprites et groupes
 
@@ -489,7 +490,7 @@ class SceneTemplate extends Phaser.Scene {
                 else if (scroll_layer.name == "5") {
 
                     this.dialogScientist12 = ["Day 25: Something abnormal has happened.", "I probably made a mistake somewhere."];
-                    this.dialogScientist13 = ["I may have created something...", "... Have I gone too far?"];            
+                    this.dialogScientist13 = ["I may have created something...", "... Have I gone too far?"];
 
                     noteScientist.listDialog = [this.dialogScientist1, this.dialogScientist12, this.dialogScientist13];
                 }
@@ -675,8 +676,6 @@ class SceneTemplate extends Phaser.Scene {
 
             this.mobD = this.physics.add.group();
 
-            this.time.delayedCall(500, this.delock_attaque, [], this);
-
             this.mobD_layer = this.map.getObjectLayer('mobD_layer');
             this.mobD_layer.objects.forEach(mobD_layer => {
                 const mobD_create = new MobD(this, mobD_layer.x + 16, mobD_layer.y + 16, 'mobD')
@@ -694,6 +693,9 @@ class SceneTemplate extends Phaser.Scene {
 
         if (this.mapName == "map_donjon") {
 
+            this.limitBossArea = this.map.createLayer('limitBossArea_layer', this.tileset).setDepth(-10);
+            this.limitBossArea.setCollisionByProperty({ estSolide: true });
+
             this.tileAttackGroup = this.physics.add.staticGroup();
 
             this.attackZoneBoss_layer = this.map.getObjectLayer('attackZoneBoss_layer');
@@ -701,7 +703,7 @@ class SceneTemplate extends Phaser.Scene {
                 const tileAttack = this.physics.add.staticSprite(obj.x + 16, obj.y + 16, 'tileAttack')
                     .setSize(32, 32)
                     .setAlpha(0)
-                    .setDepth(-2);
+                    .setDepth(0);
 
                 tileAttack.disableBody(true, true);
 
@@ -952,6 +954,21 @@ class SceneTemplate extends Phaser.Scene {
         this.physics.add.collider(this.attaque_shoot, this.obstacles, this.delock_shoot, null, this);
         this.physics.add.collider(this.attaque_shoot, this.mobB, this.delock_shoot, null, this);
         this.physics.add.collider(this.attaque_shoot, this.eau, this.delock_shoot, null, this);
+
+        this.damageSound = this.sound.add('damageSound');
+        this.deathSound = this.sound.add('deathSound');
+
+        this.classicLootSound = this.sound.add('classicLootSound');
+        this.scrollLootSound = this.sound.add('scrollLootSound');
+        this.itemLootSound = this.sound.add('itemLootSound');
+
+        this.laderSound = this.sound.add('laderSound');
+
+        this.sickleSound = this.sound.add('sickleSound');
+        this.seedSound = this.sound.add('seedSound');
+        this.saladSound = this.sound.add('saladSound');
+
+        this.victorySound = this.sound.add('victorySound');
     }
 
     updateManager() {
@@ -1092,6 +1109,9 @@ class SceneTemplate extends Phaser.Scene {
 
             //Attaque
             if ((this.cursors.space.isDown || this.controller.A) && this.attackCaCLoot == true && !this.carryGraine) {
+
+                this.sickleSound.play();
+
                 if (this.player_facing == "up") {
                     this.player.anims.play('attack_up', true);
                     this.attaque_sword.create(this.player.x, this.player.y, "sword_y").setVisible(false);
@@ -1117,6 +1137,9 @@ class SceneTemplate extends Phaser.Scene {
             //tir
 
             if ((this.shiftKey.isDown || this.controller.R2) && this.shoot_lock == false && this.attackDistanceLoot == true && !this.carryGraine) {
+
+                this.seedSound.play();
+
                 if (this.player_facing == "up") {
                     this.player.anims.play('shoot_up');
                     this.time.delayedCall(300, function () {
@@ -1329,7 +1352,7 @@ class SceneTemplate extends Phaser.Scene {
                 this.mobC1Danger = false;
 
                 this.mobC1.children.each(mobC => {
-                    mobC.setAlpha(0.8);
+                    mobC.setAlpha(0.5);
                 });
             }, [], this);
 
@@ -1365,7 +1388,7 @@ class SceneTemplate extends Phaser.Scene {
                 this.mobC2Danger = false;
 
                 this.mobC2.children.each(mobC => {
-                    mobC.setAlpha(0.8);
+                    mobC.setAlpha(0.5);
                 });
             }, [], this);
 
@@ -1401,22 +1424,7 @@ class SceneTemplate extends Phaser.Scene {
                 player.setVelocityY(600);
             }
 
-            // retrait des pv dans la variable
-            this.health -= 1;
-
-            // si la vie est en-dessous de 0, on meurt.
-            if (this.health == 0) {
-                this.killPlayer();
-            }
-
-            // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
-            else {
-                // Visuel de la frame d'invulnérabilité
-                this.pinvisible();
-
-                this.time.delayedCall(500, this.delock_joueur, [], this);
-                this.time.delayedCall(1500, this.able_hit, [], this);
-            }
+            this.perteVieCommun(player);
         }
     }
 
@@ -1444,22 +1452,7 @@ class SceneTemplate extends Phaser.Scene {
                 player.setVelocityY(600);
             }
 
-            // retrait des pv dans la variable
-            this.health -= 1;
-
-            // si la vie est en-dessous de 0, on meurt.
-            if (this.health == 0) {
-                this.killPlayer();
-            }
-
-            // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
-            else {
-                // Visuel de la frame d'invulnérabilité
-                this.pinvisible();
-
-                this.time.delayedCall(500, this.delock_joueur, [], this);
-                this.time.delayedCall(1500, this.able_hit, [], this);
-            }
+            this.perteVieCommun(player);
         }
         mobB.destroy();
     }
@@ -1468,8 +1461,6 @@ class SceneTemplate extends Phaser.Scene {
     perteVieMobC(player, mobC) {
         if (this.player_beHit == false && this.mobCDanger) {
 
-            // On ne peut plus se déplacer
-            this.player_block = true;
             // variable qui empêchera de se faire taper pendant la frame d'invul
             this.player_beHit = true;
 
@@ -1487,22 +1478,7 @@ class SceneTemplate extends Phaser.Scene {
                 player.setVelocityY(600);
             }
 
-            // retrait des pv dans la variable
-            this.health -= 1;
-
-            // si la vie est en-dessous de 0, on meurt.
-            if (this.health < 0) {
-                this.killPlayer();
-            }
-
-            // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
-            else {
-                // Visuel de la frame d'invulnérabilité
-                this.pinvisible();
-
-                this.time.delayedCall(500, this.delock_joueur, [], this);
-                this.time.delayedCall(1500, this.able_hit, [], this);
-            }
+            this.perteVieCommun(player);
         }
     }
 
@@ -1510,82 +1486,20 @@ class SceneTemplate extends Phaser.Scene {
     perteVieMobC1(player, mobC) {
         if (this.player_beHit == false && this.mobC1Danger) {
 
-            // On ne peut plus se déplacer
-            this.player_block = true;
             // variable qui empêchera de se faire taper pendant la frame d'invul
             this.player_beHit = true;
 
-            // repoussoir du personnage
-            if (mobC.body.touching.left) {
-                player.setVelocityX(-600);
-            }
-            else if (mobC.body.touching.right) {
-                player.setVelocityX(600);
-            }
-            else if (mobC.body.touching.up) {
-                player.setVelocityY(-600);
-            }
-            else if (mobC.body.touching.down) {
-                player.setVelocityY(600);
-            }
-
-            // retrait des pv dans la variable
-            this.health -= 1;
-
-            // si la vie est en-dessous de 0, on meurt.
-            if (this.health < 0) {
-                this.killPlayer();
-            }
-
-            // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
-            else {
-                // Visuel de la frame d'invulnérabilité
-                this.pinvisible();
-
-                this.time.delayedCall(500, this.delock_joueur, [], this);
-                this.time.delayedCall(1500, this.able_hit, [], this);
-            }
+            this.perteVieCommun(player);
         }
     }
 
     perteVieMobC2(player, mobC) {
         if (this.player_beHit == false && this.mobC2Danger) {
 
-            // On ne peut plus se déplacer
-            this.player_block = true;
             // variable qui empêchera de se faire taper pendant la frame d'invul
             this.player_beHit = true;
 
-            // repoussoir du personnage
-            if (mobC.body.touching.left) {
-                player.setVelocityX(-600);
-            }
-            else if (mobC.body.touching.right) {
-                player.setVelocityX(600);
-            }
-            else if (mobC.body.touching.up) {
-                player.setVelocityY(-600);
-            }
-            else if (mobC.body.touching.down) {
-                player.setVelocityY(600);
-            }
-
-            // retrait des pv dans la variable
-            this.health -= 1;
-
-            // si la vie est en-dessous de 0, on meurt.
-            if (this.health < 0) {
-                this.killPlayer();
-            }
-
-            // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
-            else {
-                // Visuel de la frame d'invulnérabilité
-                this.pinvisible();
-
-                this.time.delayedCall(500, this.delock_joueur, [], this);
-                this.time.delayedCall(1500, this.able_hit, [], this);
-            }
+            this.perteVieCommun(player);
         }
     }
 
@@ -1617,23 +1531,35 @@ class SceneTemplate extends Phaser.Scene {
 
             mobD.destroy();
 
-            // retrait des pv dans la variable
-            this.health -= 1;
-
-            // si la vie est en-dessous de 0, on meurt.
-            if (this.health == 0) {
-                this.killPlayer();
-            }
-
-            // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
-            else {
-                // Visuel de la frame d'invulnérabilité
-                this.pinvisible();
-
-                this.time.delayedCall(500, this.delock_joueur, [], this);
-                this.time.delayedCall(1500, this.able_hit, [], this);
-            }
+            this.perteVieCommun(player);
         }
+    }
+
+    perteVieCommun(player) {
+
+        // retrait des pv dans la variable
+        this.health -= 1;
+
+        // si la vie est en-dessous de 0, on meurt.
+        if (this.health < 0) {
+            this.killPlayer();
+            this.deathSound.play();
+            //.setVolume(0.4);
+        }
+
+        // Sinon, on débloque le joueur 0.5 sec plus tard, et on autorise qu'il se fasse taper dessus.
+        else {
+
+            this.damageSound.play();
+
+            // Visuel de la frame d'invulnérabilité
+            this.pinvisible();
+
+            this.time.delayedCall(500, this.delock_joueur, [], this);
+            this.time.delayedCall(1500, this.able_hit, [], this);
+        }
+
+
     }
 
     // FONCTIONS POUR TUER LES MOBS
@@ -1788,9 +1714,24 @@ class SceneTemplate extends Phaser.Scene {
         if (!this.bossDefeated) {
 
             if (this.health == 5) {
+
+                if (this.mapName != "map_hub") {
+
+                    this.heal.children.each(obj => {
+                        obj.setAlpha(.5)
+                    });
+                }
+
                 this.lifeUI.setTexture('life1')
             }
             if (this.health == 4) {
+
+                if (this.mapName != "map_hub") {
+                    this.heal.children.each(obj => {
+                        obj.setAlpha(1)
+                    })
+                }
+
                 this.lifeUI.setTexture('life2');
             }
             if (this.health == 3) {
@@ -1827,6 +1768,9 @@ class SceneTemplate extends Phaser.Scene {
     collectHeal(player, heal) {
 
         if (this.health < 5) {
+
+            this.classicLootSound.play();
+
             heal.destroy(heal.x, heal.y);
             this.health++;
         }
@@ -1834,6 +1778,9 @@ class SceneTemplate extends Phaser.Scene {
 
     // récupération du loot
     collectLoot(player, loot) {
+
+        this.classicLootSound.play();
+
         loot.destroy(loot.x, loot.y); // détruit l'esprit collecté
         this.graineScore++; // incrémente le score
         this.textScore.setText(`${this.graineScore}`); // montre le score actuel
@@ -1845,7 +1792,6 @@ class SceneTemplate extends Phaser.Scene {
 
     // destruction d'une ronce si frappé par la serpe
     destroyRonces(ronces) {
-        console.log("DESTROY")
         ronces.disableBody(true, true);
     }
 
@@ -1875,6 +1821,9 @@ class SceneTemplate extends Phaser.Scene {
 
     // affiche une échelle si graine de haricot plantée, et enlève le mur invisible qui bloque
     createEchelle(trou, graine) {
+
+        this.laderSound.play()
+
         graine.disableBody(true, true);
         trou.anims.play('trueEchelle');
         trou.isCreated = true;
@@ -1924,6 +1873,9 @@ class SceneTemplate extends Phaser.Scene {
 
     sautRight() {
         if ((Phaser.Input.Keyboard.JustDown(this.EKey) || this.controller.B) && this.volerLoot == true && this.carryGraine == false) {
+
+            this.saladSound.play();
+
             this.player_block = true;
             this.player_facing = "right"
             this.player.anims.play("fly_right");
@@ -1937,6 +1889,8 @@ class SceneTemplate extends Phaser.Scene {
 
     sautLeft() {
         if (Phaser.Input.Keyboard.JustDown(this.EKey) && this.volerLoot == true && this.carryGraine == false) {
+            this.saladSound.play();
+
             this.player_block = true;
             this.player_facing = "left"
             this.player.anims.play("fly_left");
@@ -1950,6 +1904,8 @@ class SceneTemplate extends Phaser.Scene {
 
     sautDown() {
         if (Phaser.Input.Keyboard.JustDown(this.EKey) && this.volerLoot == true && this.carryGraine == false) {
+            this.saladSound.play();
+
             this.player_block = true;
             this.player_facing = "down"
             this.player.anims.play("fly_down");
@@ -1963,6 +1919,8 @@ class SceneTemplate extends Phaser.Scene {
 
     sautUp() {
         if (Phaser.Input.Keyboard.JustDown(this.EKey) && this.volerLoot == true && this.carryGraine == false) {
+            this.saladSound.play();
+
             this.player_block = true;
             this.player_facing = "up"
             this.player.anims.play("fly_up");
@@ -2191,9 +2149,23 @@ class SceneTemplate extends Phaser.Scene {
                     }
 
                     else if (this.bigStep == 4) {
-                        this.cameras.main.fadeOut(3000, 0, 0, 0)
-                    }
 
+                        this.tweens.add({
+                            targets: this.music,
+                            volume: 0,
+                            duration: 500
+                        });
+
+                        this.victorySound.play();
+
+                        this.cameras.main.fadeOut(3000, 0, 0, 0)
+
+                        this.time.delayedCall(3000, function () {
+
+                            this.scene.start('EndGame', { music: this.music });
+
+                        }, [], this);
+                    }
                 }
             }
         }
@@ -2211,7 +2183,7 @@ class SceneTemplate extends Phaser.Scene {
                     this.player.anims.play("loot", true);
                 }
             }
-            
+
             else if (!this.lootEquipement) {
                 if (this.player_facing == "up") {
                     this.player.anims.play('up', true)
@@ -2254,14 +2226,14 @@ class SceneTemplate extends Phaser.Scene {
                     this.time.delayedCall(750, function () {
 
                         this.player_block = false;
-    
+
                     }, [], this);
                 }
 
-                else if(!this.lootEquipement) {
+                else if (!this.lootEquipement) {
                     this.player_block = false;
                 }
-                
+
                 this.itemsLook.children.each(obj => {
 
                     this.tweens.add({
@@ -2279,7 +2251,19 @@ class SceneTemplate extends Phaser.Scene {
 
                     this.cameras.main.fadeOut(1500, 0, 0, 0);
 
-                    this.time.delayedCall(1000, function () {
+                    this.music = this.sound.add('musicEnd');
+
+                    this.music.setVolume(0).setLoop(true);
+
+                    this.music.play();
+
+                    this.tweens.add({
+                        targets: this.music,
+                        volume: 0.4,
+                        duration: 1500
+                    });
+
+                    this.time.delayedCall(1500, function () {
 
                         this.scene.start('sceneHub', {
 
@@ -2303,6 +2287,7 @@ class SceneTemplate extends Phaser.Scene {
                             spawnY: 1257,
 
                             bossDefeated: this.bossDefeated,
+                            music: this.music
                         });
 
                     }, [], this);
@@ -2315,6 +2300,9 @@ class SceneTemplate extends Phaser.Scene {
     collectItem(player, item) {
 
         if (item.name == "serpe") {
+
+            this.itemLootSound.play();
+
             this.attackCaCLoot = true;
 
             this.loot_serpeBis = this.physics.add.sprite(this.player.x + 4, this.player.y - 32, "serpe_loot").setDepth(4);
@@ -2333,6 +2321,9 @@ class SceneTemplate extends Phaser.Scene {
             this.lootEquipement = true;
         }
         else if (item.name == "courge") {
+
+            this.itemLootSound.play();
+
             this.attackDistanceLoot = true;
 
             this.loot_courgeBis = this.physics.add.sprite(this.player.x, this.player.y - 32, "courge_loot").setDepth(4);
@@ -2351,6 +2342,9 @@ class SceneTemplate extends Phaser.Scene {
             this.lootEquipement = true;
         }
         else if (item.name == "salad") {
+
+            this.itemLootSound.play();
+
             this.volerLoot = true;
 
             this.loot_saladeBis = this.physics.add.sprite(this.player.x + 4, this.player.y - 32, "salade_loot").setDepth(4);
@@ -2371,6 +2365,8 @@ class SceneTemplate extends Phaser.Scene {
 
         else if (item.name == "final") {
 
+            this.itemLootSound.play();
+
             this.final_LootBis = this.physics.add.sprite(this.player.x, this.player.y - 32, "final_loot").setDepth(4);
 
             this.tweens.add({
@@ -2385,6 +2381,10 @@ class SceneTemplate extends Phaser.Scene {
             this.itemsLook.add(this.final_LootBis);
 
             this.lootEquipement = true;
+        }
+
+        else {
+            this.scrollLootSound.play();
         }
 
         this.dialogueBox.visible = true;
@@ -2403,6 +2403,13 @@ class SceneTemplate extends Phaser.Scene {
 
     killPlayer() {
 
+        this.tweens.add({
+            targets: this.music,
+            volume: 0,
+            duration: 500
+        }
+        );
+
         this.player_block = true;
 
         this.player.disableBody(true);
@@ -2419,6 +2426,25 @@ class SceneTemplate extends Phaser.Scene {
         }, [], this);
 
         this.time.delayedCall(1500, function () {
+
+            this.music = this.sound.add('musicTuto');
+
+            this.music.setLoop(true)
+                .setVolume(0.4);
+
+            this.music.play();
+
+            if (this.mapName == "map_donjon" || this.mapName == "map_zone2") {
+                this.mobD.children.each(obj => {
+                    obj.isAlive = false;
+                    obj.destroy()
+                });
+            }
+
+            if (this.mapName == "map_donjon") {
+                this.boss.isAlive = false;
+                this.boss.destroy()
+            }
 
             if (this.graineScore >= 10) {
 
@@ -2493,99 +2519,155 @@ class SceneTemplate extends Phaser.Scene {
             currentMapName = 'map_hub'
             currentSpawnX = 528
             currentSpawnY = 1445
-
         }
 
-        else if (this.mapName == "map_hub") {
-
-            if (this.nextScene == "zone1") {
-                id_map = 'sceneZone1'
-                currentMapName = 'map_zone1'
-                currentSpawnX = 3296
-                currentSpawnY = 4032
-            }
-
-            else if (this.nextScene == "zone2") {
-                id_map = 'sceneZone2'
-                currentMapName = 'map_zone2'
-                currentSpawnX = 48
-                currentSpawnY = 3040
-            }
-
-            else if (this.nextScene == "zoneDonjon") {
-                id_map = 'sceneDonjon'
-                currentMapName = 'map_donjon'
-                currentSpawnX = 1136
-                currentSpawnY = 2720
-            }
-        }
-
-        else if (this.mapName == "map_zone1") {
-
-            if (this.nextScene == "hub") {
-                id_map = 'sceneHub'
-                currentMapName = 'map_hub'
-                currentSpawnX = 48
-                currentSpawnY = 976
-            }
-
-            else if (this.nextScene == "secret") {
-                id_map = 'sceneSecrete'
-                currentMapName = 'map_secrete'
-                currentSpawnX = 48
-                currentSpawnY = 416
-            }
-        }
-
-        else if (this.mapName == "map_zone2") {
-
-            if (this.nextScene == "hub") {
-                id_map = 'sceneHub'
-                currentMapName = 'map_hub'
-                currentSpawnX = 1136
-                currentSpawnY = 1088
-            }
-
-            else if (this.nextScene == "secret") {
-                id_map = 'sceneSecrete'
-                currentMapName = 'map_secrete'
-                currentSpawnX = 1104
-                currentSpawnY = 432
-            }
-
-            this.mobD.children.each(obj => {
-                obj.isAlive = false;
-                obj.destroy()
+        else {
+            this.tweens.add({
+                targets: this.music,
+                volume: 0,
+                duration: 500
             });
-        }
 
-        else if (this.mapName == "map_donjon") {
-            id_map = 'sceneHub'
-            currentMapName = 'map_hub'
-            currentSpawnX = 592
-            currentSpawnY = 624
+            this.time.delayedCall(500, function () {
 
-            this.mobD.children.each(obj => {
-                obj.isAlive = false;
-                obj.destroy()
-            });
-        }
+                this.music.stop();
 
-        else if (this.mapName == "map_secrete") {
+                if (this.mapName == "map_hub") {
 
-            if (this.nextScene == "zone1") {
-                id_map = 'sceneZone1'
-                currentMapName = 'map_zone1'
-                currentSpawnX = 3312
-                currentSpawnY = 704
-            }
+                    if (this.nextScene == "zone1") {
 
-            if (this.nextScene == "zone2") {
-                id_map = 'sceneZone2'
-                currentMapName = 'map_zone2'
-                currentSpawnX = 48
-                currentSpawnY = 752
-            }
+                        this.music = this.sound.add('musicZone1');
+                        this.music.setLoop(true)
+                            .setVolume(0.4);
+
+                        id_map = 'sceneZone1'
+                        currentMapName = 'map_zone1'
+                        currentSpawnX = 3296
+                        currentSpawnY = 4032
+                    }
+
+                    else if (this.nextScene == "zone2") {
+
+                        this.music = this.sound.add('musicZone2');
+                        this.music.setLoop(true)
+                            .setVolume(0.4);
+
+                        id_map = 'sceneZone2'
+                        currentMapName = 'map_zone2'
+                        currentSpawnX = 48
+                        currentSpawnY = 3040
+                    }
+
+                    else if (this.nextScene == "zoneDonjon") {
+
+                        this.music = this.sound.add('musicDonjon');
+                        this.music.setLoop(true)
+                            .setVolume(0.4);
+
+                        id_map = 'sceneDonjon'
+                        currentMapName = 'map_donjon'
+                        currentSpawnX = 1136
+                        currentSpawnY = 2720
+                    }
+                }
+
+                else if (this.mapName == "map_zone1") {
+
+                    this.music = this.sound.add('musicTuto');
+                    this.music.setLoop(true)
+                        .setVolume(0.4);
+
+                    if (this.nextScene == "hub") {
+                        id_map = 'sceneHub'
+                        currentMapName = 'map_hub'
+                        currentSpawnX = 48
+                        currentSpawnY = 976
+                    }
+
+                    else if (this.nextScene == "secret") {
+                        id_map = 'sceneSecrete'
+                        currentMapName = 'map_secrete'
+                        currentSpawnX = 48
+                        currentSpawnY = 416
+                    }
+                }
+
+                else if (this.mapName == "map_zone2") {
+
+                    this.music = this.sound.add('musicTuto');
+                    this.music.setLoop(true)
+                        .setVolume(0.4);
+
+                    if (this.nextScene == "hub") {
+                        id_map = 'sceneHub'
+                        currentMapName = 'map_hub'
+                        currentSpawnX = 1136
+                        currentSpawnY = 1088
+                    }
+
+                    else if (this.nextScene == "secret") {
+                        id_map = 'sceneSecrete'
+                        currentMapName = 'map_secrete'
+                        currentSpawnX = 1104
+                        currentSpawnY = 432
+                    }
+
+                    this.mobD.children.each(obj => {
+                        obj.isAlive = false;
+                        obj.destroy()
+                    });
+                }
+
+                else if (this.mapName == "map_donjon") {
+
+                    this.music = this.sound.add('musicTuto');
+                    this.music.setLoop(true)
+                        .setVolume(0.4);
+
+                    id_map = 'sceneHub'
+                    currentMapName = 'map_hub'
+                    currentSpawnX = 592
+                    currentSpawnY = 624
+
+                    this.mobD.children.each(obj => {
+                        obj.isAlive = false;
+                        obj.destroy()
+                    });
+
+                    this.boss.destroy();
+                }
+
+                else if (this.mapName == "map_secrete") {
+
+                    if (this.nextScene == "zone1") {
+
+                        this.music = this.sound.add('musicZone1');
+                        this.music.setLoop(true)
+                            .setVolume(0.4);
+
+                        id_map = 'sceneZone1'
+                        currentMapName = 'map_zone1'
+                        currentSpawnX = 3312
+                        currentSpawnY = 704
+                    }
+
+                    if (this.nextScene == "zone2") {
+
+                        this.music = this.sound.add('musicZone2');
+                        this.music.setLoop(true)
+                            .setVolume(0.4);
+
+                        id_map = 'sceneZone2'
+                        currentMapName = 'map_zone2'
+                        currentSpawnX = 48
+                        currentSpawnY = 752
+                    }
+                }
+
+                this.music.play();
+
+            }, null, this);
+
         }
 
         this.time.delayedCall(1000, function () {
@@ -2610,10 +2692,13 @@ class SceneTemplate extends Phaser.Scene {
                 spawnX: currentSpawnX,
                 spawnY: currentSpawnY,
 
-                bossDefeated: this.bossDefeated
+                bossDefeated: this.bossDefeated,
+                music: this.music
             });
         }, [], this);
+
     }
+
 }
 
 export default SceneTemplate

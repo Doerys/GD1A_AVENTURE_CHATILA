@@ -3,7 +3,15 @@ class mainScreen extends Phaser.Scene {
         super("MainScreen");
     }
 
+    init(data) {
+        this.music = data.music;
+    }
+
     create() {
+
+        this.cameras.main.fadeIn(1500, 0, 0, 0)
+
+        this.gameLaunched = false;
 
         this.add.image(341, 192, 'mainScreen');
         this.gameButton = this.add.sprite(225, 270, "Button_Game").setInteractive({ cursor: 'pointer' });
@@ -29,56 +37,82 @@ class mainScreen extends Phaser.Scene {
     }
 
     launchGame() {
-        this.scene.start('sceneZone1', {
 
-            mapName: "map_zone1", // nom de la map
-            mapTileset: "tileset", // nom du tileset sur TILED
-            mapTilesetImage: "tileset_image", // nom du fichier image du tileset
+        if (!this.gameLaunched) {
 
-            graineScore: 0,
+            this.tweens.add({
+                targets: this.music,
+                volume: 0,
+                duration: 500
+            });
 
-            player_facing: "down",
+            this.music = this.sound.add('musicTuto');
+            this.music.setLoop(true)
+                .setVolume(0.4);
 
-            // Variables pour débloquer les mécaniques
-            attackCaCLoot: true,
-            attackDistanceLoot: true,
-            volerLoot: false,
+            this.gameLaunched = true;
 
-            bossDefeated: false,
+            this.cameras.main.fadeOut(1500, 0, 0, 0);
 
-            speed: 175,
-            //speed : 800,
-            health: 5,
+            this.time.delayedCall(1500, function () {
 
-            // SPAWN TUTO
-            //spawnX : 48,
-            //spawnY : 1808
+                this.music.play();
 
-            //SPAWN HUB
-            //spawnX: 528,
-            //spawnY: 1445
+                this.scene.start('sceneTuto', {
 
-            //SPAWN HUB FIN DU JEU
-            //spawnX: 448,
-            //spawnY: 1257
+                    mapName: "map_tuto", // nom de la map
+                    mapTileset: "tileset", // nom du tileset sur TILED
+                    mapTilesetImage: "tileset_image", // nom du fichier image du tileset
 
-            //SPAWN ZONE 1
+                    graineScore: 0,
 
-            spawnX: 2608,
-            spawnY: 1392
+                    player_facing: "down",
 
-            //SPAWN ZONE 2
-            //spawnX: 1840,
-            //spawnY: 1888,
+                    // Variables pour débloquer les mécaniques
+                    attackCaCLoot: false,
+                    attackDistanceLoot: false,
+                    volerLoot: false,
 
-            //SPAWN ZONE SECRETE
-            //spawnX: 608,
-            //spawnY: 256
+                    bossDefeated: false,
 
-            // SPAWN DONJON
-            //spawnX : 1184,
-            //spawnY : 608
-        });
+                    music: this.music,
+
+                    speed: 175,
+                    //speed : 800,
+                    health: 5,
+
+                    // SPAWN TUTO
+                    spawnX : 48,
+                    spawnY : 1808
+
+                    //SPAWN HUB
+                    //spawnX: 528,
+                    //spawnY: 1445
+
+                    //SPAWN HUB FIN DU JEU
+                    //spawnX: 448,
+                    //spawnY: 1257
+
+                    //SPAWN ZONE 1
+
+                    //spawnX: 2608,
+                    //spawnY: 1392
+
+                    //SPAWN ZONE 2
+                    //spawnX: 1840,
+                    //spawnY: 1888,
+
+                    //SPAWN ZONE SECRETE
+                    //spawnX: 608,
+                    //spawnY: 256
+
+                    // SPAWN DONJON
+                    //spawnX: 1200,
+                    //spawnY: 752
+                });
+
+            }, null, this);
+        }
     }
 }
 

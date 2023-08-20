@@ -6,6 +6,7 @@ import sceneZone1 from "./src/scenes/sceneZone1.js";
 import sceneZone2 from "./src/scenes/sceneZone2.js";
 import sceneZoneSecrete from "./src/scenes/sceneZoneSecrete.js"
 import sceneDonjon from "./src/scenes/sceneDonjon.js";
+import EndGame from "./src/scenes/endGame.js";
 
 const WIDTH = 683;
 const HEIGHT = 384;
@@ -19,7 +20,7 @@ const SHARED_CONFIG = {
     zoomFactor: ZOOM_FACTOR,
 }
 
-const Scenes = [PreloadScene, mainScreen, sceneTuto, sceneHub, sceneZone1, sceneZone2, sceneDonjon, sceneZoneSecrete] // on liste les scènes
+const Scenes = [PreloadScene, mainScreen, sceneTuto, sceneHub, sceneZone1, sceneZone2, sceneDonjon, sceneZoneSecrete, EndGame] // on liste les scènes
 const createScene = Scene => new Scene(SHARED_CONFIG) // on crée une scène qui possède les configs
 const initScenes = () => Scenes.map(createScene) // crée une scène pour chaque élément de la map. Lance la 1ere scène automatiquement
 
